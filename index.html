@@ -48,7 +48,7 @@
   .legend i{display:inline-block;width:22px;height:22px;border-radius:5px;flex:none;border:1px solid rgba(255,255,255,.15)}
   .legend b{display:block;font-size:13px}
   .legend span{color:var(--mut)}
-  .brk{position:relative;width:880px;height:392px;margin:10px auto 0;text-align:left}
+  .brk{position:relative;width:880px;height:392px;margin:34px auto 0;text-align:left}
   .brk svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   .brk .cm{position:absolute;width:250px;height:86px;box-sizing:border-box;display:flex;flex-direction:column}
   .brk .cm .cm-act{margin-top:auto;display:flex;gap:6px;justify-content:flex-end;min-height:22px}
@@ -200,7 +200,7 @@
       <div class="row" style="margin-top:14px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Kupa létrehozása</button><button id="btnCupBack">Vissza</button></div>
     </div>
     <div id="cupView" style="display:none">
-      <div class="row" style="justify-content:space-between;margin-bottom:16px"><h2 id="cupTitle" style="margin:0;font-size:20px">Kupa</h2><span id="cupChampion" class="mut" style="font-size:14px"></span></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:0"><h2 id="cupTitle" style="margin:0;font-size:20px">Kupa</h2><span id="cupChampion" class="mut" style="font-size:14px"></span></div>
       <p class="mut" id="cupRoNote" style="display:none">Ez a kupa megosztott, csak olvasható nézete.</p>
       <div class="brk" id="cupBracket"></div>
       <div id="cupManual" style="display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0b0f1a;border:1px solid #4cc3ff;border-radius:12px;padding:16px 20px;z-index:3;box-shadow:0 20px 60px rgba(0,0,0,.6)"></div>
@@ -1525,7 +1525,7 @@ function cupRender(ro){
   const pos=(id,x,y)=>cupMatchHtml(id,ro).replace('class="cm ',`style="left:${x}px;top:${y}px" class="cm `);
   let h=`<svg viewBox="0 0 880 392">`; const ln=(x1,y1,x2,y2)=>{ const mx=(x1+x2)/2; return `<path d="M${x1},${y1} H${mx} V${y2} H${x2}" fill="none" stroke="#3a4a7a" stroke-width="2" stroke-linejoin="round"/>`; };
   QY.forEach((y,i)=>{ h+=ln(X[0]+BW,y+43,X[1],SY[i>>1]+43); }); SY.forEach(y=>{ h+=ln(X[1]+BW,y+43,X[2],FY+43); });
-  h+=`</svg><div class="cup-colt" style="left:${X[0]}px;top:-8px">Negyeddöntők</div><div class="cup-colt" style="left:${X[1]}px;top:-8px">Elődöntők</div><div class="cup-colt" style="left:${X[2]}px;top:-8px">Döntő</div><div class="cup-colt" style="left:${X[2]}px;top:${BY-20}px">Bronzmeccs</div>`;
+  h+=`</svg><div class="cup-colt" style="left:${X[0]}px;top:-26px">Negyeddöntők</div><div class="cup-colt" style="left:${X[1]}px;top:-26px">Elődöntők</div><div class="cup-colt" style="left:${X[2]}px;top:-26px">Döntő</div><div class="cup-colt" style="left:${X[2]}px;top:${BY-20}px">Bronzmeccs</div>`;
   ['q1','q2','q3','q4'].forEach((id,i)=>h+=pos(id,X[0],QY[i])); ['s1','s2'].forEach((id,i)=>h+=pos(id,X[1],SY[i])); h+=pos('f',X[2],FY); if(d.bronze) h+=pos('b',X[2],BY);
   if(d.m.f.w!==null) h+=`<div class="champ">🏆 ${esc(cupTeam(d.m.f.w))}</div>`;
   $('cupBracket').innerHTML=h;
