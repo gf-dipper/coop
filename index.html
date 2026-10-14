@@ -53,7 +53,7 @@
   <!-- FŐMENÜ -->
   <div class="ov show" id="ovMenu"><div class="box">
     <h1><b>KÖTE</b><i>LÉK</i></h1>
-    <p class="sub">Két játékos, egy energiakötél. Ha túl messze kerültök egymástól, elszakad – és kezdhetitek elölről a pályát.</p>
+    <p class="sub">Két játékos, egy energiakötél. Ha túl messze kerültök egymástól, elszakad – és kezdhetitek elölről a pályát.<br><b>Négyen?</b> 2v2 verseny: két páros ugyanazon a pályán, aki előbb beér, pontot kap.</p>
     <div class="row">
       <button class="pri" id="btnHost">Szoba létrehozása</button>
       <button id="btnJoinShow">Csatlakozás kóddal</button>
@@ -81,10 +81,13 @@
   <div class="ov" id="ovLobby"><div class="box">
     <h2>A te szobád kódja</h2>
     <div class="code" id="codeShow">----</div>
-    <p class="mut">Küldd el a társadnak – ő a „Csatlakozás kóddal” gombnál írja be.<br>Te leszel a <span class="tag b">KÉK</span>, ő a <span class="tag o">NARANCS</span>.</p>
+    <p class="mut">Küldd el a társaidnak – ők a „Csatlakozás kóddal” gombnál írják be.<br>Ketten: coop. Négyen: <b>2v2 verseny</b> – a csapatokat itt lent bárki átrendezheti.</p>
     <p id="lobbyMsg">Szoba nyitása…</p>
+    <div id="hostTeams"></div>
+    <p class="mut" id="lobbyHint"></p>
     <div id="lobbyStart" style="display:none">
-      <p class="mut">Hol kezdjétek? (a legjobb időitek megmaradnak ezen a gépen)</p>
+      <div id="raceOpts" style="display:none" class="mut">Verseny hossza: <select id="selRounds" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="5">5 pálya</option><option value="10" selected>10 pálya</option><option value="20">20 pálya</option><option value="40">az összes</option></select></div>
+      <p class="mut">Hol kezdjétek? (coopban a legjobb időitek megmaradnak ezen a gépen)</p>
       <div class="lvgrid" id="lvgridHost"></div>
       <button class="pri" id="btnStartHost">Indítás az 1. pályától</button>
     </div>
@@ -94,7 +97,7 @@
   <!-- Vendég várakozás -->
   <div class="ov" id="ovGuestWait"><div class="box">
     <h2>Csatlakozva!</h2>
-    <p class="sub">Te vagy a <span class="tag o">NARANCS</span>. Várunk, hogy a társad elindítsa a játékot…</p>
+    <p class="sub" id="guestWho">Csatlakozva. Várunk a többiekre…</p><div id="guestTeams"></div><p class="mut">A nyilakkal átülhetsz a másik csapatba. A játékot a gazda indítja.</p>
     <button id="btnGuestBack">Kilépés</button>
   </div></div>
 
@@ -231,13 +234,13 @@ const LEVELS = [
 ########################`, mov:[{t:'p',path:[[1,5],[22,5]],s:7},{t:'p',path:[[22,10],[1,10]],s:7}]},
 {name:'Kereszttűz', tip:'Őrjáratok két irányból. Az egyikőtök a másik szeme.', par:80, map:`
 ########################
-#1.....................#
+#......................#
+#......................#
+#......................#
+#......................#
+#......................#
+#1.........*...........#
 #2.....................#
-#......................#
-#......................#
-#......................#
-#..........*...........#
-#......................#
 #......................#
 #......................#
 #...................####
@@ -310,17 +313,17 @@ const LEVELS = [
 #.......#......#.......#
 #.......#......#.....EE#
 #.......#......#.....EE#
-########################`, mov:[{t:'p',path:[[3,1],[3,13]],s:5},{t:'p',path:[[12,1],[12,4]],s:5},{t:'p',path:[[12,13],[12,8]],s:5},{t:'p',path:[[18,1],[18,13]],s:6},{t:'p',path:[[21,13],[21,1]],s:6}]},
+########################`, mov:[{t:'p',path:[[5,1],[5,13]],s:5},{t:'p',path:[[12,1],[12,4]],s:5},{t:'p',path:[[12,13],[12,8]],s:5},{t:'p',path:[[18,1],[18,13]],s:6},{t:'p',path:[[21,13],[21,1]],s:6}]},
 {name:'Kék és narancs', tip:'A kék sávon csak a kék fér át, a narancson csak a narancs.', par:80, map:`
 ########################
 #..........#...........#
-#.1........b...........#
 #..........b...........#
-#..........#...........#
-#..........#...........#
-#..........o...........#
-#..........o...........#
+#.1........b...........#
 #.2........#...........#
+#..........#...........#
+#..........o...........#
+#..........o...........#
+#..........#...........#
 #..........#...........#
 #..........#...........#
 #..........#...........#
@@ -342,7 +345,7 @@ const LEVELS = [
 #.....#..EE..#...#.....#
 #.....#......#.........#
 #.....########.........#
-########################`, mov:[{t:'p',path:[[1,2],[13,2]],s:6},{t:'p',path:[[13,6],[1,6]],s:6},{t:'p',path:[[14,8],[14,13]],s:5},{t:'p',path:[[22,1],[22,13]],s:6},{t:'p',path:[[16,10],[16,13]],s:4}]},
+########################`, mov:[{t:'p',path:[[6,2],[13,2]],s:6},{t:'p',path:[[13,6],[6,6]],s:6},{t:'p',path:[[14,8],[14,13]],s:5},{t:'p',path:[[22,1],[22,13]],s:6},{t:'p',path:[[16,10],[16,13]],s:4}]},
 {name:'Időzített', tip:'A gomb 4,5 másodpercre nyitja az ajtót. Nyomás, és rohanás!', par:70, map:`
 ########################
 #..............#.......#
@@ -381,8 +384,8 @@ const LEVELS = [
 #..1....b..............#
 #.......#..............#
 #.......#..............#
-#.......#...x..........#
-#..2....X..............#
+#..2....#...x..........#
+#.......X..............#
 #.......X..............#
 #.......#..............#
 #.......#..............#
@@ -406,25 +409,25 @@ const LEVELS = [
 #......#..........######
 #......#...........KGEE#
 #......#...........KGEE#
-########################`, mov:[{t:'p',path:[[16,1],[16,7]],s:5},{t:'p',path:[[4,2],[11,2]],s:6},{t:'p',path:[[11,5],[4,5]],s:6},{t:'p',path:[[2,8],[2,13]],s:5},{t:'p',path:[[5,13],[5,8]],s:5},{t:'p',path:[[9,8],[9,13]],s:6},{t:'p',path:[[22,1],[22,7]],s:6}]},
+########################`, mov:[{t:'p',path:[[16,1],[16,7]],s:5},{t:'p',path:[[11,2],[6,2]],s:6},{t:'p',path:[[11,5],[6,5]],s:6},{t:'p',path:[[2,8],[2,13]],s:5},{t:'p',path:[[5,13],[5,8]],s:5},{t:'p',path:[[9,8],[9,13]],s:6},{t:'p',path:[[22,1],[22,7]],s:6}]},
 
 // ---------- 3. VILÁG: VESZÉLY ----------
 {name:'Forgó lézer', tip:'A lézer a kötelet is elvágja – menjetek át egyszerre, egy oldalon.', par:70, map:`
 ########################
 #......................#
-#..1...................#
-#......................#
-#..2...................#
-#......................#
+#.1....................#
+#.2....................#
 #......................#
 #......................#
 #......................#
 #......................#
 #......................#
-#...................EE.#
-#...................EE.#
 #......................#
-########################`, mov:[{t:'l',c:[7,7],len:6,s:60,a0:0,arms:2},{t:'l',c:[16,7],len:6,s:-60,a0:90,arms:2}]},
+#......................#
+#....................EE#
+#....................EE#
+#......................#
+########################`, mov:[{t:'l',c:[7,7],len:5,s:60,a0:0,arms:2},{t:'l',c:[16,7],len:5,s:-60,a0:90,arms:2}]},
 {name:'Lövegek', tip:'A löveg a közelebbire céloz. Csalogassátok, és közben a másik halad.', par:80, map:`
 ########################
 #......................#
@@ -456,7 +459,7 @@ const LEVELS = [
 #.............#........#
 #.............#......EE#
 #.............#......EE#
-########################`, mov:[{t:'l',c:[6,2],len:7,s:80,a0:0},{t:'l',c:[13,6],len:7,s:-70,a0:90,arms:2},{t:'l',c:[18,11],len:5,s:90,a0:180},{t:'p',path:[[11,1],[11,8]],s:6}]},
+########################`, mov:[{t:'l',c:[12,2],len:5,s:80,a0:0},{t:'l',c:[13,7],len:6,s:-70,a0:90,arms:2},{t:'l',c:[18,11],len:5,s:90,a0:180},{t:'p',path:[[11,1],[11,8]],s:6}]},
 {name:'Tűzvonal', tip:'Tüske, löveg, őrjárat. Egy hiba, és elölről.', par:100, map:`
 ########################
 #1.....h......h......h.#
@@ -472,7 +475,7 @@ const LEVELS = [
 #......h......h......h.#
 #......h......h......#.#
 #......h......h......#E#
-########################`, mov:[{t:'t',c:[21,4],rate:1.1,s:280},{t:'t',c:[2,10],rate:1.2,s:280,ph:0.6},{t:'p',path:[[1,4],[22,4]],s:7},{t:'p',path:[[22,9],[1,9]],s:7},{t:'p',path:[[12,5],[12,10]],s:5}]},
+########################`, mov:[{t:'t',c:[20,5],rate:1.1,s:280},{t:'t',c:[2,10],rate:1.2,s:280,ph:0.6},{t:'p',path:[[1,4],[22,4]],s:7},{t:'p',path:[[22,9],[1,9]],s:7},{t:'p',path:[[12,5],[12,10]],s:5}]},
 {name:'Óramű', tip:'Két lézer, két lap. Aki tart, az nem tud elugrani – időzítsetek.', par:110, map:`
 ########################
 #............#.........#
@@ -504,7 +507,7 @@ const LEVELS = [
 #...................####
 #...................KEE#
 #...................KEE#
-########################`, mov:[{t:'t',c:[12,2],rate:1.0,s:280},{t:'t',c:[20,6],rate:1.1,s:280,ph:0.4},{t:'t',c:[3,12],rate:1.2,s:280,ph:0.8},{t:'p',path:[[14,1],[14,13]],s:6},{t:'p',path:[[17,13],[17,1]],s:6},{t:'l',c:[5,4],len:3,s:100,a0:0}]},
+########################`, mov:[{t:'t',c:[12,2],rate:1.0,s:280},{t:'t',c:[20,6],rate:1.1,s:280,ph:0.4},{t:'t',c:[3,12],rate:1.2,s:280,ph:0.8},{t:'p',path:[[14,1],[14,13]],s:6},{t:'p',path:[[17,13],[17,1]],s:6},{t:'l',c:[7,5],len:3,s:100,a0:0}]},
 {name:'Forgóajtó', tip:'Kétkarú lézerek sorban. Egyesével a lézerek között – a kötéllel együtt.', par:120, map:`
 ########################
 #......................#
@@ -520,23 +523,23 @@ const LEVELS = [
 #......................#
 #......................#
 #......................#
-########################`, mov:[{t:'l',c:[6,7],len:5,s:80,a0:0,arms:2},{t:'l',c:[11,7],len:5,s:-80,a0:90,arms:2},{t:'l',c:[16,7],len:5,s:80,a0:45,arms:2},{t:'p',path:[[1,2],[22,2]],s:7},{t:'p',path:[[22,12],[1,12]],s:7}]},
+########################`, mov:[{t:'l',c:[6,7],len:4,s:80,a0:0,arms:2},{t:'l',c:[11,7],len:4,s:-80,a0:90,arms:2},{t:'l',c:[16,7],len:4,s:80,a0:45,arms:2},{t:'p',path:[[1,2],[22,2]],s:7},{t:'p',path:[[22,12],[1,12]],s:7}]},
 {name:'Aréna', tip:'Világzáró. Minden, ami veszélyes – egy helyen.', par:150, map:`
 ########################
 #......................#
 #......................#
 #..1......*............#
 #......................#
-#......................#
+#..2...................#
 #.......*.......*......#
 #......................#
 #......................#
-#..2...........*.......#
+#..............*.......#
 #...................####
 #...................GEE#
 #...................GEE#
 #...................####
-########################`, mov:[{t:'l',c:[12,7],len:6,s:50,a0:0,arms:2},{t:'p',path:[[6,1],[18,1]],s:7},{t:'p',path:[[18,13],[6,13]],s:7},{t:'p',path:[[2,5],[2,12]],s:6},{t:'t',c:[21,2],rate:1.2,s:260},{t:'t',c:[21,8],rate:1.4,s:260,ph:0.6}]},
+########################`, mov:[{t:'l',c:[12,7],len:6,s:50,a0:0,arms:2},{t:'p',path:[[6,1],[18,1]],s:7},{t:'p',path:[[18,13],[6,13]],s:7},{t:'p',path:[[2,12],[2,7]],s:6},{t:'t',c:[21,2],rate:1.2,s:260},{t:'t',c:[21,8],rate:1.4,s:260,ph:0.6}]},
 
 // ---------- 4. VILÁG: FEJTÖRŐ ----------
 {name:'Kulcsraktár', tip:'Két kulcs, két ajtó – de melyik melyikhez? A kötél nem szakadhat.', par:120, rope:180, map:`
@@ -554,7 +557,7 @@ const LEVELS = [
 #..........#...........#
 #..........K...........#
 #..........#...........#
-########################`, mov:[{t:'p',path:[[2,5],[2,13]],s:5},{t:'p',path:[[8,13],[8,5]],s:5},{t:'p',path:[[13,1],[13,13]],s:6},{t:'p',path:[[16,13],[16,1]],s:6},{t:'l',c:[20,2],len:3,s:90,a0:0}]},
+########################`, mov:[{t:'p',path:[[2,13],[2,6]],s:5},{t:'p',path:[[10,5],[10,7]],s:4},{t:'p',path:[[9,9],[2,9]],s:5},{t:'p',path:[[13,5],[13,13]],s:6},{t:'p',path:[[16,13],[16,5]],s:6},{t:'l',c:[20,2],len:3,s:90,a0:0}]},
 {name:'Ketrec', tip:'Zárt kamrák, őrjáratokkal. Mindketten a saját kapun át.', par:120, map:`
 ########################
 #..........b...........#
@@ -639,7 +642,7 @@ const LEVELS = [
 ########################
 #..1.........#.........#
 #......*.....#.....k...#
-#..2.....x...X.........#
+#..2.......x.X.x.......#
 #............X.........#
 #............#.........#
 #......#######.........#
@@ -655,7 +658,7 @@ const LEVELS = [
 ########################
 #..1......#............#
 #.........#......*.....#
-#..2..x...X............#
+#..2....x.X.x..........#
 #.........X............#
 #.........#............#
 #.........#ffff#########
@@ -716,7 +719,7 @@ const LEVELS = [
 #......................#
 #......................#
 #......................#
-########################`, mov:[{t:'l',c:[6,7],len:5,s:90,a0:0,arms:2},{t:'l',c:[10,7],len:5,s:-90,a0:90,arms:2},{t:'l',c:[14,7],len:5,s:90,a0:180,arms:2},{t:'l',c:[18,7],len:5,s:-90,a0:270,arms:2},{t:'t',c:[11,1],rate:1.2,s:280},{t:'t',c:[11,13],rate:1.2,s:280,ph:0.6}]},
+########################`, mov:[{t:'l',c:[6,7],len:4,s:90,a0:0,arms:2},{t:'l',c:[10,7],len:4,s:-90,a0:90,arms:2},{t:'l',c:[14,7],len:4,s:90,a0:180,arms:2},{t:'l',c:[18,7],len:4,s:-90,a0:270,arms:2},{t:'t',c:[11,1],rate:1.2,s:280},{t:'t',c:[11,13],rate:1.2,s:280,ph:0.6}]},
 {name:'Üvegpadló', tip:'Csupa törékeny padló. Egyszer lehet rajta átmenni.', par:120, map:`
 ########################
 #1.....................#
@@ -748,7 +751,7 @@ const LEVELS = [
 #.......#......#.KGEE..#
 #.......#......#.KGEE..#
 #.......#..*...#.#######
-########################`, mov:[{t:'p',path:[[11,1],[11,6]],s:5},{t:'p',path:[[13,13],[13,8]],s:5},{t:'p',path:[[19,1],[19,10]],s:6},{t:'p',path:[[21,10],[21,1]],s:6},{t:'l',c:[3,10],len:3,s:90,a0:0},{t:'l',c:[11,11],len:2,s:-120,a0:0},{t:'p',path:[[16,9],[16,13]],s:5}]},
+########################`, mov:[{t:'p',path:[[11,1],[11,6]],s:5},{t:'p',path:[[13,13],[13,8]],s:5},{t:'p',path:[[19,1],[19,7]],s:6},{t:'p',path:[[21,7],[21,1]],s:6},{t:'l',c:[3,10],len:3,s:90,a0:0},{t:'l',c:[11,11],len:2,s:-120,a0:0},{t:'p',path:[[16,9],[16,13]],s:5}]},
 {name:'Lövegfészek', tip:'Öt löveg. Aki nem a célpont, az halad – felváltva.', par:150, map:`
 ########################
 #1.....................#
@@ -936,11 +939,11 @@ function update(dt,bits){
     // cél
     const allGems=S.gems.every(g=>g);
     const inExit=p=>st.exits.some(([c,r])=>p.x>c*CELL&&p.x<(c+1)*CELL&&p.y>r*CELL&&p.y<(r+1)*CELL);
-    if(allGems&&inExit(S.p[0])&&inExit(S.p[1])){ S.ph='clear'; S.phT=2.8; S.clearTime=S.lt; const par=LEVELS[S.L].par||60; S.stars=S.lt<=par?3:S.lt<=par*1.6?2:1; saveBest(S.L,S.lt,S.stars); }
+    if(allGems&&inExit(S.p[0])&&inExit(S.p[1])){ S.ph='clear'; S.phT=2.8; S.clearTime=S.lt; const par=LEVELS[S.L].par||60; S.stars=S.lt<=par?3:S.lt<=par*1.6?2:1; if(!RACE.on) saveBest(S.L,S.lt,S.stars); }
   } else if(S.ph==='fail'){ S.phT-=dt; S.tot+=dt; if(S.phT<=0){ if(S.lives<=0){ const tot=S.tot,totd=S.totd; const ws=Math.floor(S.L/WORLD)*WORLD; S=null; newState(ws); S.tot=tot; S.totd=totd; } else resetLevel(); } }
-  else if(S.ph==='clear'){ S.phT-=dt; if(S.phT<=0){ if(S.L+1<LEVELS.length){ newState(S.L+1); S.lt=0; } else { S.ph='done'; } } }
+  else if(S.ph==='clear'){ if(RACE.on) return; S.phT-=dt; if(S.phT<=0){ if(S.L+1<LEVELS.length){ newState(S.L+1); S.lt=0; } else { S.ph='done'; } } }
 }
-function fail(why){ S.ph='fail'; S.deaths++; S.totd++; S.failWhy=why; if(!OPT.inf) S.lives--; S.phT=S.lives<=0?2.6:0.9; flash(); }
+function fail(why){ S.ph='fail'; S.deaths++; S.totd++; S.failWhy=why; if(!OPT.inf&&!RACE.on) S.lives--; S.phT=S.lives<=0?2.6:0.9; flash(); }
 function flash(){ const f=$('flash'); f.style.background='rgba(255,80,100,.45)'; setTimeout(()=>f.style.background='rgba(255,80,100,0)',120); }
 
 // legjobb idők
@@ -1005,6 +1008,12 @@ function buildFloor(L){
 
 function glowCircle(x,y,r,col,blur){ ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=blur; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); ctx.restore(); }
 
+function drawGhosts(){ const ot=1-myTeam(); const a=S2.p[0],b=S2.p[1]; ctx.save(); ctx.globalAlpha=.32; ctx.strokeStyle=TEAMCOL[ot][0]; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.setLineDash([]);
+  for(let i=0;i<2;i++){ const p=S2.p[i]; ctx.fillStyle=TEAMCOL[ot][i]; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
+  ctx.restore(); if(S2.ph==='fail'){ ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle=TEAMCOL[ot][0]; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('↻ ellenfél elölről', (a.x+b.x)/2, (a.y+b.y)/2-24); ctx.restore(); } }
+function raceOverlay(){ const me=myTeam(); ctx.textAlign='center';
+  if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); }
+  if(RACE.ph==='point'){ const win=RACE.winner===me; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(win?'Pont nektek!':`A ${TEAMNAME[RACE.winner].toUpperCase()} csapat ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${S.L+1<RACE.end?'   ·   következő: '+LEVELS[S.L+1].name:''}`,W/2,H/2+54); } }
 function render(now){
   const t=now/1000;
   if(!S){ ctx.fillStyle='#0e1322'; ctx.fillRect(0,0,W,H); const bg=ctx.createRadialGradient(W/2,H/2,80,W/2,H/2,700); bg.addColorStop(0,'#141a30'); bg.addColorStop(1,'#080b14'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H); return; }
@@ -1024,7 +1033,7 @@ function render(now){
       case 'G': { ctx.fillStyle=allGems?'rgba(255,215,80,.06)':'rgba(90,74,28,.9)'; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); if(!allGems){ ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=8; ctx.strokeStyle='#ffd54a'; ctx.lineWidth=2; ctx.strokeRect(x+6,y+6,CELL-12,CELL-12); ctx.beginPath(); ctx.moveTo(x+CELL/2,y+10); ctx.lineTo(x+CELL-10,y+CELL/2); ctx.lineTo(x+CELL/2,y+CELL-10); ctx.lineTo(x+10,y+CELL/2); ctx.closePath(); ctx.stroke(); ctx.restore(); } else { ctx.strokeStyle='rgba(255,213,74,.25)'; ctx.lineWidth=1; ctx.strokeRect(x+4,y+4,CELL-8,CELL-8);} break; }
       case 'X': case 'Y': case 'Z': { const open=plateHeld(ch.toLowerCase()); const col=ch==='X'?'#c56cff':ch==='Y'?'#6cffd8':'#ff6cb5'; if(!open){ ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=10; ctx.fillStyle=col+'44'; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x+8,y+8); ctx.lineTo(x+CELL-8,y+CELL-8); ctx.moveTo(x+CELL-8,y+8); ctx.lineTo(x+8,y+CELL-8); ctx.stroke(); ctx.restore(); } else { ctx.strokeStyle=col+'55'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.strokeRect(x+4,y+4,CELL-8,CELL-8); ctx.setLineDash([]); } break; }
       case 'x': case 'y': case 'z': { const held=S.p.some(p=>Math.hypot(p.x-(c+.5)*CELL,p.y-(r+.5)*CELL)<PR+14); const col=ch==='x'?'#c56cff':ch==='y'?'#6cffd8':'#ff6cb5'; ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=held?18:6; ctx.beginPath(); ctx.arc(x+CELL/2,y+CELL/2,held?12:15,0,7); ctx.fillStyle=held?col:col+'22'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); ctx.strokeStyle=col+'66'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(x+CELL/2,y+CELL/2,17.5,0,7); ctx.stroke(); break; }
-      case 'b': case 'o': { const col=ch==='b'?BLUE:ORG; ctx.fillStyle=col+'22'; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=8; ctx.strokeStyle=col+'cc'; ctx.lineWidth=2; ctx.beginPath(); const off=(t*30)%10; for(let i=-1;i<4;i++){ const yy=y+6+i*10+off; if(yy>y+4&&yy<y+CELL-4){ctx.moveTo(x+5,yy);ctx.lineTo(x+CELL-5,yy);} } ctx.stroke(); ctx.restore(); break; }
+      case 'b': case 'o': { const col=ch==='b'?PCOL(0):PCOL(1); ctx.fillStyle=col+'22'; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=8; ctx.strokeStyle=col+'cc'; ctx.lineWidth=2; ctx.beginPath(); const off=(t*30)%10; for(let i=-1;i<4;i++){ const yy=y+6+i*10+off; if(yy>y+4&&yy<y+CELL-4){ctx.moveTo(x+5,yy);ctx.lineTo(x+CELL-5,yy);} } ctx.stroke(); ctx.restore(); break; }
       case 'K': { const i=st.kdIdx[r*COLS+c]; if(!S.kd[i]){ const gr=ctx.createLinearGradient(x,y,x,y+CELL); gr.addColorStop(0,'#8a6a2e'); gr.addColorStop(1,'#5a4218'); ctx.fillStyle=gr; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); ctx.strokeStyle='rgba(255,213,74,.5)'; ctx.lineWidth=1; ctx.strokeRect(x+5,y+5,CELL-10,CELL-10); ctx.fillStyle='#ffd54a'; ctx.beginPath(); ctx.arc(x+CELL/2,y+15,6,0,7); ctx.fill(); ctx.fillStyle='#3a2a08'; ctx.beginPath(); ctx.arc(x+CELL/2,y+15,2.5,0,7); ctx.fill(); ctx.fillStyle='#ffd54a'; ctx.fillRect(x+CELL/2-2,y+17,4,11);} break; }
       case 't': { const on=S.tt>0; ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=on?18:6; ctx.beginPath(); ctx.arc(x+CELL/2,y+CELL/2,14,0,7); ctx.fillStyle=on?'#ffd54a':'#6b5a20'; ctx.fill(); ctx.strokeStyle='#ffd54a'; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); if(on){ ctx.beginPath(); ctx.moveTo(x+CELL/2,y+CELL/2); ctx.arc(x+CELL/2,y+CELL/2,11,-Math.PI/2,-Math.PI/2+Math.PI*2*(S.tt/TIMED)); ctx.closePath(); ctx.fillStyle='#fff6c0'; ctx.fill(); } break; }
       case 'D': { if(S.tt>0){ ctx.strokeStyle='rgba(255,213,74,.4)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.strokeRect(x+4,y+4,CELL-8,CELL-8); ctx.setLineDash([]); } else { const gr=ctx.createLinearGradient(x,y,x,y+CELL); gr.addColorStop(0,'#7a6520'); gr.addColorStop(1,'#4a3c12'); ctx.fillStyle=gr; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); ctx.strokeStyle='#ffd54a'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x+CELL/2,y+CELL/2,9,0,7); ctx.moveTo(x+CELL/2,y+CELL/2); ctx.lineTo(x+CELL/2,y+CELL/2-7); ctx.moveTo(x+CELL/2,y+CELL/2); ctx.lineTo(x+CELL/2+5,y+CELL/2); ctx.stroke(); } break; }
@@ -1050,7 +1059,7 @@ function render(now){
     ctx.save(); ctx.shadowColor='#ff2a3e'; ctx.shadowBlur=22; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#ff9aa6'); gr.addColorStop(1,'#e0203a'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,pt.r,0,7); ctx.fill(); ctx.restore();
     const dx=q.x-q2.x,dy=q.y-q2.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#2a0a10'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2,q.y-2+dy/dl*2,2.6,0,7); ctx.arc(q.x+4+dx/dl*2,q.y-2+dy/dl*2,2.6,0,7); ctx.fill(); }
   // csóvák
-  for(let i=0;i<2;i++){ const tr=FX.trails[i], col=i===0?BLUE:ORG; for(let k=0;k<tr.length;k++){ const f=k/tr.length; ctx.fillStyle=col+Math.floor(f*60+8).toString(16).padStart(2,'0'); ctx.beginPath(); ctx.arc(tr[k].x,tr[k].y,PR*f*0.8,0,7); ctx.fill(); } }
+  for(let i=0;i<2;i++){ const tr=FX.trails[i], col=PCOL(i); for(let k=0;k<tr.length;k++){ const f=k/tr.length; ctx.fillStyle=col+Math.floor(f*60+8).toString(16).padStart(2,'0'); ctx.beginPath(); ctx.arc(tr[k].x,tr[k].y,PR*f*0.8,0,7); ctx.fill(); } }
   // kötél
   { const a=S.p[0],b=S.p[1]; const d=Math.hypot(b.x-a.x,b.y-a.y); const slack=Math.max(0,st.rope-d); const mx=(a.x+b.x)/2,my=(a.y+b.y)/2+Math.min(40,slack*0.35);
     const tn=S.tension; const col=tn<=0?'#cfe0ff':tn<0.5?'#ffd54a':'#ff5c6c';
@@ -1061,13 +1070,14 @@ function render(now){
     if(tn>0.5){ ctx.globalAlpha=.5+Math.sin(t*25)*.3; ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(mx,my,b.x,b.y); ctx.stroke(); }
     ctx.restore(); }
   // játékosok
-  for(let i=0;i<2;i++){ const p=S.p[i], col=i===0?BLUE:ORG, dark=i===0?'#1a6a9a':'#9a5410';
+  if(RACE.on&&S2) drawGhosts();
+  for(let i=0;i<2;i++){ const p=S.p[i], col=PCOL(i), dark=i===0?'#1a6a9a':'#9a5410';
     ctx.fillStyle='rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(p.x,p.y+PR+3,PR*0.9,4,0,0,7); ctx.fill();
     ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=20; const gr=ctx.createRadialGradient(p.x-5,p.y-5,2,p.x,p.y,PR+2); gr.addColorStop(0,'#ffffff'); gr.addColorStop(0.25,col); gr.addColorStop(1,dark); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.restore();
     ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(p.x,p.y,PR-1,0,7); ctx.stroke();
     const vx=p.vx,vy=p.vy,v=Math.hypot(vx,vy); const ex=v>10?vx/v*3:0, ey=v>10?vy/v*3:0; ctx.fillStyle='#0b0f1a'; ctx.beginPath(); ctx.arc(p.x-4+ex,p.y-2+ey,2.8,0,7); ctx.arc(p.x+4+ex,p.y-2+ey,2.8,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(p.x-3+ex,p.y-3+ey,1,0,7); ctx.arc(p.x+5+ex,p.y-3+ey,1,0,7); ctx.fill();
     if(p.key){ ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=10; ctx.fillStyle='#ffd54a'; ctx.beginPath(); ctx.arc(p.x,p.y-23,5,0,7); ctx.fill(); ctx.fillRect(p.x-1,p.y-23,2,9); ctx.restore(); }
-    if(NET.me===i||NET.mode==='local'){ const lbl=NET.mode==='local'?(i===0?'WASD':'NYILAK'):'TE'; ctx.font='bold 11px system-ui'; ctx.textAlign='center'; const ly=p.y-(p.key?32:21); ctx.fillStyle='rgba(11,15,26,.7)'; const w=ctx.measureText(lbl).width+10; rr(p.x-w/2,ly-10,w,14,4); ctx.fill(); ctx.fillStyle=col; ctx.fillText(lbl,p.x,ly+1); }
+    if(myPi()===i||NET.mode==='local'){ const lbl=NET.mode==='local'?(i===0?'WASD':'NYILAK'):'TE'; ctx.font='bold 11px system-ui'; ctx.textAlign='center'; const ly=p.y-(p.key?32:21); ctx.fillStyle='rgba(11,15,26,.7)'; const w=ctx.measureText(lbl).width+10; rr(p.x-w/2,ly-10,w,14,4); ctx.fill(); ctx.fillStyle=col; ctx.fillText(lbl,p.x,ly+1); }
   }
   // részecskék
   for(const q of FX.parts){ ctx.globalAlpha=Math.max(0,q.life/q.max); ctx.fillStyle=q.col; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(q.life/q.max+0.3),0,7); ctx.fill(); } ctx.globalAlpha=1;
@@ -1076,13 +1086,18 @@ function render(now){
   const lv=LEVELS[S.L];
   ctx.fillStyle='rgba(8,11,20,.82)'; rr(8,8,W-16,32,9); ctx.fill(); ctx.strokeStyle='rgba(120,150,255,.18)'; ctx.lineWidth=1; rr(8.5,8.5,W-17,31,9); ctx.stroke();
   ctx.textAlign='left'; ctx.fillStyle='#8b94b3'; ctx.font='bold 12px system-ui'; const nl=`${S.L+1}/${LEVELS.length}`; ctx.fillText(nl,20,29); const nw=ctx.measureText(nl).width; ctx.fillStyle='#e8ecf7'; ctx.font='bold 15px system-ui'; ctx.fillText(lv.name,20+nw+10,29);
-  ctx.textAlign='center'; ctx.fillStyle='#8b94b3'; ctx.font='13px system-ui'; ctx.fillText(lv.tip,W/2,29);
+  if(!RACE.on){ ctx.textAlign='center'; ctx.fillStyle='#8b94b3'; ctx.font='13px system-ui'; ctx.fillText(lv.tip,W/2,29); }
   ctx.textAlign='right'; ctx.fillStyle='#e8ecf7'; ctx.font='bold 14px system-ui';
   const gemsLeft=S.gems.filter(x=>!x).length;
-  ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
+  if(RACE.on){ ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
+    // eredmény
+    const me=myTeam(); const parts=[['KÉK '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' ZÖLD',TEAMCOL[1][0],'bold 15px system-ui'],[`     ${S.L-RACE.start+1}/${RACE.end-RACE.start}. pálya   ·   te: ${TEAMNAME[me]} csapat`,'#8b94b3','13px system-ui']];
+    let tw=0; for(const q of parts){ ctx.font=q[2]; tw+=ctx.measureText(q[0]).width; } let xx=W/2-tw/2; ctx.textAlign='left'; for(const q of parts){ ctx.font=q[2]; ctx.fillStyle=q[1]; ctx.fillText(q[0],xx,29); xx+=ctx.measureText(q[0]).width; }
+  } else ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
+  if(RACE.on) raceOverlay();
   // overlay
-  if(S.ph==='fail'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füst.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
-  if(S.ph==='clear'){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag: ${lv.par} mp alatt)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
+  if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füst.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
+  if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag: ${lv.par} mp alatt)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
 }
 
 // ============================================================
@@ -1098,23 +1113,64 @@ function bitsArrows(){ return (keys.ArrowUp?1:0)|(keys.ArrowDown?2:0)|(keys.Arro
 // ============================================================
 //  HÁLÓZAT (PeerJS, host-autoritatív)
 // ============================================================
-const NET={mode:null, me:0, peer:null, conn:null, ping:0, remoteBits:0, lastSent:-1, lastSentAt:0, lastSnap:0, code:''};
+const NET={mode:null, me:0, seat:0, seats:[null,null,null,null], peer:null, conns:[], ping:0, remoteBits:[0,0,0,0], lastSent:-1, lastSentAt:0, lastSnap:0, code:''};
+// RACE: 2v2 verseny állapota. S = a nézett csapat állapota, S2 = a másik csapaté (szellemek)
+const RACE={on:false, score:[0,0], ph:'count', t:0, winner:-1, start:0, end:0, wonBy:0};
+let S2=null;
+const TEAMCOL=[[BLUE,ORG],['#5be28a','#ff6cb5']];
+const TEAMNAME=['Kék','Zöld'];
+function occupied(){ return [0,1,2,3].filter(i=>NET.seats[i]); }
+function myTeam(){ return RACE.on?(NET.seat>>1):0; }
+function myPi(){ if(NET.mode!=='online') return 0; return RACE.on?(NET.seat&1):Math.max(0,occupied().indexOf(NET.seat)); }
+function playerCount(){ return occupied().length; }
+function seatOfConn(idx){ return NET.seats.findIndex(x=>x&&x.c===idx); }
+function freeSeatIn(team){ for(const i of [team*2,team*2+1]) if(!NET.seats[i]) return i; return -1; }
+function moveToTeam(seat,team){ if(seat<0||!NET.seats[seat]) return false; if((seat>>1)===team) return false; let f=freeSeatIn(team); if(f<0){ f=seat^2; const tmp=NET.seats[f]; NET.seats[f]=NET.seats[seat]; NET.seats[seat]=tmp; if(seat===NET.seat) NET.seat=f; else if(f===NET.seat) NET.seat=seat; return true; } NET.seats[f]=NET.seats[seat]; NET.seats[seat]=null; if(seat===NET.seat) NET.seat=f; return true; }
+function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx)}); }catch(e){} } }); }
+function teamsHtml(isHost){
+  const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">';
+  for(let t=0;t<2;t++){ const col=TEAMCOL[t][0]; h+=`<div style="flex:1;min-width:200px;background:#0b0f1a;border:1px solid ${col}55;border-radius:12px;padding:10px"><div style="color:${col};font-weight:700;margin-bottom:6px">${TEAMNAME[t].toUpperCase()} CSAPAT</div>`;
+    for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${sp.n}${me?' (te)':''}</span>${(isHost||me)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
+    h+='</div>'; }
+  h+='</div>'; if(n>=3&&n<4) h+='<p class="mut">Hárman: vagy jöjjön még egy fő, vagy lépjen ki egy, és ketten coopot játszhattok.</p>';
+  if(n===2&&(NET.seats[0]&&NET.seats[1]||NET.seats[2]&&NET.seats[3])===false) h+='';
+  return h; }
+function bindTeamButtons(root,isHost){ root.querySelectorAll('button.mv').forEach(b=>{ b.onclick=()=>{ const seat=+b.dataset.seat, team=+b.dataset.team; if(isHost){ if(moveToTeam(seat,team)){ updateLobby(); sendLobby(); } } else { const c=conn0(); if(c&&c.open) c.send({t:'team',team}); } }; }); }
+function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>2v2 verseny</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>coop</b> jön. Várunk, hogy a gazda indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
+function PCOL(pi){ return TEAMCOL[myTeam()][pi]; }
 function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
 function peerId(code){ return 'kotelek-v1-'+code.toUpperCase(); }
 function newPeer(id){ return new Peer(id,{debug:1}); }
-function cleanupNet(){ try{ if(NET.conn) NET.conn.close(); }catch(e){} try{ if(NET.peer) NET.peer.destroy(); }catch(e){} NET.conn=null; NET.peer=null; }
-
+function cleanupNet(){ for(const c of NET.conns){ try{ c.close(); }catch(e){} } try{ if(NET.peer) NET.peer.destroy(); }catch(e){} NET.conns=[]; NET.peer=null; RACE.on=false; S2=null; }
+function conn0(){ return NET.conns[0]; }
+function broadcast(msg){ for(const c of NET.conns){ if(c.open){ try{ c.send(msg); }catch(e){} } } }
+function slotName(i){ return i===0?'Te (gazda)':'Vendég '+i; }
+function updateLobby(){
+  const n=playerCount();
+  let html='';
+  if(n===1){ html='Várakozás a társakra…'; }
+  else if(n===2){ html='<b style="color:var(--ok)">Ketten vagytok.</b> Indíthatod a coopot – vagy várjatok még kettőre a 2v2-höz.'; }
+  else if(n===3){ html='<b>Hárman vagytok.</b> Még egy fő kell a 2v2-höz.'; }
+  else { html='<b style="color:var(--ok)">Mind a négyen itt vagytok!</b> Indulhat a 2v2 verseny – aki előbb beér, pontot kap, életek nincsenek.'; }
+  $('lobbyMsg').innerHTML=html; const tb=$('hostTeams'); tb.innerHTML=teamsHtml(true); bindTeamButtons(tb,true);
+  $('lobbyStart').style.display=(n===2||n===4)?'block':'none';
+  $('btnStartHost').textContent=n===4?'2v2 verseny indítása az 1. pályától':'Coop indítása az 1. pályától';
+  $('raceOpts').style.display=n===4?'block':'none';
+  $('lobbyHint').textContent='';
+  buildGrid('lvgridHost',L=>{ if(playerCount()===4) startRace(L); else startGame(L); });
+}
 function hostRoom(){
-  cleanupNet(); NET.mode='online'; NET.me=0; NET.code=makeCode();
+  cleanupNet(); NET.mode='online'; NET.me=0; NET.seat=0; NET.seats=[{n:'Gazda',c:-1},null,null,null]; NET.code=makeCode();
   $('codeShow').textContent=NET.code; $('lobbyMsg').textContent='Szoba nyitása…'; $('lobbyStart').style.display='none'; show('ovLobby');
   const peer=newPeer(peerId(NET.code)); NET.peer=peer;
-  peer.on('open',()=>{ $('lobbyMsg').textContent='Várakozás a társadra…'; });
+  peer.on('open',()=>{ updateLobby(); });
   peer.on('error',e=>{ if(e.type==='unavailable-id'){ hostRoom(); return; } $('lobbyMsg').innerHTML='<span class="err">Hiba: '+e.type+'</span> – próbáld újra, vagy nézd meg a netet.'; });
   peer.on('connection',conn=>{
-    if(NET.conn){ conn.close(); return; }
-    NET.conn=conn;
-    conn.on('open',()=>{ $('lobbyMsg').innerHTML='<b style="color:var(--ok)">A társad csatlakozott!</b> Indíthatod.'; $('lobbyStart').style.display='block'; buildGrid('lvgridHost',L=>startGame(L)); });
-    conn.on('data',d=>{ if(d.t==='in'){ NET.remoteBits=d.k; } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } });
+    if(NET.conns.length>=3||S){ conn.on('open',()=>{ conn.send({t:'full'}); setTimeout(()=>conn.close(),500); }); return; }
+    NET.conns.push(conn);
+    const idx=()=>NET.conns.indexOf(conn);
+    conn.on('open',()=>{ const f=NET.seats.findIndex(x=>!x); NET.seats[f]={n:'Vendég '+(idx()+1),c:idx()}; updateLobby(); sendLobby(); });
+    conn.on('data',d=>{ if(d.t==='in'){ const st=seatOfConn(idx()); if(st>=0) NET.remoteBits[st]=d.k; } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } else if(d.t==='team'&&!S){ if(moveToTeam(seatOfConn(idx()),d.team)){ updateLobby(); sendLobby(); } } });
     conn.on('close',()=>{ lost(); });
     conn.on('error',()=>{ lost(); });
   });
@@ -1124,30 +1180,81 @@ function joinRoom(code){
   $('joinMsg').textContent='Kapcsolódás…';
   const peer=newPeer(undefined); NET.peer=peer;
   peer.on('open',()=>{
-    const conn=peer.connect(peerId(code),{reliable:true}); NET.conn=conn;
+    const conn=peer.connect(peerId(code),{reliable:true}); NET.conns=[conn];
     const to=setTimeout(()=>{ if(!conn.open){ $('joinMsg').innerHTML='<span class="err">Nem találom a szobát.</span> Jó a kód? A társadnál nyitva van a lobby?'; } },8000);
     conn.on('open',()=>{ clearTimeout(to); show('ovGuestWait'); pingLoop(); });
-    conn.on('data',d=>{ if(d.t==='s'){ applySnap(d); } else if(d.t==='pong'){ NET.ping=Math.round(performance.now()-d.ts); } else if(d.t==='menu'){ S=null; show('ovMenu'); } });
+    conn.on('data',d=>{
+      if(d.t==='s'){ applySnap(d); }
+      else if(d.t==='pong'){ NET.ping=Math.round(performance.now()-d.ts); }
+      else if(d.t==='lobby'){ NET.seats=d.seats; NET.seat=d.you; NET.me=d.you; if(!S) renderGuestLobby(); }
+      else if(d.t==='full'){ $('joinMsg').innerHTML='<span class="err">Ez a szoba tele van, vagy már megy a játék.</span>'; show('ovJoin'); }
+      else if(d.t==='menu'){ S=null; S2=null; RACE.on=false; show('ovGuestWait'); renderGuestLobby(); }
+    });
     conn.on('close',()=>{ lost(); });
     conn.on('error',()=>{ clearTimeout(to); $('joinMsg').innerHTML='<span class="err">Nem sikerült kapcsolódni.</span>'; });
   });
   peer.on('error',e=>{ $('joinMsg').innerHTML='<span class="err">Hiba: '+e.type+'</span>'; });
 }
-function pingLoop(){ if(!NET.conn||!NET.conn.open) return; NET.conn.send({t:'ping',ts:performance.now()}); setTimeout(pingLoop,1500); }
-function lost(){ if(NET.mode!=='online') return; cleanupNet(); NET.mode=null; S=null; hideAll(); show('ovLost'); }
+function pingLoop(){ const c=conn0(); if(!c||!c.open) return; c.send({t:'ping',ts:performance.now()}); setTimeout(pingLoop,1500); }
+function lost(){ if(NET.mode!=='online') return; cleanupNet(); NET.mode=null; S=null; S2=null; hideAll(); show('ovLost'); }
 
-function sendSnap(){
-  if(!NET.conn||!NET.conn.open||!S) return;
+function packState(S){
   const p=S.p;
-  NET.conn.send({t:'s',L:S.L,ph:S.ph,tm:S.tm,lt:S.lt,p:[p[0].x,p[0].y,p[0].vx,p[0].vy,p[1].x,p[1].y,p[1].vx,p[1].vy],kh:[p[0].key,p[1].key],g:S.gems,fr:S.fr,lv:S.lives,inf:OPT.inf,kg:S.kg,kd:S.kd,tt:S.tt,bl:S.bullets.map(b=>[Math.round(b.x),Math.round(b.y)]),dt:S.deaths,tn:S.tension,fw:S.failWhy,st:S.stars,ct:S.clearTime,tot:S.tot,totd:S.totd,pz:PAUSED});
+  return {L:S.L,ph:S.ph,tm:S.tm,lt:S.lt,p:[p[0].x,p[0].y,p[0].vx,p[0].vy,p[1].x,p[1].y,p[1].vx,p[1].vy],kh:[p[0].key,p[1].key],g:S.gems,fr:S.fr,lv:S.lives,kg:S.kg,kd:S.kd,tt:S.tt,bl:S.bullets.map(b=>[Math.round(b.x),Math.round(b.y)]),dt:S.deaths,tn:S.tension,fw:S.failWhy,st:S.stars,ct:S.clearTime,tot:S.tot,totd:S.totd};
 }
-function applySnap(d){
-  if(!S||S.L!==d.L){ newState(d.L); hideAll(); }
+function unpackState(S,d){
   const p=S.p; p[0].x=d.p[0];p[0].y=d.p[1];p[0].vx=d.p[2];p[0].vy=d.p[3];p[1].x=d.p[4];p[1].y=d.p[5];p[1].vx=d.p[6];p[1].vy=d.p[7];
-  p[0].key=d.kh[0];p[1].key=d.kh[1]; S.gems=d.g; S.fr=d.fr; S.lives=d.lv; OPT.inf=d.inf; S.kg=d.kg; S.kd=d.kd; S.tt=d.tt; S.bullets=d.bl.map(b=>({x:b[0],y:b[1]})); S.deaths=d.dt; S.tension=d.tn; S.failWhy=d.fw; S.stars=d.st; S.clearTime=d.ct; S.tm=d.tm; S.lt=d.lt; S.tot=d.tot; S.totd=d.totd;
+  p[0].key=d.kh[0];p[1].key=d.kh[1]; S.gems=d.g; S.fr=d.fr; S.lives=d.lv; S.kg=d.kg; S.kd=d.kd; S.tt=d.tt; S.bullets=d.bl.map(b=>({x:b[0],y:b[1]})); S.deaths=d.dt; S.tension=d.tn; S.failWhy=d.fw; S.stars=d.st; S.clearTime=d.ct; S.tm=d.tm; S.lt=d.lt; S.tot=d.tot; S.totd=d.totd;
   if(d.ph==='fail'&&S.ph!=='fail') flash();
   S.ph=d.ph;
-  if(d.ph==='done'){ showDone(); } else if(d.pz){ show('ovPauseGuest'); } else { hideAll(); }
+}
+function sendSnap(){
+  if(!NET.conns.length||!S) return;
+  const msg={t:'s',inf:OPT.inf,pz:PAUSED,race:RACE.on,A:packState(S)};
+  if(RACE.on){ msg.B=packState(S2); msg.sc=RACE.score; msg.rph=RACE.ph; msg.rt=RACE.t; msg.rw=RACE.winner; msg.rs=RACE.start; msg.re=RACE.end; msg.rwb=RACE.wonBy; }
+  broadcast(msg);
+}
+function applySnap(d){
+  OPT.inf=d.inf;
+  if(d.race){
+    RACE.on=true; RACE.score=d.sc; RACE.ph=d.rph; RACE.t=d.rt; RACE.winner=d.rw; RACE.start=d.rs; RACE.end=d.re; RACE.wonBy=d.rwb;
+    const mine=myTeam()===0?d.A:d.B, other=myTeam()===0?d.B:d.A;
+    if(!S||S.L!==mine.L){ const keep=S; S=null; newState(mine.L); hideAll(); }
+    if(!S2||S2.L!==other.L){ const tmp=S; S=null; newState(other.L); S2=S; S=tmp; }
+    unpackState(S,mine); unpackState(S2,other);
+    if(RACE.ph==='done'){ showRaceDone(); } else if(d.pz){ show('ovPauseGuest'); } else { hideAll(); }
+  } else {
+    if(!S||S.L!==d.A.L){ newState(d.A.L); hideAll(); }
+    unpackState(S,d.A);
+    if(S.ph==='done'){ showDone(); } else if(d.pz){ show('ovPauseGuest'); } else { hideAll(); }
+  }
+}
+
+// ---- 2v2 verseny vezérlés (host) ----
+function startRace(L){
+  PAUSED=false; sendLobby(); RACE.on=true; RACE.score=[0,0]; RACE.start=L; RACE.end=Math.min(LEVELS.length,L+parseInt($('selRounds').value||'10'));
+  raceLevel(L); hideAll();
+}
+function raceLevel(L){
+  S=null; newState(L); S.tot=0; S.totd=0; const A=S;
+  S=null; newState(L); S.tot=0; S.totd=0; const B=S;
+  S=A; S2=B; RACE.ph='count'; RACE.t=3.2; RACE.winner=-1;
+}
+function raceUpdate(dt,bitsA,bitsB){
+  if(RACE.ph==='count'){ RACE.t-=dt; if(RACE.t<=0) RACE.ph='play'; return; }
+  if(RACE.ph==='play'){
+    const A=S,B=S2;
+    S=A; update(dt,bitsA); S=B; update(dt,bitsB); S=A;
+    const aWin=A.ph==='clear', bWin=B.ph==='clear';
+    if(aWin||bWin){ RACE.winner=aWin?0:1; RACE.score[RACE.winner]++; RACE.wonBy=(aWin?A:B).lt; RACE.ph='point'; RACE.t=3.5; }
+    return;
+  }
+  if(RACE.ph==='point'){ RACE.t-=dt; if(RACE.t<=0){ if(S.L+1<RACE.end){ raceLevel(S.L+1); } else { RACE.ph='done'; showRaceDone(); } } return; }
+}
+function showRaceDone(){
+  const [a,b]=RACE.score; const w=a===b?'Döntetlen!':(a>b?'A KÉK csapat nyert!':'A ZÖLD csapat nyert!');
+  $('doneTime').textContent=`${w}  ${a} : ${b}`; $('doneDeaths').textContent=a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.';
+  $('ovDone').querySelector('h2').textContent='🏁 Vége a versenynek'; show('ovDone');
 }
 
 // ============================================================
@@ -1157,11 +1264,11 @@ let PAUSED=false;
 function hideAll(){ document.querySelectorAll('.ov').forEach(o=>o.classList.remove('show')); }
 function show(id){ hideAll(); $(id).classList.add('show'); }
 function buildGrid(id,onPick){ const grid=$(id); grid.innerHTML=''; const best=loadBest(); LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.className='w'+(Math.floor(i/WORLD)+1); const bb=best[i]; b.innerHTML=`${i+1}. ${lv.name}<small>${bb?'★'.repeat(bb.stars)+' '+fmt(bb.t):'–'}</small>`; b.onclick=()=>onPick(i); grid.appendChild(b); }); }
-function startGame(L){ PAUSED=false; newState(L); S.tot=0; S.totd=0; hideAll(); }
+function startGame(L){ PAUSED=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(L); S.tot=0; S.totd=0; hideAll(); }
 function startLocal(L){ cleanupNet(); NET.mode='local'; startGame(L); }
-function onEsc(){ if(!S||S.ph==='done') return; if(NET.mode==='online'&&NET.me!==0) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} elhalálozás`; show('ovPause'); } else hideAll(); }
+function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} elhalálozás`; show('ovPause'); } else hideAll(); }
 function showDone(){ $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd} alkalommal kezdtétek újra. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
-function toMenu(){ PAUSED=false; if(NET.mode==='online'&&NET.conn&&NET.conn.open){ try{NET.conn.send({t:'menu'});}catch(e){} } cleanupNet(); NET.mode=null; S=null; show('ovMenu'); }
+function toMenu(){ PAUSED=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; S=null; S2=null; RACE.on=false; if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
 
 $('chkInf').onchange=e=>{ OPT.inf=e.target.checked; };
 $('btnHost').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } hostRoom(); };
@@ -1171,13 +1278,13 @@ $('inCode').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnJoin').onc
 $('btnJoinBack').onclick=()=>{ cleanupNet(); show('ovMenu'); };
 $('btnLobbyBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
 $('btnGuestBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
-$('btnStartHost').onclick=()=>startGame(0);
+$('btnStartHost').onclick=()=>{ if(playerCount()===4) startRace(0); else startGame(0); };
 $('btnLocal').onclick=()=>{ buildGrid('lvgridLocal',L=>startLocal(L)); show('ovLocal'); };
 $('btnStartLocal').onclick=()=>startLocal(0);
 $('btnLocalBack').onclick=()=>show('ovMenu');
 $('btnResume').onclick=()=>{ PAUSED=false; hideAll(); };
-$('btnRestart').onclick=()=>{ PAUSED=false; resetLevel(); S.lt=0; hideAll(); };
-$('btnSkip').onclick=()=>{ PAUSED=false; if(S.L+1<LEVELS.length){ const tot=S.tot,totd=S.totd; newState(S.L+1); S.tot=tot; S.totd=totd; hideAll(); } else { S.ph='done'; showDone(); } };
+$('btnRestart').onclick=()=>{ PAUSED=false; if(RACE.on){ raceLevel(S.L); } else { resetLevel(); S.lt=0; } hideAll(); };
+$('btnSkip').onclick=()=>{ PAUSED=false; if(RACE.on){ if(S.L+1<RACE.end) raceLevel(S.L+1); else { RACE.ph='done'; showRaceDone(); } hideAll(); return; } if(S.L+1<LEVELS.length){ const tot=S.tot,totd=S.totd; newState(S.L+1); S.tot=tot; S.totd=totd; hideAll(); } else { S.ph='done'; showDone(); } };
 $('btnToMenu').onclick=toMenu;
 $('btnLostMenu').onclick=()=>show('ovMenu');
 $('btnDoneMenu').onclick=toMenu;
@@ -1193,19 +1300,21 @@ let last=performance.now(), acc=0; const STEP=1/60;
 function loop(now){
   const dtR=Math.min(0.1,(now-last)/1000); last=now; acc+=dtR;
   if(S){
-    if(NET.mode==='online'&&NET.me===1){
+    if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1){
       // vendég: csak bemenetet küld
-      const b=bitsWASD()|bitsArrows();
-      if(NET.conn&&NET.conn.open&&(b!==NET.lastSent||now-NET.lastSentAt>100)){ NET.conn.send({t:'in',k:b}); NET.lastSent=b; NET.lastSentAt=now; }
+      const b=bitsWASD()|bitsArrows(); const c=conn0();
+      if(c&&c.open&&(b!==NET.lastSent||now-NET.lastSentAt>100)){ c.send({t:'in',k:b}); NET.lastSent=b; NET.lastSentAt=now; }
       // enyhe helyi előrejelzés a simaság kedvéért
-      if(S.ph==='play'){ for(const p of S.p){ p.x+=p.vx*dtR*0.5; p.y+=p.vy*dtR*0.5; } S.tm+=dtR; }
+      if(S.ph==='play'&&(!RACE.on||RACE.ph==='play')){ for(const st of [S,S2]){ if(!st) continue; for(const p of st.p){ p.x+=p.vx*dtR*0.5; p.y+=p.vy*dtR*0.5; } st.tm+=dtR; } }
       acc=0;
     } else {
       while(acc>=STEP){ acc-=STEP;
-        if(S.ph==='done'){ if(!$('ovDone').classList.contains('show')) showDone(); break; }
         if(PAUSED) break;
+        const all=[0,1,2,3].map(i=>i===NET.seat?(bitsWASD()|bitsArrows()):NET.remoteBits[i]);
+        if(RACE.on){ if(RACE.ph==='done') break; raceUpdate(STEP,[all[0],all[1]],[all[2],all[3]]); continue; }
+        if(S.ph==='done'){ if(!$('ovDone').classList.contains('show')) showDone(); break; }
         let bits;
-        if(NET.mode==='local') bits=[bitsWASD(),bitsArrows()]; else bits=[bitsWASD()|bitsArrows(),NET.remoteBits];
+        if(NET.mode==='local') bits=[bitsWASD(),bitsArrows()]; else { const o=occupied(); bits=[all[o[0]]||0,all[o[1]!==undefined?o[1]:1]||0]; }
         update(STEP,bits);
         if(!S) break;
       }
