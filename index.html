@@ -16,6 +16,55 @@
   .ov.show{display:flex}
   .box{background:rgba(20,26,43,.96);border:1px solid var(--line);border-radius:16px;padding:28px 32px;min-width:420px;max-width:880px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
   h1{margin:0 0 4px;font-size:44px;letter-spacing:2px}
+  .menu{background:transparent;border:none;box-shadow:none;padding:0;max-width:900px;width:900px}
+  .logo{font-size:84px;font-weight:900;letter-spacing:10px;line-height:1;margin:0;background:linear-gradient(90deg,#4cc3ff 0%,#9be3ff 35%,#ffd37a 65%,#ffa23a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(76,195,255,.35)) drop-shadow(0 0 12px rgba(255,162,58,.25));animation:shine 6s ease-in-out infinite;background-size:200% 100%}
+  @keyframes shine{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .tag2{color:#aab4d6;font-size:16px;letter-spacing:4px;text-transform:uppercase;margin:6px 0 26px}
+  .cards{display:flex;gap:16px;justify-content:center;margin:0 0 18px}
+  .card{flex:1;max-width:270px;background:linear-gradient(180deg,rgba(26,34,58,.92),rgba(14,19,34,.92));border:1px solid #2b3658;border-radius:16px;padding:22px 18px 18px;cursor:pointer;text-align:left;transition:.18s;position:relative;overflow:hidden;color:var(--txt);margin:0;font-size:15px}
+  .card:hover{transform:translateY(-4px);border-color:#4cc3ff;box-shadow:0 14px 40px rgba(76,195,255,.18)}
+  .card .ic{font-size:30px;margin-bottom:8px;display:block}
+  .card b{font-size:18px;display:block;margin-bottom:6px}
+  .card span{color:var(--mut);font-size:13px;line-height:1.4;display:block}
+  .card.pri{border-color:#3a8ff0;background:linear-gradient(180deg,rgba(47,124,246,.35),rgba(14,19,34,.95));color:var(--txt);font-weight:normal}
+  .card.pri span{color:#b9c6ea}
+  .card.pri:hover{border-color:#9be3ff}
+  .bar{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:6px}
+  .bar button{padding:8px 14px;font-size:13px;border-radius:20px;background:rgba(20,26,43,.9)}
+  .bar button.off{color:var(--mut);border-style:dashed}
+  .bar label{color:var(--mut);font-size:13px;background:rgba(20,26,43,.9);border:1px solid #334066;border-radius:20px;padding:8px 14px;cursor:pointer}
+  .stars2{color:#ffd54a;font-size:13px}
+  .prof{display:flex;gap:10px;justify-content:center;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
+  .prof input{width:170px;letter-spacing:0;text-transform:none;font-size:15px;padding:8px 12px;font-family:inherit;text-align:left}
+  .faces{display:flex;gap:4px}
+  .faces button{margin:0;padding:4px 8px;font-size:18px;border-radius:10px;line-height:1}
+  .faces button.sel{border-color:#4cc3ff;background:#1f3a66}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;text-align:left;font-size:13px;margin:12px 0}
+  .legend div{display:flex;gap:10px;align-items:center}
+  .legend i{display:inline-block;width:22px;height:22px;border-radius:5px;flex:none;border:1px solid rgba(255,255,255,.15)}
+  .legend b{display:block;font-size:13px}
+  .legend span{color:var(--mut)}
+  .brk{position:relative;width:880px;height:462px;margin:6px auto 0;text-align:left}
+  .brk svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .brk .cm{position:absolute;width:250px;height:96px;box-sizing:border-box;display:flex;flex-direction:column}
+  .brk .cm .cm-act{margin-top:auto;display:flex;gap:6px;justify-content:flex-end;min-height:22px}
+  .brk .cup-colt{position:absolute;top:-4px;width:250px}
+  .champ{position:absolute;left:600px;top:150px;width:250px;text-align:center;color:#ffd54a;font-weight:800;font-size:18px;text-shadow:0 0 18px rgba(255,213,74,.5)}
+  #ovCup .box{max-height:590px;overflow:auto;padding:12px 22px}
+  #ovCup h2{font-size:22px;margin-bottom:0}
+  .cup-cols{display:flex;gap:18px;justify-content:center;align-items:flex-start;text-align:left}
+  .cup-col{flex:1;min-width:230px;display:flex;flex-direction:column;gap:10px}
+  .cup-colt{color:var(--mut);font-size:12px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:2px}
+  .cm{background:#0b0f1a;border:1px solid #2b3658;border-radius:12px;padding:7px 11px}
+  .cm.ready{border-color:#3a8ff0;box-shadow:0 0 0 1px rgba(76,195,255,.25)}
+  .cm.done{border-color:#2e6b4a}
+  .cm-title{color:var(--mut);font-size:11px;margin-bottom:4px}
+  .cm-row{display:flex;justify-content:space-between;padding:1px 0;font-size:14px}
+  .cm-row.win{color:#ffd54a;font-weight:700}
+  .cm-sc{font-family:ui-monospace,monospace;min-width:18px;text-align:right}
+  textarea{background:#0b0f1a;border:1px solid #334066;color:var(--txt);border-radius:10px;padding:10px;font-size:15px;width:320px;height:190px;font-family:inherit}
+  input.plain{letter-spacing:0;text-transform:none;font-size:16px;width:320px;font-family:inherit}
+  .ctrl{display:flex;gap:28px;justify-content:center;color:var(--mut);font-size:13px;margin:16px 0 0}
   h1 b{color:var(--blue)} h1 i{color:var(--org);font-style:normal}
   h2{margin:0 0 12px;font-size:26px}
   .sub{color:var(--mut);margin:0 0 20px;font-size:15px}
@@ -51,20 +100,25 @@
   <div class="flash" id="flash"></div>
 
   <!-- FŐMENÜ -->
-  <div class="ov show" id="ovMenu"><div class="box">
-    <h1><b>KÖTE</b><i>LÉK</i></h1>
-    <p class="sub">Két játékos, egy energiakötél. Ha túl messze kerültök egymástól, elszakad – és kezdhetitek elölről a pályát.<br><b>Négyen?</b> 2v2 verseny: két páros ugyanazon a pályán, aki előbb beér, pontot kap.</p>
-    <div class="row">
-      <button class="pri" id="btnHost">Szoba létrehozása</button>
-      <button id="btnJoinShow">Csatlakozás kóddal</button>
-      <button id="btnLocal">Egy gépen (teszt)</button>
+  <div class="ov show" id="ovMenu"><div class="box menu">
+    <h1 class="logo">KÖTELÉK</h1>
+    <p class="tag2">két játékos · egy energiakötél · 40 pálya</p>
+    <div class="cards">
+      <button class="card pri" id="btnHost"><span class="ic">🌐</span><b>Szoba létrehozása</b><span>Kapsz egy 4 betűs kódot. Ketten coop, négyen 2v2 verseny – a lobbyban választotok csapatot.</span></button>
+      <button class="card" id="btnJoinShow"><span class="ic">🔑</span><b>Csatlakozás kóddal</b><span>Írd be a társad kódját, és már bent is vagy a szobában.</span></button>
+      <button class="card" id="btnLocal"><span class="ic">🎮</span><b>Egy gépen</b><span>Kék: WASD · Narancs: nyilak. Gyors próbának vagy kanapéról.</span></button>
+      <button class="card" id="btnCup"><span class="ic">🏆</span><b>Kupa</b><span>8 csapatos bracket szervezőknek. Te hostolod a meccseket nézőként, az eredmény magától könyvelődik.</span></button>
     </div>
-    <div class="keys">
-      <div><b>Mozgás:</b> <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> vagy a nyilak<br><span class="mut">Online módban mindkettő a saját figurádat mozgatja.</span></div>
-      <div><b>Szünet / menü:</b> <kbd>Esc</kbd> (a szoba gazdájánál)<br><span class="mut">Egy gépen: kék = WASD, narancs = nyilak.</span></div>
+    <div class="prof"><span class="mut">👤</span><input id="profName" maxlength="14" placeholder="A neved (ezt látják a többiek)"><div class="faces" id="faces"></div></div>
+    <div class="bar">
+      <button id="btnHelp">❓ Súgó</button>
+      <button id="btnFull">⛶ Teljes képernyő</button>
+      <button class="btnMusic">♫ Zene: BE</button>
+      <button class="btnSfx">🔊 Hangok: BE</button>
+      <label><input type="checkbox" id="chkInf" style="width:auto;letter-spacing:0;transform:scale(1.15);margin-right:6px;vertical-align:-2px">Végtelen élet</label>
+      <span class="stars2" id="menuStars"></span>
     </div>
-    <p class="mut">40 pálya, 5 világ, világonként 8 élet. Ha elfogy, a világ elölről indul.<br>Gyűjtsétek össze a kristályokat, és érjetek a zöld mezőre <b>mindketten</b>.</p>
-    <p class="mut"><label><input type="checkbox" id="chkInf" style="width:auto;letter-spacing:0;transform:scale(1.2);margin-right:6px"> Végtelen élet (kényelmes mód)</label></p>
+    <div class="ctrl"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / nyilak – mozgás</span><span><kbd>Esc</kbd> – szünet, pálya átugrása (gazda)</span><span>a kötelet a tüske, őrjárat és lézer elvágja</span></div>
     <p class="mut" id="menuErr"></p>
   </div></div>
 
@@ -82,12 +136,13 @@
     <h2>A te szobád kódja</h2>
     <div class="code" id="codeShow">----</div>
     <p class="mut">Küldd el a társaidnak – ők a „Csatlakozás kóddal” gombnál írják be.<br>Ketten: coop. Négyen: <b>2v2 verseny</b> – a csapatokat itt lent bárki átrendezheti.</p>
+    <p id="lobbyCup" style="display:none"></p>
     <p id="lobbyMsg">Szoba nyitása…</p>
     <div id="hostTeams"></div>
     <p class="mut" id="lobbyHint"></p>
     <div id="lobbyStart" style="display:none">
       <div id="raceOpts" style="display:none" class="mut">Verseny hossza: <select id="selRounds" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="5">5 pálya</option><option value="10" selected>10 pálya</option><option value="20">20 pálya</option><option value="40">az összes</option></select></div>
-      <p class="mut">Hol kezdjétek? (coopban a legjobb időitek megmaradnak ezen a gépen)</p>
+      <p class="mut" id="lobbyLvHint">Hol kezdjétek? (coopban a legjobb időitek megmaradnak ezen a gépen)</p>
       <div class="lvgrid" id="lvgridHost"></div>
       <button class="pri" id="btnStartHost">Indítás az 1. pályától</button>
     </div>
@@ -118,7 +173,9 @@
       <button id="btnRestart">Pálya újra</button>
       <button id="btnSkip">Pálya átugrása</button>
       <button id="btnToMenu">Főmenü</button>
+      <button id="btnHelp2">❓ Súgó</button>
     </div>
+    <div class="bar" style="margin-top:12px"><button class="btnMusic">♫ Zene: BE</button><button class="btnSfx">🔊 Hangok: BE</button></div>
   </div></div>
 
   <!-- Vendég szünet -->
@@ -127,11 +184,57 @@
   <!-- Kapcsolat megszakadt -->
   <div class="ov" id="ovLost"><div class="box"><h2 class="err">A kapcsolat megszakadt</h2><p class="sub">A társad kilépett vagy elment a net. Csináljatok új szobát.</p><button class="pri" id="btnLostMenu">Főmenü</button></div></div>
 
+  <!-- KUPA -->
+  <div class="ov" id="ovCup"><div class="box" style="max-width:960px;width:940px">
+    <div id="cupSetup" style="display:none">
+      <h2>🏆 Új kupa</h2>
+      <p class="sub">8 csapat, egyenes kiesés: negyeddöntők és elődöntők first to 3, döntő first to 5, bronzmeccs. Minden körnek saját pályakészlete van, így a párhuzamos meccsek is ugyanazokon a pályákon mennek.</p>
+      <div class="row" style="align-items:flex-start;gap:24px">
+        <div style="text-align:left"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" style="margin:12px 0 4px">Csapatok (soronként egy, 8 db – a sorrend a seedelés: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…"></textarea></div>
+        <div style="text-align:left;max-width:300px" class="mut"><b style="color:var(--txt)">Hogyan megy?</b><br>1. Létrehozod a bracketet.<br>2. Egy meccsnél „Indítás” → kapsz szobakódot, kiteszed Discordra.<br>3. A 4 játékos belép, a saját csapatát választja, te indítod a versenyt, és nézőként figyeled (Tab: a másik csapat nézete).<br>4. A meccs végén az eredmény magától bekerül a bracketbe.<br>5. „Link másolása” → kiteszed, mindenki látja az állást.</div>
+      </div>
+      <div class="row" style="margin-top:14px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Bracket létrehozása</button><button id="btnCupBack">Vissza</button></div>
+    </div>
+    <div id="cupView" style="display:none">
+      <h2 id="cupTitle" style="margin-bottom:2px">Kupa</h2>
+      <p id="cupChampion" class="sub" style="margin-bottom:10px"></p>
+      <p class="mut" id="cupRoNote" style="display:none">Ez a bracket megosztott, csak olvasható nézete.</p>
+      <div class="brk" id="cupBracket"></div>
+      <div id="cupManual" style="display:none;margin-top:12px;background:#0b0f1a;border:1px solid #334066;border-radius:12px;padding:12px"></div>
+      <p class="mut" id="cupMsg" style="margin:10px 0 4px"></p>
+      <div class="row cup-host-only"><button id="btnCupLink">🔗 Link másolása</button><button id="btnCupText">💬 Discord-szöveg</button><button id="btnCupPng">🖼 Kép letöltése</button><button id="btnCupNew" style="color:var(--bad)">Új kupa</button><button id="btnCupBack2">Főmenü</button></div>
+      <div class="row" id="cupRoBar" style="display:none"><button id="btnCupViewBack">A játékhoz</button></div>
+    </div>
+  </div></div>
+
+  <!-- SÚGÓ -->
+  <div class="ov" id="ovHelp"><div class="box" style="max-width:820px">
+    <h2>Hogyan megy a játék?</h2>
+    <p class="sub">Két figura, egy energiakötél. Minden kristályt össze kell szedni, és <b>mindkettőtöknek</b> a zöld célra kell állni. Ha a kötél túl hosszúra nyúlik, elszakad; ha tüske, őrjárat vagy lézer érinti, elvágja – ilyenkor a pálya elölről indul.</p>
+    <div class="legend">
+      <div><i style="background:#5fd4ff"></i><div><b>Kristály</b><span>Mind kell, különben zárva a sárga kristálykapu.</span></div></div>
+      <div><i style="background:#5be28a55;border-color:#5be28a"></i><div><b>Cél</b><span>Mindkét figura álljon rajta egyszerre.</span></div></div>
+      <div><i style="background:#c56cff44;border-color:#c56cff;border-radius:50%"></i><div><b>Nyomólap</b><span>Amíg valaki rajta áll, nyitva az azonos színű ajtó. Felváltva!</span></div></div>
+      <div><i style="background:linear-gradient(90deg,#4cc3ff55 50%,#ffa23a55 50%)"></i><div><b>Színes sáv</b><span>Csak az adott színű figura fér át rajta.</span></div></div>
+      <div><i style="background:#8a6a2e"></i><div><b>Kulcs és lakat</b><span>Vedd fel a kulcsot, és menj neki a lakatos ajtónak.</span></div></div>
+      <div><i style="background:#ffd54a;border-radius:50%"></i><div><b>Sárga gomb</b><span>4,5 másodpercre nyitja az óra-ajtót. Nyomás és futás!</span></div></div>
+      <div><i style="background:#4a3a4a;border-color:#ffb0c0"></i><div><b>Törékeny padló</b><span>Rálépés után 0,7 mp-cel leszakad – egyszer lehet átmenni rajta.</span></div></div>
+      <div><i style="background:#2a1018;border-color:#ff5c6c"></i><div><b>Tüske</b><span>Érintés = elölről. A kötelet is elvágja!</span></div></div>
+      <div><i style="background:#e0203a;border-radius:50%"></i><div><b>Őrjárat</b><span>Fix útvonalon jár. Figyeld a ritmust – a kötelet is elvágja.</span></div></div>
+      <div><i style="background:#ff4d5e"></i><div><b>Lézer</b><span>Forog, a falnál megáll. A karok között, egyszerre, egy oldalon.</span></div></div>
+      <div><i style="background:#3a4466;border-radius:50%"></i><div><b>Löveg</b><span>A közelebbi figurára lő. Az egyik csalogat, a másik halad.</span></div></div>
+      <div><i style="background:#1f2a48"></i><div><b>Gyorsbillentyűk</b><span>WASD / nyilak · Esc szünet · R újra (gazda) · Tab nézetváltás (néző)</span></div></div>
+    </div>
+    <p class="mut">Világonként 8 élet van – ha elfogy, a világ elölről. Minden pályán 3 csillag jár a jó időért; a legjobb időitek a pályaválasztóban látszanak.</p>
+    <button class="pri" id="btnHelpBack">Rendben</button>
+  </div></div>
+
   <!-- Vége -->
   <div class="ov" id="ovDone"><div class="box">
     <h2>🎉 Végigjátszottátok!</h2>
     <p class="big" id="doneTime"></p>
     <p class="mut" id="doneDeaths"></p>
+    <div class="row"><button id="btnShare">📋 Eredmény másolása</button></div><p class="mut" id="shareMsg"></p>
     <p class="sub">Ha még bírjátok: a pályaválasztóból bármelyiket újra mehetitek, és vadászhatjátok a 3 csillagot.</p>
     <button class="pri" id="btnDoneMenu">Főmenü</button>
   </div></div>
@@ -282,7 +385,7 @@ const LEVELS = [
 ########################`, mov:[{t:'p',path:[[6,1],[6,13]],s:6},{t:'p',path:[[10,13],[10,1]],s:6},{t:'p',path:[[14,1],[14,13]],s:7},{t:'p',path:[[18,10],[18,1]],s:7},{t:'p',path:[[1,6],[22,6]],s:8},{t:'p',path:[[22,8],[1,8]],s:8}]},
 
 // ---------- 2. VILÁG: GÉPEZET ----------
-{name:'Nyomólap', tip:'Aki a lapon áll, nyitva tartja az ajtót. A túloldalon is van lap.', par:60, map:`
+{name:'Nyomólap', tip:'Aki a lapon áll, nyitva tartja az ajtót. A túloldalon is van lap.', par:60, rope:175, map:`
 ########################
 #..........#...........#
 #..........#...........#
@@ -342,10 +445,10 @@ const LEVELS = [
 #.....###K####.#.#.#...#
 #.....#......#.#.#.#...#
 #.....#..EE..#...#.....#
-#.....#..EE..#...#.....#
+#.....#..EE..#...#h....#
 #.....#......#.........#
 #.....########.........#
-########################`, mov:[{t:'p',path:[[6,2],[13,2]],s:6},{t:'p',path:[[13,6],[6,6]],s:6},{t:'p',path:[[14,8],[14,13]],s:5},{t:'p',path:[[22,1],[22,13]],s:6},{t:'p',path:[[16,10],[16,13]],s:4}]},
+########################`, mov:[{t:'p',path:[[6,2],[13,2]],s:6},{t:'p',path:[[13,6],[6,6]],s:6},{t:'p',path:[[13,7],[1,7]],s:6},{t:'p',path:[[14,8],[14,13]],s:5},{t:'p',path:[[22,1],[22,13]],s:6},{t:'p',path:[[16,8],[16,12]],s:5},{t:'p',path:[[20,12],[15,12]],s:5}]},
 {name:'Időzített', tip:'A gomb 4,5 másodpercre nyitja az ajtót. Nyomás, és rohanás!', par:70, map:`
 ########################
 #..............#.......#
@@ -384,7 +487,7 @@ const LEVELS = [
 #..1....b..............#
 #.......#..............#
 #.......#..............#
-#..2....#...x..........#
+#..2....#.x............#
 #.......X..............#
 #.......X..............#
 #.......#..............#
@@ -409,25 +512,25 @@ const LEVELS = [
 #......#..........######
 #......#...........KGEE#
 #......#...........KGEE#
-########################`, mov:[{t:'p',path:[[16,1],[16,7]],s:5},{t:'p',path:[[11,2],[6,2]],s:6},{t:'p',path:[[11,5],[6,5]],s:6},{t:'p',path:[[2,8],[2,13]],s:5},{t:'p',path:[[5,13],[5,8]],s:5},{t:'p',path:[[9,8],[9,13]],s:6},{t:'p',path:[[22,1],[22,7]],s:6}]},
+########################`, mov:[{t:'p',path:[[16,1],[16,7]],s:5},{t:'p',path:[[6,5],[6,1]],s:5},{t:'p',path:[[9,1],[9,5]],s:5},{t:'p',path:[[3,13],[3,8]],s:5},{t:'p',path:[[4,8],[4,13]],s:5},{t:'p',path:[[9,8],[9,13]],s:6},{t:'p',path:[[12,13],[12,7]],s:6},{t:'p',path:[[15,7],[15,13]],s:6},{t:'p',path:[[22,1],[22,7]],s:6},{t:'l',c:[19,5],len:3,s:80,a0:0,arms:2}]},
 
 // ---------- 3. VILÁG: VESZÉLY ----------
-{name:'Forgó lézer', tip:'A lézer a kötelet is elvágja – menjetek át egyszerre, egy oldalon.', par:70, map:`
+{name:'Forgó lézer', tip:'A lézer a kötelet is elvágja – a karok között, egyszerre, egy oldalon.', par:80, map:`
 ########################
+#....##############....#
+#.1..##############....#
+#.2..##############....#
+#....#.............#...#
+#....#.............#...#
+#..................#...#
 #......................#
-#.1....................#
-#.2....................#
-#......................#
-#......................#
-#......................#
-#......................#
-#......................#
-#......................#
-#......................#
-#....................EE#
-#....................EE#
-#......................#
-########################`, mov:[{t:'l',c:[7,7],len:5,s:60,a0:0,arms:2},{t:'l',c:[16,7],len:5,s:-60,a0:90,arms:2}]},
+#..................#...#
+#....#.............#...#
+#....#.............#...#
+#....##############....#
+#....##############..EE#
+#....##############..EE#
+########################`, mov:[{t:'l',c:[9,7],len:5,s:60,a0:0,arms:2},{t:'l',c:[15,7],len:5,s:-60,a0:90,arms:2}]},
 {name:'Lövegek', tip:'A löveg a közelebbire céloz. Csalogassátok, és közben a másik halad.', par:80, map:`
 ########################
 #......................#
@@ -476,22 +579,22 @@ const LEVELS = [
 #......h......h......#.#
 #......h......h......#E#
 ########################`, mov:[{t:'t',c:[20,5],rate:1.1,s:280},{t:'t',c:[2,10],rate:1.2,s:280,ph:0.6},{t:'p',path:[[1,4],[22,4]],s:7},{t:'p',path:[[22,9],[1,9]],s:7},{t:'p',path:[[12,5],[12,10]],s:5}]},
-{name:'Óramű', tip:'Két lézer, két lap. Aki tart, az nem tud elugrani – időzítsetek.', par:110, map:`
+{name:'Óramű', tip:'Két lézer, két lap. Aki tart, az nem tud elugrani – időzítsetek.', par:110, rope:170, map:`
 ########################
 #............#.........#
 #..1.........#.........#
 #............#.........#
 #..2.........#.........#
-#........x...X.........#
-#........x...X.........#
+#..........x.X.........#
+#..........x.X.x.......#
 #............#.........#
-#............#...x.....#
-#............#...x.....#
+#............#.........#
+#............#.........#
 #............#...EE....#
 #............#...EE....#
 #............#.........#
 #............#.........#
-########################`, mov:[{t:'l',c:[10,2],len:3,s:90,a0:0},{t:'l',c:[19,6],len:3,s:-110,a0:45},{t:'l',c:[4,10],len:3,s:70,a0:0},{t:'p',path:[[9,8],[9,13]],s:4},{t:'p',path:[[20,13],[20,8]],s:4}]},
+########################`, mov:[{t:'l',c:[10,3],len:3,s:90,a0:0},{t:'l',c:[18,5],len:3,s:-110,a0:45},{t:'p',path:[[9,8],[9,13]],s:4},{t:'p',path:[[20,13],[20,8]],s:4},{t:'p',path:[[22,7],[14,7]],s:5}]},
 {name:'Lövegtorony', tip:'Három löveg, egy kulcs. Osszátok fel a feladatot.', par:120, map:`
 ########################
 #..1...................#
@@ -685,9 +788,9 @@ const LEVELS = [
 #......................#
 #......................#
 #......................#
-#......................#
-#...................EE.#
-########################`, mov:[{t:'p',path:[[3,2],[3,7]],s:5},{t:'p',path:[[6,7],[6,2]],s:5},{t:'p',path:[[8,2],[8,7]],s:6},{t:'p',path:[[12,1],[21,1]],s:7},{t:'p',path:[[21,3],[12,3]],s:7},{t:'p',path:[[12,5],[21,5]],s:7},{t:'p',path:[[21,7],[12,7]],s:7},{t:'p',path:[[2,10],[21,10]],s:8},{t:'p',path:[[21,12],[2,12]],s:8}]},
+#.....................##
+#...................EE##
+########################`, mov:[{t:'p',path:[[3,2],[3,7]],s:5},{t:'p',path:[[6,7],[6,2]],s:5},{t:'p',path:[[8,2],[8,7]],s:6},{t:'p',path:[[12,1],[21,1]],s:7},{t:'p',path:[[21,3],[12,3]],s:7},{t:'p',path:[[12,5],[21,5]],s:7},{t:'p',path:[[21,7],[12,7]],s:7},{t:'p',path:[[2,10],[22,10]],s:8},{t:'p',path:[[22,11],[2,11]],s:7},{t:'p',path:[[2,12],[19,12]],s:8},{t:'p',path:[[19,13],[2,13]],s:7}]},
 {name:'Vak bizalom', tip:'Egymástól elzárva. Csak a másik tempójára számíthattok.', par:120, rope:200, map:`
 ########################
 #.1....h.....h...h....E#
@@ -808,6 +911,10 @@ const LEVELS = [
 const CELL=40, COLS=24, ROWS=15, W=960, H=600, PR=13;
 const ACC=1800, MAXV=230, FRIC=9, DEF_ROPE=150, SNAP=1.45, TIMED=4.5, LIVES=8, FRAG_T=0.7, WORLD=8;
 const OPT={inf:false};
+const PROF={n:'',f:0}; try{ Object.assign(PROF,JSON.parse(localStorage.getItem('kotelek_prof')||'{}')); }catch(e){}
+function profSave(){ try{ localStorage.setItem('kotelek_prof',JSON.stringify(PROF)); }catch(e){} }
+const FACES=[['🙂','Sima'],['😎','Napszemüveg'],['😠','Dühös'],['🐱','Macska'],['👑','Korona'],['🤖','Robot']];
+function myName(){ return (PROF.n||'').trim().slice(0,14); }
 const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
 const $=id=>document.getElementById(id);
 const BLUE='#4cc3ff', ORG='#ffa23a';
@@ -957,7 +1064,10 @@ function fmt(t){ const m=Math.floor(t/60),s=Math.floor(t%60); return (m?m+':':''
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 
 // --- effektek ---
-const FX={parts:[],trails:[[],[]],shake:0,prevGems:null,prevKg:null,prevL:-1,prevPh:'',flashT:0};
+const FX={parts:[],trails:[[],[]],shake:0,prevGems:null,prevKg:null,prevL:-1,prevPh:'',flashT:0,prevTT:0,prevFr:0,prevKd:0,prevRph:'',prevCnt:-1};
+const ELEM_TIPS={plate:['Nyomólap','Amíg valaki rajta áll, nyitva az azonos színű ajtó. Felváltva!'],gate:['Színes sáv','Csak az adott színű figura fér át rajta.'],key:['Kulcs','Vedd fel, és menj neki a lakatos ajtónak.'],button:['Sárga gomb','4,5 másodpercre nyitja az óra-ajtót. Nyomás és futás!'],frag:['Törékeny padló','Rálépés után leszakad – egyszer lehet átmenni rajta.'],patrol:['Őrjárat','Fix ritmusban jár. Érintés = elölről, és a kötelet is elvágja.'],laser:['Lézer','Forog, a falnál megáll. A karok között, egyszerre, egy oldalon.'],turret:['Löveg','A közelebbi figurára lő. Az egyik csalogat, a másik halad.'],hazard:['Tüske','Érintés = elölről. A kötelet is elvágja!'],gem:['Kristály','Mind kell, különben zárva a cél előtti kapu.']};
+function levelElems(st){ const e=[]; if(Object.keys(st.plates).length) e.push('plate'); if(st.grid.some(r=>r.includes('b')||r.includes('o'))) e.push('gate'); if(st.keys.length) e.push('key'); if(st.buttons.length) e.push('button'); if(st.frags.length) e.push('frag'); if(st.patrols.length) e.push('patrol'); if(st.lasers.length) e.push('laser'); if(st.turrets.length) e.push('turret'); if(st.hazards.length) e.push('hazard'); if(st.gems.length) e.push('gem'); return e; }
+const MENU={stars:Array.from({length:70},()=>({x:Math.random()*960,y:Math.random()*600,r:Math.random()*1.6+0.4,s:Math.random()*8+3,a:Math.random()*6.28}))};
 function spawnParts(x,y,n,col,spd,size,life){ for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, v=spd*(0.3+Math.random()); FX.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:life*(0.6+Math.random()*0.6),max:life,col,size:size*(0.6+Math.random()*0.8)}); } }
 function fxFail(why){ if(!S) return; FX.shake=0.35; for(const p of S.p){ spawnParts(p.x,p.y,26,why==='rope'?'#ffd54a':'#ff5c6c',260,4,0.7); }
   if(why==='rope'){ const a=S.p[0],b=S.p[1]; for(let i=0;i<14;i++){ const f=i/13; spawnParts(a.x+(b.x-a.x)*f,a.y+(b.y-a.y)*f,2,'#fff2a8',120,2.5,0.5);} } }
@@ -966,12 +1076,15 @@ function updateFX(dt){
   if(FX.shake>0) FX.shake-=dt;
   if(!S) return;
   // események felismerése (hostnál és vendégnél is működik)
-  if(FX.prevL!==S.L){ FX.prevL=S.L; FX.prevGems=S.gems.slice(); FX.prevKg=S.kg.slice(); FX.trails=[[],[]]; FX.parts.length=0; }
-  S.gems.forEach((g,i)=>{ if(g&&FX.prevGems&&!FX.prevGems[i]){ const c=S.st.gems[i]; spawnParts((c[0]+.5)*CELL,(c[1]+.5)*CELL,18,'#8fe8ff',160,3,0.6); } });
-  S.kg.forEach((g,i)=>{ if(g&&FX.prevKg&&!FX.prevKg[i]){ const c=S.st.keys[i]; spawnParts((c[0]+.5)*CELL,(c[1]+.5)*CELL,14,'#ffd54a',140,3,0.6); } });
+  if(FX.prevL!==S.L){ FX.prevL=S.L; FX.prevGems=S.gems.slice(); FX.prevKg=S.kg.slice(); FX.trails=[[],[]]; FX.parts.length=0; FX.prevTT=0; FX.prevFr=0; FX.prevKd=0; let seen={}; try{ seen=JSON.parse(localStorage.getItem('kotelek_seen')||'{}'); }catch(e){} const nw=levelElems(S.st).filter(k=>!seen[k]); if(nw.length){ FX.banner={items:nw.slice(0,2),t:7}; nw.forEach(k=>seen[k]=1); try{ localStorage.setItem('kotelek_seen',JSON.stringify(seen)); }catch(e){} } }
+  if(FX.banner){ FX.banner.t-=dt; if(FX.banner.t<=0) FX.banner=null; }
+  S.gems.forEach((g,i)=>{ if(g&&FX.prevGems&&!FX.prevGems[i]){ const c=S.st.gems[i]; spawnParts((c[0]+.5)*CELL,(c[1]+.5)*CELL,18,'#8fe8ff',160,3,0.6); sfx('gem'); } });
+  S.kg.forEach((g,i)=>{ if(g&&FX.prevKg&&!FX.prevKg[i]){ const c=S.st.keys[i]; spawnParts((c[0]+.5)*CELL,(c[1]+.5)*CELL,14,'#ffd54a',140,3,0.6); sfx('key'); } });
+  if(S.tt>FX.prevTT+0.5) sfx('button'); FX.prevTT=S.tt; const frArmed=S.fr.filter(v=>v>=0).length; if(frArmed>(FX.prevFr||0)) sfx('crack'); FX.prevFr=frArmed; const kdOpen=S.kd.filter(v=>v).length; if(kdOpen>(FX.prevKd||0)) sfx('door'); FX.prevKd=kdOpen;
   FX.prevGems=S.gems.slice(); FX.prevKg=S.kg.slice();
-  if(S.ph==='fail'&&FX.prevPh!=='fail') fxFail(S.failWhy);
-  if(S.ph==='clear'&&FX.prevPh!=='clear'){ for(const p of S.p) spawnParts(p.x,p.y,30,'#5be28a',220,3.5,0.9); }
+  if(S.ph==='fail'&&FX.prevPh!=='fail'){ fxFail(S.failWhy); sfx((S.failWhy==='rope'||S.failWhy==='ropecut')?'snap':'fail'); }
+  if(S.ph==='clear'&&FX.prevPh!=='clear'){ for(const p of S.p) spawnParts(p.x,p.y,30,'#5be28a',220,3.5,0.9); if(!RACE.on) sfx('clear'); }
+  if(RACE.on){ if(RACE.ph==='point'&&FX.prevRph!=='point') sfx(RACE.winner===myTeam()?'clear':'point'); if(RACE.ph==='count'){ const n=Math.ceil(RACE.t-0.2); if(n!==FX.prevCnt){ sfx(n>0?'count':'go'); FX.prevCnt=n; } } FX.prevRph=RACE.ph; }
   FX.prevPh=S.ph;
   if(S.ph==='play'){ for(let i=0;i<2;i++){ const t=FX.trails[i], p=S.p[i]; t.push({x:p.x,y:p.y}); if(t.length>14) t.shift(); } }
 }
@@ -1008,15 +1121,40 @@ function buildFloor(L){
 
 function glowCircle(x,y,r,col,blur){ ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=blur; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); ctx.restore(); }
 
+function drawFace(x,y,f,col,ex,ey){
+  switch(f){
+    case 1: ctx.fillStyle='#0b0f1a'; rr(x-9+ex,y-5+ey,8,6,2); ctx.fill(); rr(x+1+ex,y-5+ey,8,6,2); ctx.fill(); ctx.fillStyle='rgba(255,255,255,.35)'; ctx.fillRect(x-8+ex,y-4+ey,3,1.5); ctx.fillRect(x+2+ex,y-4+ey,3,1.5); ctx.strokeStyle='#0b0f1a'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x-1+ex,y-3+ey); ctx.lineTo(x+1+ex,y-3+ey); ctx.stroke(); break;
+    case 2: ctx.strokeStyle='#0b0f1a'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x-8+ex,y-8+ey); ctx.lineTo(x-2+ex,y-5+ey); ctx.moveTo(x+8+ex,y-8+ey); ctx.lineTo(x+2+ex,y-5+ey); ctx.stroke(); break;
+    case 3: ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(x-11,y-6); ctx.lineTo(x-9,y-19); ctx.lineTo(x-2,y-11); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(x+11,y-6); ctx.lineTo(x+9,y-19); ctx.lineTo(x+2,y-11); ctx.closePath(); ctx.fill(); ctx.fillStyle='#ffb0c0'; ctx.beginPath(); ctx.moveTo(x-9,y-9); ctx.lineTo(x-8,y-15); ctx.lineTo(x-4,y-11); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(x+9,y-9); ctx.lineTo(x+8,y-15); ctx.lineTo(x+4,y-11); ctx.closePath(); ctx.fill(); break;
+    case 4: ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=8; ctx.fillStyle='#ffd54a'; ctx.beginPath(); ctx.moveTo(x-9,y-11); ctx.lineTo(x-9,y-21); ctx.lineTo(x-4,y-15); ctx.lineTo(x,y-23); ctx.lineTo(x+4,y-15); ctx.lineTo(x+9,y-21); ctx.lineTo(x+9,y-11); ctx.closePath(); ctx.fill(); ctx.restore(); ctx.fillStyle='#ff5c6c'; ctx.beginPath(); ctx.arc(x,y-14,1.6,0,7); ctx.fill(); break;
+    case 5: ctx.fillStyle='#0b0f1a'; ctx.fillRect(x-9+ex,y-4+ey,18,4); ctx.fillStyle='#7fffd4'; ctx.fillRect(x-7+ex,y-3+ey,4,2); ctx.fillRect(x+3+ex,y-3+ey,4,2); ctx.strokeStyle='#0b0f1a'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x,y-13); ctx.lineTo(x,y-18); ctx.stroke(); ctx.fillStyle='#ff5c6c'; ctx.beginPath(); ctx.arc(x,y-19,2,0,7); ctx.fill(); break;
+  }
+}
 function drawGhosts(){ const ot=1-myTeam(); const a=S2.p[0],b=S2.p[1]; ctx.save(); ctx.globalAlpha=.32; ctx.strokeStyle=TEAMCOL[ot][0]; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.setLineDash([]);
   for(let i=0;i<2;i++){ const p=S2.p[i]; ctx.fillStyle=TEAMCOL[ot][i]; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
   ctx.restore(); if(S2.ph==='fail'){ ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle=TEAMCOL[ot][0]; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('↻ ellenfél elölről', (a.x+b.x)/2, (a.y+b.y)/2-24); ctx.restore(); } }
 function raceOverlay(){ const me=myTeam(); ctx.textAlign='center';
   if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); }
-  if(RACE.ph==='point'){ const win=RACE.winner===me; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(win?'Pont nektek!':`A ${TEAMNAME[RACE.winner].toUpperCase()} csapat ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${S.L+1<RACE.end?'   ·   következő: '+LEVELS[S.L+1].name:''}`,W/2,H/2+54); } }
+  if(RACE.ph==='point'){ const win=RACE.winner===me&&!NET.spectator; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(NET.spectator?`${TEAMNAME[RACE.winner]} ért be előbb!`:win?'Pont nektek!':`${TEAMNAME[RACE.winner]} ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${RACE.idx+1<RACE.list.length&&!(RACE.target&&Math.max(...RACE.score)>=RACE.target)?'   ·   következő: '+LEVELS[RACE.list[RACE.idx+1]||0].name:''}`,W/2,H/2+54); } }
+function renderMenu(t){
+  const bg=ctx.createRadialGradient(W/2,H*0.4,60,W/2,H/2,760); bg.addColorStop(0,'#17203a'); bg.addColorStop(1,'#06080f'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  // lassan úszó rács (perspektíva-szerű)
+  ctx.strokeStyle='rgba(110,140,255,.07)'; ctx.lineWidth=1; ctx.beginPath(); const off=(t*18)%40; for(let x=-40;x<=W+40;x+=40){ ctx.moveTo(x+off,0); ctx.lineTo(x+off,H); } for(let y=-40;y<=H+40;y+=40){ ctx.moveTo(0,y+off*0.5); ctx.lineTo(W,y+off*0.5); } ctx.stroke();
+  // csillagok
+  for(const st of MENU.stars){ st.y-=st.s*0.016; st.x+=Math.sin(t*0.3+st.a)*0.15; if(st.y<-5){ st.y=H+5; st.x=Math.random()*W; } ctx.globalAlpha=0.35+0.35*Math.sin(t*2+st.a); ctx.fillStyle='#cfe0ff'; ctx.beginPath(); ctx.arc(st.x,st.y,st.r,0,7); ctx.fill(); } ctx.globalAlpha=1;
+  // két keringő figura kötéllel
+  const cx=W/2, cy=H*0.5; const a1=t*0.35, a2=a1+Math.PI*0.9+Math.sin(t*0.7)*0.35;
+  const p1={x:cx+Math.cos(a1)*460,y:cy+Math.sin(a1)*265}, p2={x:cx+Math.cos(a2)*460,y:cy+Math.sin(a2)*265};
+  const d=Math.hypot(p2.x-p1.x,p2.y-p1.y), tn=Math.max(0,(d-300)/200); const col=tn<=0?'#cfe0ff':tn<0.5?'#ffd54a':'#ff5c6c';
+  ctx.save(); ctx.lineCap='round'; ctx.strokeStyle=col; ctx.globalAlpha=.12; ctx.lineWidth=10; ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.quadraticCurveTo((p1.x+p2.x)/2,(p1.y+p2.y)/2+Math.max(0,300-d)*0.35,p2.x,p2.y); ctx.stroke(); ctx.globalAlpha=.45; ctx.shadowColor=col; ctx.shadowBlur=12; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+  for(const [p,c,dk] of [[p1,BLUE,'#1a6a9a'],[p2,ORG,'#9a5410']]){ ctx.save(); ctx.shadowColor=c; ctx.shadowBlur=28; const gr=ctx.createRadialGradient(p.x-6,p.y-6,2,p.x,p.y,20); gr.addColorStop(0,'#fff'); gr.addColorStop(0.25,c); gr.addColorStop(1,dk); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(p.x,p.y,18,0,7); ctx.fill(); ctx.restore(); ctx.fillStyle='#0b0f1a'; ctx.beginPath(); ctx.arc(p.x-5,p.y-3,3.5,0,7); ctx.arc(p.x+5,p.y-3,3.5,0,7); ctx.fill(); }
+  // fényfoltok
+  for(const [x,y,c] of [[160,120,'rgba(76,195,255,.10)'],[800,480,'rgba(255,162,58,.10)'],[820,110,'rgba(91,226,138,.07)']]){ const g2=ctx.createRadialGradient(x,y,0,x,y,260); g2.addColorStop(0,c); g2.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H); }
+  ctx.fillStyle='rgba(0,0,0,.25)'; ctx.fillRect(0,0,W,H);
+}
 function render(now){
   const t=now/1000;
-  if(!S){ ctx.fillStyle='#0e1322'; ctx.fillRect(0,0,W,H); const bg=ctx.createRadialGradient(W/2,H/2,80,W/2,H/2,700); bg.addColorStop(0,'#141a30'); bg.addColorStop(1,'#080b14'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H); return; }
+  if(!S){ renderMenu(t); return; }
   const st=S.st, g=st.grid;
   if(FLOOR.L!==S.L) buildFloor(S.L);
   ctx.save();
@@ -1077,7 +1215,8 @@ function render(now){
     ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(p.x,p.y,PR-1,0,7); ctx.stroke();
     const vx=p.vx,vy=p.vy,v=Math.hypot(vx,vy); const ex=v>10?vx/v*3:0, ey=v>10?vy/v*3:0; ctx.fillStyle='#0b0f1a'; ctx.beginPath(); ctx.arc(p.x-4+ex,p.y-2+ey,2.8,0,7); ctx.arc(p.x+4+ex,p.y-2+ey,2.8,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(p.x-3+ex,p.y-3+ey,1,0,7); ctx.arc(p.x+5+ex,p.y-3+ey,1,0,7); ctx.fill();
     if(p.key){ ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=10; ctx.fillStyle='#ffd54a'; ctx.beginPath(); ctx.arc(p.x,p.y-23,5,0,7); ctx.fill(); ctx.fillRect(p.x-1,p.y-23,2,9); ctx.restore(); }
-    if(myPi()===i||NET.mode==='local'){ const lbl=NET.mode==='local'?(i===0?'WASD':'NYILAK'):'TE'; ctx.font='bold 11px system-ui'; ctx.textAlign='center'; const ly=p.y-(p.key?32:21); ctx.fillStyle='rgba(11,15,26,.7)'; const w=ctx.measureText(lbl).width+10; rr(p.x-w/2,ly-10,w,14,4); ctx.fill(); ctx.fillStyle=col; ctx.fillText(lbl,p.x,ly+1); }
+    const info=pInfo(i); drawFace(p.x,p.y,info.f,col,ex,ey);
+    { const mine=myPi()===i&&NET.mode!=='local'; const lbl=(info.n||'')+(mine?(info.n?' (te)':'TE'):''); if(lbl){ ctx.font=(mine?'bold ':'')+'11px system-ui'; ctx.textAlign='center'; const ly=p.y-(p.key?32:21)-(info.f===3||info.f===4?6:0); ctx.fillStyle=mine?'rgba(11,15,26,.8)':'rgba(11,15,26,.5)'; const w=ctx.measureText(lbl).width+10; rr(p.x-w/2,ly-10,w,14,4); ctx.fill(); ctx.fillStyle=mine?col:'#aab4d6'; ctx.fillText(lbl,p.x,ly+1); } }
   }
   // részecskék
   for(const q of FX.parts){ ctx.globalAlpha=Math.max(0,q.life/q.max); ctx.fillStyle=q.col; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(q.life/q.max+0.3),0,7); ctx.fill(); } ctx.globalAlpha=1;
@@ -1091,10 +1230,12 @@ function render(now){
   const gemsLeft=S.gems.filter(x=>!x).length;
   if(RACE.on){ ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
     // eredmény
-    const me=myTeam(); const parts=[['KÉK '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' ZÖLD',TEAMCOL[1][0],'bold 15px system-ui'],[`     ${S.L-RACE.start+1}/${RACE.end-RACE.start}. pálya   ·   te: ${TEAMNAME[me]} csapat`,'#8b94b3','13px system-ui']];
+    const me=myTeam(); const parts=[[TEAMNAME[0].toUpperCase()+' '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' '+TEAMNAME[1].toUpperCase(),TEAMCOL[1][0],'bold 15px system-ui'],[`     ${RACE.target?'first to '+RACE.target+'  ·  ':''}${RACE.idx+1}. pálya   ·   ${NET.spectator?'nézed: '+TEAMNAME[me]+' (Tab: váltás)':'te: '+TEAMNAME[me]}`,'#8b94b3','13px system-ui']];
     let tw=0; for(const q of parts){ ctx.font=q[2]; tw+=ctx.measureText(q[0]).width; } let xx=W/2-tw/2; ctx.textAlign='left'; for(const q of parts){ ctx.font=q[2]; ctx.fillStyle=q[1]; ctx.fillText(q[0],xx,29); xx+=ctx.measureText(q[0]).width; }
   } else ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
   if(RACE.on) raceOverlay();
+  // új elem tipp
+  if(FX.banner&&S.ph==='play'){ const a=Math.min(1,FX.banner.t/0.5,(7-FX.banner.t)/0.4); ctx.save(); ctx.globalAlpha=a; const items=FX.banner.items; const bw=Math.min(620,180+items.length*230), bx=W/2-bw/2, by=48; ctx.fillStyle='rgba(8,11,20,.9)'; rr(bx,by,bw,items.length>1?58:40,10); ctx.fill(); ctx.strokeStyle='rgba(255,213,74,.5)'; ctx.lineWidth=1; rr(bx+.5,by+.5,bw-1,(items.length>1?58:40)-1,10); ctx.stroke(); ctx.textAlign='left'; items.forEach((k,i)=>{ const [tt,tx]=ELEM_TIPS[k]; ctx.font='bold 13px system-ui'; const lw=ctx.measureText('ÚJ: '+tt).width; ctx.fillStyle='#ffd54a'; ctx.fillText('ÚJ: '+tt,bx+14,by+18+i*20); ctx.fillStyle='#e8ecf7'; ctx.font='12px system-ui'; ctx.fillText(tx,bx+14+lw+8,by+18+i*20); }); ctx.restore(); }
   // overlay
   if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füst.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
   if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag: ${lv.par} mp alatt)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
@@ -1104,7 +1245,7 @@ function render(now){
 //  BEMENET
 // ============================================================
 const keys={};
-window.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; keys[e.code]=true; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault(); if(e.code==='Escape') onEsc(); });
+window.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; keys[e.code]=true; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault(); if(e.code==='Escape') onEsc(); if(e.code==='KeyR'&&S&&!RACE.on&&NET.mode!=='online'||e.code==='KeyR'&&S&&!RACE.on&&NET.seat===0&&!NET.spectator){ if(S.ph==='play'||S.ph==='fail'){ resetLevel(); S.lt=0; } } if(e.code==='Tab'&&NET.spectator&&S){ e.preventDefault(); NET.viewTeam^=1; } });
 window.addEventListener('keyup',e=>{ keys[e.code]=false; });
 window.addEventListener('blur',()=>{ for(const k in keys) keys[k]=false; });
 function bitsWASD(){ return (keys.KeyW?1:0)|(keys.KeyS?2:0)|(keys.KeyA?4:0)|(keys.KeyD?8:0); }
@@ -1115,28 +1256,32 @@ function bitsArrows(){ return (keys.ArrowUp?1:0)|(keys.ArrowDown?2:0)|(keys.Arro
 // ============================================================
 const NET={mode:null, me:0, seat:0, seats:[null,null,null,null], peer:null, conns:[], ping:0, remoteBits:[0,0,0,0], lastSent:-1, lastSentAt:0, lastSnap:0, code:''};
 // RACE: 2v2 verseny állapota. S = a nézett csapat állapota, S2 = a másik csapaté (szellemek)
-const RACE={on:false, score:[0,0], ph:'count', t:0, winner:-1, start:0, end:0, wonBy:0};
+const RACE={on:false, score:[0,0], ph:'count', t:0, winner:-1, start:0, end:0, wonBy:0, list:[], idx:0, target:0};
 let S2=null;
 const TEAMCOL=[[BLUE,ORG],['#5be28a','#ff6cb5']];
 const TEAMNAME=['Kék','Zöld'];
+NET.spectator=false; NET.viewTeam=0;
 function occupied(){ return [0,1,2,3].filter(i=>NET.seats[i]); }
-function myTeam(){ return RACE.on?(NET.seat>>1):0; }
-function myPi(){ if(NET.mode!=='online') return 0; return RACE.on?(NET.seat&1):Math.max(0,occupied().indexOf(NET.seat)); }
+function myTeam(){ if(NET.spectator) return NET.viewTeam; return RACE.on?(NET.seat>>1):0; }
+function myPi(){ if(NET.spectator) return -1; if(NET.mode!=='online') return 0; return RACE.on?(NET.seat&1):Math.max(0,occupied().indexOf(NET.seat)); }
 function playerCount(){ return occupied().length; }
+NET.pinfo=null; // [[{n,f},{n,f}],[...]] csapatonként
+function computePinfo(){ const g=i=>NET.seats[i]?{n:NET.seats[i].n,f:NET.seats[i].f|0}:{n:'',f:0}; if(RACE.on) return [[g(0),g(1)],[g(2),g(3)]]; const o=occupied(); return [[g(o[0]),g(o[1]===undefined?-1:o[1])],[{n:'',f:0},{n:'',f:0}]]; }
+function pInfo(i){ if(NET.mode==='local') return {n:i===0?'WASD':'NYILAK',f:i===0?PROF.f:(PROF.f+1)%FACES.length}; const pi=NET.pinfo||computePinfo(); return pi[myTeam()][i]||{n:'',f:0}; }
 function seatOfConn(idx){ return NET.seats.findIndex(x=>x&&x.c===idx); }
 function freeSeatIn(team){ for(const i of [team*2,team*2+1]) if(!NET.seats[i]) return i; return -1; }
 function moveToTeam(seat,team){ if(seat<0||!NET.seats[seat]) return false; if((seat>>1)===team) return false; let f=freeSeatIn(team); if(f<0){ f=seat^2; const tmp=NET.seats[f]; NET.seats[f]=NET.seats[seat]; NET.seats[seat]=tmp; if(seat===NET.seat) NET.seat=f; else if(f===NET.seat) NET.seat=seat; return true; } NET.seats[f]=NET.seats[seat]; NET.seats[seat]=null; if(seat===NET.seat) NET.seat=f; return true; }
-function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx)}); }catch(e){} } }); }
+function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx),names:TEAMNAME,cup:!!CUP.match}); }catch(e){} } }); }
 function teamsHtml(isHost){
-  const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">';
-  for(let t=0;t<2;t++){ const col=TEAMCOL[t][0]; h+=`<div style="flex:1;min-width:200px;background:#0b0f1a;border:1px solid ${col}55;border-radius:12px;padding:10px"><div style="color:${col};font-weight:700;margin-bottom:6px">${TEAMNAME[t].toUpperCase()} CSAPAT</div>`;
-    for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${sp.n}${me?' (te)':''}</span>${(isHost||me)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
+  const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">'; if(isHost&&NET.spectator) h='<p class="mut" style="margin:0">Nézőként hostolsz – nem játszol, csak futtatod a meccset.</p>'+h;
+  for(let t=0;t<2;t++){ const col=TEAMCOL[t][0]; h+=`<div style="flex:1;min-width:200px;background:#0b0f1a;border:1px solid ${col}55;border-radius:12px;padding:10px"><div style="color:${col};font-weight:700;margin-bottom:6px">${esc(TEAMNAME[t].toUpperCase())}${CUP.match||TEAMNAME[t]!==['Kék','Zöld'][t]?'':' CSAPAT'}</div>`;
+    for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${FACES[sp.f|0][0]} ${esc(sp.n)}${me?' (te)':''}</span>${(isHost||me)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
     h+='</div>'; }
   h+='</div>'; if(n>=3&&n<4) h+='<p class="mut">Hárman: vagy jöjjön még egy fő, vagy lépjen ki egy, és ketten coopot játszhattok.</p>';
   if(n===2&&(NET.seats[0]&&NET.seats[1]||NET.seats[2]&&NET.seats[3])===false) h+='';
   return h; }
 function bindTeamButtons(root,isHost){ root.querySelectorAll('button.mv').forEach(b=>{ b.onclick=()=>{ const seat=+b.dataset.seat, team=+b.dataset.team; if(isHost){ if(moveToTeam(seat,team)){ updateLobby(); sendLobby(); } } else { const c=conn0(); if(c&&c.open) c.send({t:'team',team}); } }; }); }
-function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>2v2 verseny</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>coop</b> jön. Várunk, hogy a gazda indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
+function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>${CUP.match||TEAMNAME[0]!=='Kék'?'kupameccs':'2v2 verseny'}</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>coop</b> jön. Várunk, hogy a gazda indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
 function PCOL(pi){ return TEAMCOL[myTeam()][pi]; }
 function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
 function peerId(code){ return 'kotelek-v1-'+code.toUpperCase(); }
@@ -1153,14 +1298,15 @@ function updateLobby(){
   else if(n===3){ html='<b>Hárman vagytok.</b> Még egy fő kell a 2v2-höz.'; }
   else { html='<b style="color:var(--ok)">Mind a négyen itt vagytok!</b> Indulhat a 2v2 verseny – aki előbb beér, pontot kap, életek nincsenek.'; }
   $('lobbyMsg').innerHTML=html; const tb=$('hostTeams'); tb.innerHTML=teamsHtml(true); bindTeamButtons(tb,true);
-  $('lobbyStart').style.display=(n===2||n===4)?'block':'none';
-  $('btnStartHost').textContent=n===4?'2v2 verseny indítása az 1. pályától':'Coop indítása az 1. pályától';
-  $('raceOpts').style.display=n===4?'block':'none';
+  $('lobbyStart').style.display=((n===2&&!NET.spectator)||n===4)?'block':'none';
+  $('btnStartHost').textContent=CUP.match?'Kupameccs indítása':(n===4?'2v2 verseny indítása az 1. pályától':'Coop indítása az 1. pályától');
+  $('lvgridHost').style.display=CUP.match?'none':'grid'; $('lobbyLvHint').style.display=CUP.match?'none':'block';
+  $('raceOpts').style.display=(n===4&&!CUP.match)?'block':'none';
   $('lobbyHint').textContent='';
   buildGrid('lvgridHost',L=>{ if(playerCount()===4) startRace(L); else startGame(L); });
 }
-function hostRoom(){
-  cleanupNet(); NET.mode='online'; NET.me=0; NET.seat=0; NET.seats=[{n:'Gazda',c:-1},null,null,null]; NET.code=makeCode();
+function hostRoom(spectator){
+  cleanupNet(); NET.mode='online'; NET.me=0; NET.spectator=!!spectator; NET.viewTeam=0; if(!spectator){ TEAMNAME[0]='Kék'; TEAMNAME[1]='Zöld'; CUP.match=null; } NET.seat=spectator?-1:0; NET.seats=[spectator?null:{n:myName()||'Gazda',c:-1,f:PROF.f},null,null,null]; NET.code=makeCode(); $('lobbyCup').style.display='none';
   $('codeShow').textContent=NET.code; $('lobbyMsg').textContent='Szoba nyitása…'; $('lobbyStart').style.display='none'; show('ovLobby');
   const peer=newPeer(peerId(NET.code)); NET.peer=peer;
   peer.on('open',()=>{ updateLobby(); });
@@ -1169,8 +1315,8 @@ function hostRoom(){
     if(NET.conns.length>=3||S){ conn.on('open',()=>{ conn.send({t:'full'}); setTimeout(()=>conn.close(),500); }); return; }
     NET.conns.push(conn);
     const idx=()=>NET.conns.indexOf(conn);
-    conn.on('open',()=>{ const f=NET.seats.findIndex(x=>!x); NET.seats[f]={n:'Vendég '+(idx()+1),c:idx()}; updateLobby(); sendLobby(); });
-    conn.on('data',d=>{ if(d.t==='in'){ const st=seatOfConn(idx()); if(st>=0) NET.remoteBits[st]=d.k; } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } else if(d.t==='team'&&!S){ if(moveToTeam(seatOfConn(idx()),d.team)){ updateLobby(); sendLobby(); } } });
+    conn.on('open',()=>{ const f=NET.seats.findIndex(x=>!x); NET.seats[f]={n:'Vendég '+(idx()+1),c:idx(),f:0}; updateLobby(); sendLobby(); });
+    conn.on('data',d=>{ if(d.t==='in'){ const st=seatOfConn(idx()); if(st>=0) NET.remoteBits[st]=d.k; } else if(d.t==='hello'){ const st=seatOfConn(idx()); if(st>=0){ NET.seats[st].n=(String(d.n||'').trim().slice(0,14))||('Vendég '+(idx()+1)); NET.seats[st].f=Math.max(0,Math.min(FACES.length-1,d.f|0)); updateLobby(); sendLobby(); } } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } else if(d.t==='team'&&!S){ if(moveToTeam(seatOfConn(idx()),d.team)){ updateLobby(); sendLobby(); } } });
     conn.on('close',()=>{ lost(); });
     conn.on('error',()=>{ lost(); });
   });
@@ -1182,11 +1328,11 @@ function joinRoom(code){
   peer.on('open',()=>{
     const conn=peer.connect(peerId(code),{reliable:true}); NET.conns=[conn];
     const to=setTimeout(()=>{ if(!conn.open){ $('joinMsg').innerHTML='<span class="err">Nem találom a szobát.</span> Jó a kód? A társadnál nyitva van a lobby?'; } },8000);
-    conn.on('open',()=>{ clearTimeout(to); show('ovGuestWait'); pingLoop(); });
+    conn.on('open',()=>{ clearTimeout(to); conn.send({t:'hello',n:myName(),f:PROF.f}); show('ovGuestWait'); pingLoop(); });
     conn.on('data',d=>{
       if(d.t==='s'){ applySnap(d); }
       else if(d.t==='pong'){ NET.ping=Math.round(performance.now()-d.ts); }
-      else if(d.t==='lobby'){ NET.seats=d.seats; NET.seat=d.you; NET.me=d.you; if(!S) renderGuestLobby(); }
+      else if(d.t==='lobby'){ NET.seats=d.seats; NET.seat=d.you; NET.me=d.you; if(d.names){ TEAMNAME[0]=d.names[0]; TEAMNAME[1]=d.names[1]; } if(!S) renderGuestLobby(); }
       else if(d.t==='full'){ $('joinMsg').innerHTML='<span class="err">Ez a szoba tele van, vagy már megy a játék.</span>'; show('ovJoin'); }
       else if(d.t==='menu'){ S=null; S2=null; RACE.on=false; show('ovGuestWait'); renderGuestLobby(); }
     });
@@ -1210,14 +1356,14 @@ function unpackState(S,d){
 }
 function sendSnap(){
   if(!NET.conns.length||!S) return;
-  const msg={t:'s',inf:OPT.inf,pz:PAUSED,race:RACE.on,A:packState(S)};
-  if(RACE.on){ msg.B=packState(S2); msg.sc=RACE.score; msg.rph=RACE.ph; msg.rt=RACE.t; msg.rw=RACE.winner; msg.rs=RACE.start; msg.re=RACE.end; msg.rwb=RACE.wonBy; }
+  const msg={t:'s',inf:OPT.inf,pz:PAUSED,race:RACE.on,A:packState(S),pi:computePinfo()};
+  if(RACE.on){ msg.B=packState(S2); msg.sc=RACE.score; msg.rph=RACE.ph; msg.rt=RACE.t; msg.rw=RACE.winner; msg.rs=RACE.idx; msg.re=RACE.list.length; msg.rwb=RACE.wonBy; msg.tg=RACE.target; msg.nm=TEAMNAME; }
   broadcast(msg);
 }
 function applySnap(d){
-  OPT.inf=d.inf;
+  OPT.inf=d.inf; if(d.pi) NET.pinfo=d.pi;
   if(d.race){
-    RACE.on=true; RACE.score=d.sc; RACE.ph=d.rph; RACE.t=d.rt; RACE.winner=d.rw; RACE.start=d.rs; RACE.end=d.re; RACE.wonBy=d.rwb;
+    RACE.on=true; RACE.score=d.sc; RACE.ph=d.rph; RACE.t=d.rt; RACE.winner=d.rw; RACE.idx=d.rs; RACE.start=0; RACE.end=d.re; RACE.wonBy=d.rwb; RACE.list=new Array(d.re).fill(0); RACE.target=d.tg||0; if(d.nm){ TEAMNAME[0]=d.nm[0]; TEAMNAME[1]=d.nm[1]; }
     const mine=myTeam()===0?d.A:d.B, other=myTeam()===0?d.B:d.A;
     if(!S||S.L!==mine.L){ const keep=S; S=null; newState(mine.L); hideAll(); }
     if(!S2||S2.L!==other.L){ const tmp=S; S=null; newState(other.L); S2=S; S=tmp; }
@@ -1232,8 +1378,10 @@ function applySnap(d){
 
 // ---- 2v2 verseny vezérlés (host) ----
 function startRace(L){
-  PAUSED=false; sendLobby(); RACE.on=true; RACE.score=[0,0]; RACE.start=L; RACE.end=Math.min(LEVELS.length,L+parseInt($('selRounds').value||'10'));
-  raceLevel(L); hideAll();
+  PAUSED=false; sendLobby(); RACE.on=true; RACE.score=[0,0];
+  if(CUP.match){ RACE.list=CUP.match.pool.slice(); RACE.target=CUP.match.target; }
+  else { const end=Math.min(LEVELS.length,L+parseInt($('selRounds').value||'10')); RACE.list=[]; for(let i=L;i<end;i++) RACE.list.push(i); RACE.target=0; }
+  RACE.idx=0; RACE.start=0; RACE.end=RACE.list.length; raceLevel(RACE.list[0]); hideAll();
 }
 function raceLevel(L){
   S=null; newState(L); S.tot=0; S.totd=0; const A=S;
@@ -1249,12 +1397,199 @@ function raceUpdate(dt,bitsA,bitsB){
     if(aWin||bWin){ RACE.winner=aWin?0:1; RACE.score[RACE.winner]++; RACE.wonBy=(aWin?A:B).lt; RACE.ph='point'; RACE.t=3.5; }
     return;
   }
-  if(RACE.ph==='point'){ RACE.t-=dt; if(RACE.t<=0){ if(S.L+1<RACE.end){ raceLevel(S.L+1); } else { RACE.ph='done'; showRaceDone(); } } return; }
+  if(RACE.ph==='point'){ RACE.t-=dt; if(RACE.t<=0){ const won=RACE.target>0&&Math.max(...RACE.score)>=RACE.target; if(!won&&RACE.idx+1<RACE.list.length){ RACE.idx++; raceLevel(RACE.list[RACE.idx]); } else { RACE.ph='done'; cupAfterMatch(); showRaceDone(); } } return; }
 }
 function showRaceDone(){
-  const [a,b]=RACE.score; const w=a===b?'Döntetlen!':(a>b?'A KÉK csapat nyert!':'A ZÖLD csapat nyert!');
-  $('doneTime').textContent=`${w}  ${a} : ${b}`; $('doneDeaths').textContent=a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.';
+  const [a,b]=RACE.score; const w=a===b?'Döntetlen!':(a>b?`${TEAMNAME[0]} nyert!`:`${TEAMNAME[1]} nyert!`);
+  $('doneTime').textContent=`${w}  ${a} : ${b}`; const dA=(myTeam()===0?S:S2)||S, dB=(myTeam()===0?S2:S)||S2; $('doneDeaths').textContent=`Újrakezdések – ${TEAMNAME[0]}: ${(myTeam()===0?dA:dB)?.totd??'?'} · ${TEAMNAME[1]}: ${(myTeam()===0?dB:dA)?.totd??'?'}. `+(CUP.returning?'Az eredmény bekerült a bracketbe.':(a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.'));
+  $('btnDoneMenu').textContent=CUP.returning?'Vissza a kupához':'Főmenü';
   $('ovDone').querySelector('h2').textContent='🏁 Vége a versenynek'; show('ovDone');
+}
+
+// ============================================================
+//  HANG (procedurális zene + effektek, Web Audio)
+// ============================================================
+const AUDIO={ctx:null,master:null,musicGain:null,sfxGain:null,music:true,sfx:true,started:false,next:0,step:0,timer:null,rev:null,lp:null};
+try{ const sv=JSON.parse(localStorage.getItem('kotelek_audio')||'{}'); if(sv.music===false) AUDIO.music=false; if(sv.sfx===false) AUDIO.sfx=false; }catch(e){}
+function audioSave(){ try{ localStorage.setItem('kotelek_audio',JSON.stringify({music:AUDIO.music,sfx:AUDIO.sfx})); }catch(e){} }
+function audioInit(){
+  if(AUDIO.ctx) { if(AUDIO.ctx.state==='suspended') AUDIO.ctx.resume(); return; }
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+  const c=new AC(); AUDIO.ctx=c;
+  AUDIO.master=c.createGain(); AUDIO.master.gain.value=0.9; AUDIO.master.connect(c.destination);
+  // egyszerű zengető (generált impulzus)
+  const len=c.sampleRate*2.2, buf=c.createBuffer(2,len,c.sampleRate);
+  for(let ch=0;ch<2;ch++){ const d=buf.getChannelData(ch); for(let i=0;i<len;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4)*0.5; } }
+  const rev=c.createConvolver(); rev.buffer=buf; const revG=c.createGain(); revG.gain.value=0.35; rev.connect(revG); revG.connect(AUDIO.master); AUDIO.rev=rev;
+  AUDIO.lp=c.createBiquadFilter(); AUDIO.lp.type='lowpass'; AUDIO.lp.frequency.value=1800; AUDIO.lp.Q.value=0.4;
+  AUDIO.musicGain=c.createGain(); AUDIO.musicGain.gain.value=AUDIO.music?0.5:0; AUDIO.musicGain.connect(AUDIO.lp); AUDIO.lp.connect(AUDIO.master); AUDIO.lp.connect(rev);
+  AUDIO.sfxGain=c.createGain(); AUDIO.sfxGain.gain.value=AUDIO.sfx?0.6:0; AUDIO.sfxGain.connect(AUDIO.master); AUDIO.sfxGain.connect(rev);
+  AUDIO.next=c.currentTime+0.1; AUDIO.timer=setInterval(musicTick,120); AUDIO.started=true;
+}
+// akkordmenet (Hz): Am – F – C – G, majd Am – F – Dm – E
+const CHORDS_A=[[220,261.63,329.63],[174.61,220,261.63],[130.81*2,164.81*2,196*2],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63],[146.83,174.61,220],[164.81,207.65,246.94]];
+const CHORDS_B=[[146.83,174.61,220],[196,246.94,293.66],[220,261.63,329.63],[164.81,207.65,246.94],[174.61,220,261.63],[130.81*2,164.81*2,196*2],[196,246.94,293.66],[164.81,207.65,246.94]];
+const CHORDS=CHORDS_A;
+const ARP=[[0,1,2,1],[0,2,1,2],[1,0,2,0],[2,1,0,1]];
+const BEAT=0.5; // 120 bpm, negyed
+function osc(type,freq,t0,t1,gain,dest,detune){ const c=AUDIO.ctx; const o=c.createOscillator(); o.type=type; o.frequency.value=freq; if(detune) o.detune.value=detune; const g=c.createGain(); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(gain,t0+Math.min(0.4,(t1-t0)*0.4)); g.gain.setValueAtTime(gain,Math.max(t0,t1-0.25)); g.gain.linearRampToValueAtTime(0,t1); o.connect(g); g.connect(dest); o.start(t0); o.stop(t1+0.05); }
+function musicTick(){
+  const c=AUDIO.ctx; if(!c) return;
+  while(AUDIO.next<c.currentTime+0.6){
+    const step=AUDIO.step, section=Math.floor(step/64)%3, CH=section===2?CHORDS_B:CHORDS_A, bar=Math.floor(step/8)%CH.length, chord=CH[bar], t=AUDIO.next; const busy=section===1||(RACE.on&&RACE.ph==='play');
+    const dest=AUDIO.musicGain;
+    if(step%8===0){ // pad + basszus, 4 ütem
+      const dur=BEAT*8;
+      for(const f of chord){ osc('sawtooth',f/2,t,t+dur,0.045,dest,-7); osc('sawtooth',f/2,t,t+dur,0.045,dest,7); osc('triangle',f,t,t+dur,0.03,dest,0); }
+      osc('sine',chord[0]/4,t,t+dur*0.95,0.16,dest,0);
+      osc('triangle',chord[0]/4,t,t+dur*0.95,0.05,dest,0);
+    }
+    if(busy&&step%4===1){ osc('square',chord[Math.floor(step/4)%3]*2,t,t+BEAT*0.5,0.025,dest,0); }
+    if(step%2===0){ // arpeggio nyolcadokon
+      const pat=ARP[Math.floor(step/16)%ARP.length]; const n=chord[pat[(step/2)%4]]*2; const vel=(step%8===0)?0.09:0.06;
+      osc('triangle',n,t,t+BEAT*0.9,vel,dest,0);
+      if(step%32>=16) osc('sine',n*2,t+BEAT*0.5,t+BEAT*1.2,0.03,dest,0);
+    }
+    if(step%16===14){ osc('sine',chord[2]*2,t,t+BEAT*1.8,0.05,dest,0); }
+    AUDIO.next+=BEAT; AUDIO.step++;
+  }
+}
+function setMusic(on){ AUDIO.music=on; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.linearRampToValueAtTime(on?0.5:0,AUDIO.ctx.currentTime+0.3); } updateAudioButtons(); }
+function setSfx(on){ AUDIO.sfx=on; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=on?0.6:0; } updateAudioButtons(); }
+function updateAudioButtons(){ document.querySelectorAll('.btnMusic').forEach(b=>{ b.textContent=(AUDIO.music?'♫ Zene: BE':'♫ Zene: KI'); b.classList.toggle('off',!AUDIO.music); }); document.querySelectorAll('.btnSfx').forEach(b=>{ b.textContent=(AUDIO.sfx?'🔊 Hangok: BE':'🔇 Hangok: KI'); b.classList.toggle('off',!AUDIO.sfx); }); }
+// effektek
+function sfx(name){
+  if(!AUDIO.ctx||!AUDIO.sfx) return; const c=AUDIO.ctx, t=c.currentTime, d=AUDIO.sfxGain;
+  const blip=(f0,f1,dur,type,g)=>{ const o=c.createOscillator(); o.type=type||'sine'; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur); const gg=c.createGain(); gg.gain.setValueAtTime(g||0.3,t); gg.gain.exponentialRampToValueAtTime(0.001,t+dur); o.connect(gg); gg.connect(d); o.start(t); o.stop(t+dur+0.02); };
+  const noise=(dur,g,fc)=>{ const n=c.createBufferSource(); const len=c.sampleRate*dur, b=c.createBuffer(1,len,c.sampleRate), dd=b.getChannelData(0); for(let i=0;i<len;i++) dd[i]=(Math.random()*2-1)*(1-i/len); n.buffer=b; const f=c.createBiquadFilter(); f.type='bandpass'; f.frequency.value=fc||800; f.Q.value=0.7; const gg=c.createGain(); gg.gain.value=g; n.connect(f); f.connect(gg); gg.connect(d); n.start(t); };
+  switch(name){
+    case 'gem': blip(880,1760,0.18,'sine',0.25); setTimeout(()=>{},0); blip(1320,2640,0.22,'triangle',0.12); break;
+    case 'key': blip(660,990,0.12,'square',0.08); blip(990,1320,0.18,'triangle',0.15); break;
+    case 'button': blip(440,330,0.15,'square',0.12); break;
+    case 'door': blip(180,90,0.35,'sawtooth',0.12); noise(0.25,0.15,400); break;
+    case 'fail': noise(0.45,0.5,500); blip(220,55,0.5,'sawtooth',0.25); break;
+    case 'snap': noise(0.2,0.4,2500); blip(1200,200,0.3,'square',0.15); break;
+    case 'clear': [523.25,659.25,783.99,1046.5].forEach((f,i)=>{ const o=c.createOscillator(); o.type='triangle'; o.frequency.value=f; const gg=c.createGain(); gg.gain.setValueAtTime(0,t+i*0.09); gg.gain.linearRampToValueAtTime(0.22,t+i*0.09+0.03); gg.gain.exponentialRampToValueAtTime(0.001,t+i*0.09+0.8); o.connect(gg); gg.connect(d); o.start(t+i*0.09); o.stop(t+i*0.09+0.85); }); break;
+    case 'point': [659.25,783.99,1046.5,1318.5].forEach((f,i)=>{ const o=c.createOscillator(); o.type='square'; o.frequency.value=f; const gg=c.createGain(); gg.gain.setValueAtTime(0,t+i*0.07); gg.gain.linearRampToValueAtTime(0.12,t+i*0.07+0.02); gg.gain.exponentialRampToValueAtTime(0.001,t+i*0.07+0.5); o.connect(gg); gg.connect(d); o.start(t+i*0.07); o.stop(t+i*0.07+0.55); }); break;
+    case 'count': blip(660,660,0.12,'square',0.1); break;
+    case 'go': blip(880,1320,0.3,'square',0.15); break;
+    case 'ui': blip(520,780,0.08,'sine',0.12); break;
+    case 'crack': noise(0.15,0.3,1500); break;
+  }
+}
+// első kattintásra indul (böngésző-szabály)
+['click','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,()=>{ audioInit(); },{passive:true}));
+
+// ============================================================
+//  KUPA (8 csapatos egyenes kieséses bracket, a szervező hostol)
+// ============================================================
+const CUP={data:null, match:null, view:false};
+const CUP_ROUNDS={q:{name:'Negyeddöntő',target:3,pool:[2,5,8,12,16,18,22,26,29]},s:{name:'Elődöntő',target:3,pool:[6,11,15,19,23,27,30,34,36]},b:{name:'Bronzmeccs',target:3,pool:[4,9,13,20,24,28,32,35,38]},f:{name:'Döntő',target:5,pool:[7,10,14,17,21,25,31,33,37,39,0,3,1]}};
+const CUP_ORDER=['q1','q2','q3','q4','s1','s2','b','f'];
+function cupLoad(){ try{ CUP.data=JSON.parse(localStorage.getItem('kotelek_cup')||'null'); }catch(e){ CUP.data=null; } }
+function cupSave(){ try{ localStorage.setItem('kotelek_cup',JSON.stringify(CUP.data)); }catch(e){} }
+function cupNew(name,teams){
+  const m={}; for(const id of CUP_ORDER) m[id]={a:null,b:null,sa:0,sb:0,w:null};
+  m.q1.a=0;m.q1.b=1;m.q2.a=2;m.q2.b=3;m.q3.a=4;m.q3.b=5;m.q4.a=6;m.q4.b=7;
+  CUP.data={name:name||'Kötelék Kupa',teams,m,bronze:true,created:Date.now()}; cupSave();
+}
+function cupRecord(id,sa,sb){
+  const d=CUP.data, M=d.m[id]; M.sa=sa; M.sb=sb; M.w=sa>sb?M.a:M.b; const L=sa>sb?M.b:M.a;
+  const feed={q1:['s1','a'],q2:['s1','b'],q3:['s2','a'],q4:['s2','b'],s1:['f','a'],s2:['f','b']};
+  if(feed[id]){ const [to,side]=feed[id]; d.m[to][side]=M.w; }
+  if(id==='s1') d.m.b.a=L; if(id==='s2') d.m.b.b=L;
+  cupSave();
+}
+function cupTeam(i){ return i===null||i===undefined?null:(CUP.data.teams[i]||('Csapat '+(i+1))); }
+function cupMatchHtml(id,ro){
+  const d=CUP.data, M=d.m[id]; const ta=cupTeam(M.a), tb=cupTeam(M.b); const done=M.w!==null; const ready=ta&&tb&&!done&&!ro;
+  const row=(name,sc,win,idx)=>`<div class="cm-row ${win?'win':''}">${name?`<span class="cm-name">${esc(name)}</span>`:'<span class="cm-name mut">– várakozik –</span>'}<span class="cm-sc">${done?sc:''}</span></div>`;
+  return `<div class="cm ${done?'done':''} ${ready?'ready':''}" data-id="${id}">
+    <div class="cm-title">${CUP_ROUNDS[id[0]].name}${id.length>1?' '+id[1]:''}</div>
+    ${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}
+    <div class="cm-act">${ready?`<button class="pri cup-start" data-id="${id}" style="padding:4px 12px;font-size:12px;margin:0">▶ Indítás</button><button class="cup-man" data-id="${id}" style="padding:4px 9px;font-size:11px;margin:0">kézi</button>`:''}${done&&!ro?`<button class="cup-reset" data-id="${id}" style="padding:2px 8px;font-size:11px;margin:0;color:var(--mut)">visszavonás</button>`:''}</div>
+  </div>`;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function cupRender(ro){
+  const d=CUP.data; if(!d) return;
+  $('cupTitle').textContent=d.name;
+  const BW=250, X=[0,300,600], QY=[10,126,242,358], SY=[68,300], FY=184, BY=362;
+  const pos=(id,x,y)=>cupMatchHtml(id,ro).replace('class="cm ',`style="left:${x}px;top:${y}px" class="cm `);
+  let h=`<svg viewBox="0 0 880 462">`; const ln=(x1,y1,x2,y2)=>{ const mx=(x1+x2)/2; return `<path d="M${x1},${y1} H${mx} V${y2} H${x2}" fill="none" stroke="#3a4a7a" stroke-width="2" stroke-linejoin="round"/>`; };
+  QY.forEach((y,i)=>{ h+=ln(X[0]+BW,y+48,X[1],SY[i>>1]+48); }); SY.forEach(y=>{ h+=ln(X[1]+BW,y+48,X[2],FY+48); });
+  h+=`</svg><div class="cup-colt" style="left:${X[0]}px;top:-8px">Negyeddöntők</div><div class="cup-colt" style="left:${X[1]}px;top:-8px">Elődöntők</div><div class="cup-colt" style="left:${X[2]}px;top:-8px">Döntő</div><div class="cup-colt" style="left:${X[2]}px;top:${BY-20}px">Bronzmeccs</div>`;
+  ['q1','q2','q3','q4'].forEach((id,i)=>h+=pos(id,X[0],QY[i])); ['s1','s2'].forEach((id,i)=>h+=pos(id,X[1],SY[i])); h+=pos('f',X[2],FY); if(d.bronze) h+=pos('b',X[2],BY);
+  if(d.m.f.w!==null) h+=`<div class="champ">🏆 ${esc(cupTeam(d.m.f.w))}</div>`;
+  $('cupBracket').innerHTML=h;
+  const f=d.m.f; $('cupChampion').innerHTML=f.w!==null?`🏆 Bajnok: <b style="color:#ffd54a">${esc(cupTeam(f.w))}</b>${d.m.b.w!==null?` · 🥉 ${esc(cupTeam(d.m.b.w))}`:''}`:'';
+  if(ro) return;
+  document.querySelectorAll('.cup-start').forEach(b=>b.onclick=()=>cupStartMatch(b.dataset.id));
+  document.querySelectorAll('.cup-man').forEach(b=>b.onclick=()=>cupManual(b.dataset.id));
+  document.querySelectorAll('.cup-reset').forEach(b=>b.onclick=()=>{ const id=b.dataset.id; const M=d.m[id]; M.w=null; M.sa=M.sb=0; const feed={q1:['s1','a'],q2:['s1','b'],q3:['s2','a'],q4:['s2','b'],s1:['f','a'],s2:['f','b']}; if(feed[id]){ const [to,side]=feed[id]; d.m[to][side]=null; } if(id==='s1') d.m.b.a=null; if(id==='s2') d.m.b.b=null; cupSave(); cupRender(false); });
+}
+function cupManual(id){
+  const M=CUP.data.m[id]; const t=CUP_ROUNDS[id[0]].target;
+  const box=$('cupManual'); box.style.display='block';
+  box.innerHTML=`<b>Kézi eredmény – ${esc(cupTeam(M.a))} vs ${esc(cupTeam(M.b))}</b><div class="row" style="margin-top:8px"><input id="manA" style="width:70px;letter-spacing:0;font-size:18px" value="${t}"> : <input id="manB" style="width:70px;letter-spacing:0;font-size:18px" value="0"><button class="pri" id="manOk">Rögzítés</button><button id="manX">Mégse</button></div>`;
+  $('manOk').onclick=()=>{ const a=+$('manA').value||0,b=+$('manB').value||0; if(a===b){ alert('Döntetlen nem lehet.'); return; } cupRecord(id,a,b); box.style.display='none'; cupRender(false); };
+  $('manX').onclick=()=>{ box.style.display='none'; };
+}
+function cupStartMatch(id){
+  const M=CUP.data.m[id]; const R=CUP_ROUNDS[id[0]];
+  CUP.match={id,target:R.target,pool:R.pool.slice()};
+  TEAMNAME[0]=cupTeam(M.a); TEAMNAME[1]=cupTeam(M.b);
+  hostRoom(true);
+  $('lobbyCup').style.display='block'; $('lobbyCup').innerHTML=`<b>${R.name}:</b> <span style="color:${TEAMCOL[0][0]}">${esc(TEAMNAME[0])}</span> (kék) vs <span style="color:${TEAMCOL[1][0]}">${esc(TEAMNAME[1])}</span> (zöld) · first to ${R.target}<br><span class="mut">Te nézőként hostolsz. A négy játékos a kóddal lép be, és a saját csapatát választja. Amint mind a négyen bent vannak, indíthatod.</span>`;
+}
+function cupAfterMatch(){
+  if(!CUP.match) return; const [a,b]=RACE.score; if(a!==b) cupRecord(CUP.match.id,a,b); CUP.match=null; CUP.returning=true;
+}
+function cupEncode(){ return btoa(unescape(encodeURIComponent(JSON.stringify(CUP.data)))); }
+function cupDecode(s){ try{ return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch(e){ return null; } }
+function cupLink(){ return location.origin+location.pathname+'#cup='+cupEncode(); }
+function cupText(){
+  const d=CUP.data; const nm=i=>cupTeam(i)||'?'; const m=id=>{ const M=d.m[id]; if(M.a===null||M.b===null) return `${nm(M.a)} vs ${nm(M.b)}`; return M.w===null?`${nm(M.a)} vs ${nm(M.b)}`:`**${nm(M.w)}** ${M.sa}:${M.sb} ${nm(M.w===M.a?M.b:M.a)}`; };
+  let t=`🏆 **${d.name}**\n\n**Negyeddöntők**\n`+['q1','q2','q3','q4'].map((id,i)=>`${i+1}. ${m(id)}`).join('\n');
+  t+=`\n\n**Elődöntők**\n1. ${m('s1')}\n2. ${m('s2')}\n\n**Döntő**\n${m('f')}`;
+  if(d.bronze) t+=`\n\n**Bronzmeccs**\n${m('b')}`;
+  if(d.m.f.w!==null) t+=`\n\n👑 Bajnok: **${nm(d.m.f.w)}**`;
+  return t;
+}
+function cupPng(){
+  const d=CUP.data; const c=document.createElement('canvas'); c.width=1200; c.height=700; const x=c.getContext('2d');
+  const bg=x.createLinearGradient(0,0,0,700); bg.addColorStop(0,'#141a30'); bg.addColorStop(1,'#07090f'); x.fillStyle=bg; x.fillRect(0,0,1200,700);
+  x.fillStyle='#4cc3ff'; x.font='bold 40px system-ui'; x.textAlign='center'; x.fillText(d.name,600,60);
+  x.fillStyle='#8b94b3'; x.font='14px system-ui'; x.fillText('Kötelék – 2v2 kupa',600,86);
+  const nm=i=>cupTeam(i)||'–';
+  const box=(id,px,py,w)=>{ const M=d.m[id]; const done=M.w!==null; x.fillStyle='#1b2238'; x.strokeStyle=done?'#5be28a':'#2b3658'; x.lineWidth=2; rrc(x,px,py,w,74,10); x.fill(); x.stroke();
+    x.textAlign='left'; x.font='12px system-ui'; x.fillStyle='#8b94b3'; x.fillText(CUP_ROUNDS[id[0]].name+(id.length>1?' '+id[1]:''),px+12,py+18);
+    [[M.a,M.sa,M.w===M.a&&done],[M.b,M.sb,M.w===M.b&&done]].forEach(([t,s,wn],k)=>{ x.font=(wn?'bold ':'')+'16px system-ui'; x.fillStyle=wn?'#ffd54a':(t===null?'#56607f':'#e8ecf7'); x.fillText(nm(t),px+12,py+40+k*22); x.textAlign='right'; x.fillText(done?String(s):'',px+w-12,py+40+k*22); x.textAlign='left'; }); };
+  const rrc=(x,px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
+  const line=(x1,y1,x2,y2)=>{ x.strokeStyle='#34406a'; x.lineWidth=2; x.beginPath(); x.moveTo(x1,y1); x.lineTo((x1+x2)/2,y1); x.lineTo((x1+x2)/2,y2); x.lineTo(x2,y2); x.stroke(); };
+  const W1=260; const qy=[120,250,380,510]; ['q1','q2','q3','q4'].forEach((id,i)=>box(id,60,qy[i],W1));
+  const sy=[185,445]; ['s1','s2'].forEach((id,i)=>box(id,440,sy[i],W1));
+  box('f',820,315,W1); if(d.bronze) box('b',820,560,W1);
+  qy.forEach((y,i)=>line(60+W1,y+37,440,sy[i>>1]+37)); sy.forEach(y=>line(440+W1,y+37,820,315+37));
+  if(d.m.f.w!==null){ x.textAlign='center'; x.fillStyle='#ffd54a'; x.font='bold 26px system-ui'; x.fillText('🏆 '+nm(d.m.f.w),950,270); }
+  x.textAlign='center'; x.fillStyle='#56607f'; x.font='12px system-ui'; x.fillText(new Date().toLocaleString('hu-HU'),600,685);
+  const a=document.createElement('a'); a.download=(d.name||'kupa').replace(/[^\wáéíóöőúüű-]+/gi,'_')+'.png'; a.href=c.toDataURL('image/png'); a.click();
+}
+function cupOpen(){
+  cupLoad(); if(CUP.data){ $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(false); } else { $('cupSetup').style.display='block'; $('cupView').style.display='none'; }
+  show('ovCup');
+}
+function cupSetupInit(){
+  $('btnCupCreate').onclick=()=>{ const teams=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8); while(teams.length<8) teams.push('Csapat '+(teams.length+1)); cupNew($('cupName').value.trim(),teams); cupOpen(); };
+  $('btnCupShuffle').onclick=()=>{ const t=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean); for(let i=t.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [t[i],t[j]]=[t[j],t[i]]; } $('cupTeams').value=t.join('\n'); };
+  $('btnCupNew').onclick=()=>{ if(confirm('Biztos törlöd a kupát, és újat kezdesz?')){ CUP.data=null; try{localStorage.removeItem('kotelek_cup');}catch(e){} cupOpen(); } };
+  $('btnCupLink').onclick=async()=>{ const l=cupLink(); try{ await navigator.clipboard.writeText(l); $('cupMsg').textContent='Link a vágólapon – tedd ki Discordra, bárki megnézheti az állást.'; }catch(e){ $('cupMsg').textContent=l; } };
+  $('btnCupText').onclick=async()=>{ const t=cupText(); try{ await navigator.clipboard.writeText(t); $('cupMsg').textContent='Szöveg a vágólapon – Discordon formázva jelenik meg.'; }catch(e){ $('cupMsg').textContent=t; } };
+  $('btnCupPng').onclick=()=>cupPng();
+  $('btnCupBack').onclick=()=>show('ovMenu');
+  $('btnCupViewBack').onclick=()=>{ location.hash=''; show('ovMenu'); };
+  // megosztott link megnyitása (csak olvasás)
+  if(location.hash.startsWith('#cup=')){ const d=cupDecode(location.hash.slice(5)); if(d){ const keep=CUP.data; CUP.data=d; $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(true); document.querySelectorAll('.cup-host-only').forEach(e=>e.style.display='none'); $('cupRoNote').style.display='block'; $('cupRoBar').style.display='flex'; show('ovCup'); CUP.view=true; } }
 }
 
 // ============================================================
@@ -1262,15 +1597,28 @@ function showRaceDone(){
 // ============================================================
 let PAUSED=false;
 function hideAll(){ document.querySelectorAll('.ov').forEach(o=>o.classList.remove('show')); }
-function show(id){ hideAll(); $(id).classList.add('show'); }
+function show(id){ hideAll(); $(id).classList.add('show'); if(id==='ovMenu') menuStars(); }
 function buildGrid(id,onPick){ const grid=$(id); grid.innerHTML=''; const best=loadBest(); LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.className='w'+(Math.floor(i/WORLD)+1); const bb=best[i]; b.innerHTML=`${i+1}. ${lv.name}<small>${bb?'★'.repeat(bb.stars)+' '+fmt(bb.t):'–'}</small>`; b.onclick=()=>onPick(i); grid.appendChild(b); }); }
 function startGame(L){ PAUSED=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(L); S.tot=0; S.totd=0; hideAll(); }
 function startLocal(L){ cleanupNet(); NET.mode='local'; startGame(L); }
 function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} elhalálozás`; show('ovPause'); } else hideAll(); }
 function showDone(){ $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd} alkalommal kezdtétek újra. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
-function toMenu(){ PAUSED=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; S=null; S2=null; RACE.on=false; if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
+function toMenu(){ PAUSED=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; $('btnDoneMenu').textContent='Főmenü'; S=null; S2=null; RACE.on=false; if(CUP.returning){ CUP.returning=false; broadcast({t:'menu'}); cleanupNet(); NET.mode=null; NET.spectator=false; cupOpen(); return; } if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
 
 $('chkInf').onchange=e=>{ OPT.inf=e.target.checked; };
+document.querySelectorAll('.btnMusic').forEach(b=>b.onclick=()=>{ audioInit(); setMusic(!AUDIO.music); });
+document.querySelectorAll('.btnSfx').forEach(b=>b.onclick=()=>{ audioInit(); setSfx(!AUDIO.sfx); sfx('ui'); });
+updateAudioButtons();
+document.querySelectorAll('button:not(.btnMusic):not(.btnSfx)').forEach(b=>b.addEventListener('click',()=>sfx('ui')));
+function menuStars(){ const b=loadBest(); let st=0,n=0; for(const k in b){ st+=b[k].stars; n++; } $('menuStars').textContent=n?`★ ${st}/${LEVELS.length*3} csillag · ${n} pálya teljesítve`:''; }
+menuStars();
+$('profName').value=PROF.n||''; $('profName').oninput=e=>{ PROF.n=e.target.value.slice(0,14); profSave(); };
+function renderFaces(){ const box=$('faces'); box.innerHTML=''; FACES.forEach((f,i)=>{ const b=document.createElement('button'); b.textContent=f[0]; b.title=f[1]; b.className=i===PROF.f?'sel':''; b.onclick=()=>{ PROF.f=i; profSave(); renderFaces(); }; box.appendChild(b); }); }
+renderFaces();
+$('btnHelp').onclick=()=>show('ovHelp'); $('btnHelp2').onclick=()=>{ show('ovHelp'); $('btnHelpBack').onclick=()=>{ show('ovPause'); $('btnHelpBack').onclick=()=>show('ovMenu'); }; };
+$('btnHelpBack').onclick=()=>show('ovMenu');
+$('btnFull').onclick=()=>{ const el=document.documentElement; if(!document.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen).call(el); } else { document.exitFullscreen(); } setTimeout(fit,300); };
+$('btnShare').onclick=async()=>{ let t; if(RACE.on){ t=`🏁 Kötelék 2v2: ${TEAMNAME[0]} ${RACE.score[0]} : ${RACE.score[1]} ${TEAMNAME[1]}`; } else { const b=loadBest(); let st=0; for(const k in b) st+=b[k].stars; t=`🎉 Végigjátszottuk a Kötelék 40 pályáját! ⏱ ${fmt(S.tot)} · ☠ ${S.totd} újrakezdés · ★ ${st}/${LEVELS.length*3}`; } try{ await navigator.clipboard.writeText(t); $('shareMsg').textContent='Vágólapon – mehet Discordra.'; }catch(e){ $('shareMsg').textContent=t; } };
 $('btnHost').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } hostRoom(); };
 $('btnJoinShow').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } $('joinMsg').textContent=''; show('ovJoin'); setTimeout(()=>$('inCode').focus(),50); };
 $('btnJoin').onclick=()=>{ const c=$('inCode').value.trim().toUpperCase(); if(c.length!==4){ $('joinMsg').textContent='4 betű kell.'; return; } joinRoom(c); };
@@ -1278,13 +1626,14 @@ $('inCode').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnJoin').onc
 $('btnJoinBack').onclick=()=>{ cleanupNet(); show('ovMenu'); };
 $('btnLobbyBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
 $('btnGuestBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
-$('btnStartHost').onclick=()=>{ if(playerCount()===4) startRace(0); else startGame(0); };
+$('btnStartHost').onclick=()=>{ if(CUP.match) startRace(0); else if(playerCount()===4) startRace(0); else startGame(0); };
+$('btnCup').onclick=()=>cupOpen(); $('btnCupBack2').onclick=()=>show('ovMenu'); cupSetupInit();
 $('btnLocal').onclick=()=>{ buildGrid('lvgridLocal',L=>startLocal(L)); show('ovLocal'); };
 $('btnStartLocal').onclick=()=>startLocal(0);
 $('btnLocalBack').onclick=()=>show('ovMenu');
 $('btnResume').onclick=()=>{ PAUSED=false; hideAll(); };
 $('btnRestart').onclick=()=>{ PAUSED=false; if(RACE.on){ raceLevel(S.L); } else { resetLevel(); S.lt=0; } hideAll(); };
-$('btnSkip').onclick=()=>{ PAUSED=false; if(RACE.on){ if(S.L+1<RACE.end) raceLevel(S.L+1); else { RACE.ph='done'; showRaceDone(); } hideAll(); return; } if(S.L+1<LEVELS.length){ const tot=S.tot,totd=S.totd; newState(S.L+1); S.tot=tot; S.totd=totd; hideAll(); } else { S.ph='done'; showDone(); } };
+$('btnSkip').onclick=()=>{ PAUSED=false; if(RACE.on){ if(RACE.idx+1<RACE.list.length){ RACE.idx++; raceLevel(RACE.list[RACE.idx]); } else { RACE.ph='done'; cupAfterMatch(); showRaceDone(); } hideAll(); return; } if(S.L+1<LEVELS.length){ const tot=S.tot,totd=S.totd; newState(S.L+1); S.tot=tot; S.totd=totd; hideAll(); } else { S.ph='done'; showDone(); } };
 $('btnToMenu').onclick=toMenu;
 $('btnLostMenu').onclick=()=>show('ovMenu');
 $('btnDoneMenu').onclick=toMenu;
@@ -1321,8 +1670,7 @@ function loop(now){
       if(NET.mode==='online'&&now-NET.lastSnap>33){ NET.lastSnap=now; sendSnap(); }
     }
   }
-  updateFX(dtR);
-  render(now);
+  if(NET.spectator&&NET.viewTeam===1&&S&&S2){ const t_=S; S=S2; S2=t_; updateFX(dtR); render(now); S2=S; S=t_; } else { updateFX(dtR); render(now); }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

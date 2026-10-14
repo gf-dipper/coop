@@ -26,21 +26,35 @@ Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
 3. A másik: **Csatlakozás kóddal** → beírja → Mehet.
 4. A szoba gazdája látja, hogy a társa csatlakozott, és elindítja (akár a pályaválasztóból is).
 
-- Mozgás: **WASD** vagy **nyilak**.
+- A főmenüben adj meg egy nevet és válassz arcot – ezt látják a többiek a lobbyban és a figurád fölött.
+- Mozgás: **WASD** vagy **nyilak**. **R**: pálya gyors újrakezdése (gazda). A főmenü ❓ Súgója minden pályaelemet elmagyaráz; az új elemek első találkozáskor a pályán is kapnak egy rövid tippet.
 - **Esc** (a szoba gazdájánál): szünet, pálya újra, pálya átugrása, főmenü.
 - A célmezőre **mindkettőtöknek** rá kell állnia, miután minden kristályt összeszedtetek.
 - **A kötelet elvágja** a tüske, az őrjárat és a lézer – mindig ugyanazon az oldalon legyetek, és együtt menjetek át.
 - A kötél nem húzza magával a másikat: aki lemarad, annál elszakad.
+- Zene és hangeffektek a főmenüben (és a szünet menüben) ki-/bekapcsolhatók – a beállítás megmarad a böngészőben. A zene az első kattintás után indul (böngésző-szabály).
 - A legjobb idők a gazda gépén mentődnek (böngésző tároló), a pályaválasztóban látszanak a csillagok.
 
 ### Négyen (2v2 verseny)
 
 1. A gazda szobát nyit, a másik három ugyanazzal a kóddal csatlakozik.
-2. Az első két belépő (gazda + 1. vendég) a **kék csapat**, a másik kettő a **zöld csapat**. Ha nem jó a felosztás, lépjen ki és lépjen be újra, aki cserélne.
+2. A lobbyban mindenki látja a két csapatot, és a saját nevénél lévő gombbal átülhet a másikba (ha tele van, helyet cserél az ottanival). A gazda bárkit átültethet.
 3. A gazda a lobbyban beállítja a verseny hosszát (5 / 10 / 20 / mind a 40 pálya) és indít.
 4. Mindkét páros ugyanazt a pályát futja egyszerre, a saját példányán – az ellenfelet áttetsző szellemként látjátok.
    Aki előbb ér be (mindkét tag a célon, minden kristállyal), pontot kap. **Életek nincsenek**: ha elhaltok, csak ti kezditek elölről a pályát, az ellenfél közben halad.
-5. A verseny végén az összesített pontszám dönt.
+5. A verseny végén az összesített pontszám dönt; az eredmény egy gombbal másolható Discordra.
+
+### Kupa (Discord-bajnokság, 8 csapat)
+
+A főmenü **🏆 Kupa** pontja a szervezőnek való:
+
+1. Beírod a kupa nevét és a 8 csapatnevet (soronként egy; a sorrend a seedelés, a 🎲 Sorsolás keveri) → **Bracket létrehozása**. Negyeddöntők és elődöntők *first to 3*, a döntő *first to 5*, van bronzmeccs. Minden körnek fix pályakészlete van, így a párhuzamos meccsek ugyanazokon a pályákon mennek.
+2. Egy meccsnél **▶ Indítás** → a játék szobát nyit a két csapat nevével, te **nézőként hostolsz** (nem játszol). A kódot kiteszed Discordra, a 4 játékos belép, mindenki a saját csapatát választja, te indítod a meccset. Játék közben a **Tab** a másik csapat nézetére vált.
+3. A meccs végén az eredmény magától bekerül a bracketbe, a győztes továbblép (a vesztes elődöntős a bronzmeccsbe). Ha valami elcsúszik: **kézi** eredmény vagy **visszavonás**.
+4. **🔗 Link másolása**: a bracket teljes állása benne van a linkben – kiteszed Discordra, bárki megnyitja és látja (csak olvasás). **💬 Discord-szöveg**: formázott összefoglaló a csatornába. **🖼 Kép letöltése**: PNG bracket.
+5. A kupa a szervező böngészőjében mentődik, bezárás után is megvan.
+
+Tipp a lebonyolításhoz: egy szervező egyszerre egy meccset tud hostolni, tehát a 4 negyeddöntő egymás után megy (kb. 10–15 perc egy meccs). Ha két szervező van, mindkettő a saját gépén futtathatja a saját meccseit, és a kézi eredmény-rögzítéssel kerül össze a bracket.
 
 ## Pályaelemek
 
