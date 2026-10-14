@@ -19,7 +19,7 @@ Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
 
 ## Így játsszatok
 
-### Ketten (coop)
+### Ketten (páros játék)
 
 1. Mindketten nyissátok meg a linket (asztali böngésző, Chrome/Edge/Firefox).
 2. Az egyikőtök: **Szoba létrehozása** → kap egy 4 betűs kódot → elküldi a másiknak.
@@ -48,7 +48,7 @@ Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
 
 A főmenü **🏆 Kupa** pontja a szervezőnek való:
 
-1. Beírod a kupa nevét és a 8 csapatnevet (soronként egy; a sorrend a seedelés, a 🎲 Sorsolás keveri) → **Bracket létrehozása**. Negyeddöntők és elődöntők *first to 3*, a döntő *first to 5*, van bronzmeccs. Minden körnek fix pályakészlete van, így a párhuzamos meccsek ugyanazokon a pályákon mennek.
+1. Beírod a kupa nevét és a 8 csapatnevet (soronként egy; a sorrend a seedelés, a 🎲 Sorsolás keveri) → **Kupa létrehozása**. Negyeddöntők és elődöntők 3 nyert pályáig, a döntő 5-ig, van bronzmeccs. Minden körnek fix pályakészlete van, így a párhuzamos meccsek ugyanazokon a pályákon mennek.
 2. Egy meccsnél **▶ Indítás** → a játék szobát nyit a két csapat nevével, te **nézőként hostolsz** (nem játszol). A kódot kiteszed Discordra, a 4 játékos belép, mindenki a saját csapatát választja, te indítod a meccset. Játék közben a **Tab** a másik csapat nézetére vált.
 3. A meccs végén az eredmény magától bekerül a bracketbe, a győztes továbblép (a vesztes elődöntős a bronzmeccsbe). Ha valami elcsúszik: **kézi** eredmény vagy **visszavonás**.
 4. **🔗 Link másolása**: a bracket teljes állása benne van a linkben – kiteszed Discordra, bárki megnyitja és látja (csak olvasás). **💬 Discord-szöveg**: formázott összefoglaló a csatornába. **🖼 Kép letöltése**: PNG bracket.

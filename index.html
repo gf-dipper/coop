@@ -32,10 +32,14 @@
   .bar{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:6px}
   .bar button{padding:8px 14px;font-size:13px;border-radius:20px;background:rgba(20,26,43,.9)}
   .bar button.off{color:var(--mut);border-style:dashed}
+  .vol{display:inline-flex;align-items:center;gap:6px;background:rgba(20,26,43,.9);border:1px solid #334066;border-radius:20px;padding:4px 12px 4px 6px}
+  .vol button{margin:0;padding:4px 8px;border-radius:14px;font-size:13px;border:none;background:transparent}
+  .vol input[type=range]{width:90px;padding:0;margin:0;background:transparent;border:none;letter-spacing:0;accent-color:#4cc3ff;height:18px}
+  .vol span{font-size:11px;color:var(--mut);min-width:28px;text-align:right}
   .bar label{color:var(--mut);font-size:13px;background:rgba(20,26,43,.9);border:1px solid #334066;border-radius:20px;padding:8px 14px;cursor:pointer}
   .stars2{color:#ffd54a;font-size:13px}
   .prof{display:flex;gap:10px;justify-content:center;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
-  .prof input{width:170px;letter-spacing:0;text-transform:none;font-size:15px;padding:8px 12px;font-family:inherit;text-align:left}
+  .prof input{width:230px;letter-spacing:0;text-transform:none;font-size:15px;padding:8px 12px;font-family:inherit;text-align:left}
   .faces{display:flex;gap:4px}
   .faces button{margin:0;padding:4px 8px;font-size:18px;border-radius:10px;line-height:1}
   .faces button.sel{border-color:#4cc3ff;background:#1f3a66}
@@ -104,17 +108,17 @@
     <h1 class="logo">KÖTELÉK</h1>
     <p class="tag2">két játékos · egy energiakötél · 40 pálya</p>
     <div class="cards">
-      <button class="card pri" id="btnHost"><span class="ic">🌐</span><b>Szoba létrehozása</b><span>Kapsz egy 4 betűs kódot. Ketten coop, négyen 2v2 verseny – a lobbyban választotok csapatot.</span></button>
+      <button class="card pri" id="btnHost"><span class="ic">🌐</span><b>Szoba létrehozása</b><span>Kapsz egy 4 betűs kódot. Ketten páros játék, négyen 2v2 verseny – a szobában választotok csapatot.</span></button>
       <button class="card" id="btnJoinShow"><span class="ic">🔑</span><b>Csatlakozás kóddal</b><span>Írd be a társad kódját, és már bent is vagy a szobában.</span></button>
       <button class="card" id="btnLocal"><span class="ic">🎮</span><b>Egy gépen</b><span>Kék: WASD · Narancs: nyilak. Gyors próbának vagy kanapéról.</span></button>
-      <button class="card" id="btnCup"><span class="ic">🏆</span><b>Kupa</b><span>8 csapatos bracket szervezőknek. Te hostolod a meccseket nézőként, az eredmény magától könyvelődik.</span></button>
+      <button class="card" id="btnCup"><span class="ic">🏆</span><b>Kupa</b><span>8 csapatos kieséses kupa szervezőknek. Te futtatod a meccseket nézőként, az eredmény magától beíródik.</span></button>
     </div>
-    <div class="prof"><span class="mut">👤</span><input id="profName" maxlength="14" placeholder="A neved (ezt látják a többiek)"><div class="faces" id="faces"></div></div>
+    <div class="prof"><span class="mut">👤</span><input id="profName" maxlength="14" placeholder="A neved – ezt látják a többiek"><div class="faces" id="faces"></div></div>
     <div class="bar">
       <button id="btnHelp">❓ Súgó</button>
       <button id="btnFull">⛶ Teljes képernyő</button>
-      <button class="btnMusic">♫ Zene: BE</button>
-      <button class="btnSfx">🔊 Hangok: BE</button>
+      <div class="vol"><button class="btnMusic" title="Zene némítása">♫</button><input type="range" class="volMusic" min="0" max="100" step="1"><span class="volMusicV"></span></div>
+      <div class="vol"><button class="btnSfx" title="Hangok némítása">🔊</button><input type="range" class="volSfx" min="0" max="100" step="1"><span class="volSfxV"></span></div>
       <label><input type="checkbox" id="chkInf" style="width:auto;letter-spacing:0;transform:scale(1.15);margin-right:6px;vertical-align:-2px">Végtelen élet</label>
       <span class="stars2" id="menuStars"></span>
     </div>
@@ -135,14 +139,14 @@
   <div class="ov" id="ovLobby"><div class="box">
     <h2>A te szobád kódja</h2>
     <div class="code" id="codeShow">----</div>
-    <p class="mut">Küldd el a társaidnak – ők a „Csatlakozás kóddal” gombnál írják be.<br>Ketten: coop. Négyen: <b>2v2 verseny</b> – a csapatokat itt lent bárki átrendezheti.</p>
+    <p class="mut">Küldd el a társaidnak – ők a „Csatlakozás kóddal” gombnál írják be.<br>Ketten: páros játék. Négyen: <b>2v2 verseny</b> – a csapatokat itt lent bárki átrendezheti.</p>
     <p id="lobbyCup" style="display:none"></p>
     <p id="lobbyMsg">Szoba nyitása…</p>
     <div id="hostTeams"></div>
     <p class="mut" id="lobbyHint"></p>
     <div id="lobbyStart" style="display:none">
       <div id="raceOpts" style="display:none" class="mut">Verseny hossza: <select id="selRounds" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="5">5 pálya</option><option value="10" selected>10 pálya</option><option value="20">20 pálya</option><option value="40">az összes</option></select></div>
-      <p class="mut" id="lobbyLvHint">Hol kezdjétek? (coopban a legjobb időitek megmaradnak ezen a gépen)</p>
+      <p class="mut" id="lobbyLvHint">Honnan induljatok? (páros módban a legjobb időitek megmaradnak ezen a gépen)</p>
       <div class="lvgrid" id="lvgridHost"></div>
       <button class="pri" id="btnStartHost">Indítás az 1. pályától</button>
     </div>
@@ -152,7 +156,7 @@
   <!-- Vendég várakozás -->
   <div class="ov" id="ovGuestWait"><div class="box">
     <h2>Csatlakozva!</h2>
-    <p class="sub" id="guestWho">Csatlakozva. Várunk a többiekre…</p><div id="guestTeams"></div><p class="mut">A nyilakkal átülhetsz a másik csapatba. A játékot a gazda indítja.</p>
+    <p class="sub" id="guestWho">Csatlakozva. Várunk a többiekre…</p><div id="guestTeams"></div><p class="mut">A → gombbal átülhetsz a másik csapatba. A játékot a szoba gazdája indítja.</p>
     <button id="btnGuestBack">Kilépés</button>
   </div></div>
 
@@ -170,35 +174,35 @@
     <p class="mut" id="pauseInfo"></p>
     <div class="row">
       <button class="pri" id="btnResume">Folytatás</button>
-      <button id="btnRestart">Pálya újra</button>
+      <button id="btnRestart">Pálya elölről</button>
       <button id="btnSkip">Pálya átugrása</button>
       <button id="btnToMenu">Főmenü</button>
       <button id="btnHelp2">❓ Súgó</button>
     </div>
-    <div class="bar" style="margin-top:12px"><button class="btnMusic">♫ Zene: BE</button><button class="btnSfx">🔊 Hangok: BE</button></div>
+    <div class="bar" style="margin-top:12px"><div class="vol"><button class="btnMusic" title="Zene némítása">♫</button><input type="range" class="volMusic" min="0" max="100" step="1"><span class="volMusicV"></span></div><div class="vol"><button class="btnSfx" title="Hangok némítása">🔊</button><input type="range" class="volSfx" min="0" max="100" step="1"><span class="volSfxV"></span></div></div>
   </div></div>
 
   <!-- Vendég szünet -->
-  <div class="ov" id="ovPauseGuest"><div class="box"><h2>Szünet</h2><p class="sub">A társad megállította a játékot.</p></div></div>
+  <div class="ov" id="ovPauseGuest"><div class="box"><h2>Szünet</h2><p class="sub">A szoba gazdája megállította a játékot.</p></div></div>
 
   <!-- Kapcsolat megszakadt -->
-  <div class="ov" id="ovLost"><div class="box"><h2 class="err">A kapcsolat megszakadt</h2><p class="sub">A társad kilépett vagy elment a net. Csináljatok új szobát.</p><button class="pri" id="btnLostMenu">Főmenü</button></div></div>
+  <div class="ov" id="ovLost"><div class="box"><h2 class="err">A kapcsolat megszakadt</h2><p class="sub">Valaki kilépett, vagy elment a net. Nyissatok új szobát.</p><button class="pri" id="btnLostMenu">Főmenü</button></div></div>
 
   <!-- KUPA -->
   <div class="ov" id="ovCup"><div class="box" style="max-width:960px;width:940px">
     <div id="cupSetup" style="display:none">
       <h2>🏆 Új kupa</h2>
-      <p class="sub">8 csapat, egyenes kiesés: negyeddöntők és elődöntők first to 3, döntő first to 5, bronzmeccs. Minden körnek saját pályakészlete van, így a párhuzamos meccsek is ugyanazokon a pályákon mennek.</p>
+      <p class="sub">8 csapat, egyenes kieséses rendszer: a negyeddöntők és az elődöntők 3 nyert pályáig, a döntő 5-ig megy, és van bronzmeccs is. Minden körnek saját pályakészlete van, így minden meccs ugyanazokon a pályákon dől el.</p>
       <div class="row" style="align-items:flex-start;gap:24px">
-        <div style="text-align:left"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" style="margin:12px 0 4px">Csapatok (soronként egy, 8 db – a sorrend a seedelés: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…"></textarea></div>
-        <div style="text-align:left;max-width:300px" class="mut"><b style="color:var(--txt)">Hogyan megy?</b><br>1. Létrehozod a bracketet.<br>2. Egy meccsnél „Indítás” → kapsz szobakódot, kiteszed Discordra.<br>3. A 4 játékos belép, a saját csapatát választja, te indítod a versenyt, és nézőként figyeled (Tab: a másik csapat nézete).<br>4. A meccs végén az eredmény magától bekerül a bracketbe.<br>5. „Link másolása” → kiteszed, mindenki látja az állást.</div>
+        <div style="text-align:left"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" style="margin:12px 0 4px">Csapatok (soronként egy, 8 db – a sorrend adja a párokat: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…"></textarea></div>
+        <div style="text-align:left;max-width:300px" class="mut"><b style="color:var(--txt)">Hogyan megy?</b><br>1. Létrehozod a kupát.<br>2. Egy meccsnél „Indítás” → kapsz egy szobakódot, kiteszed Discordra.<br>3. A 4 játékos belép, mindenki a saját csapatát választja, te indítod a meccset, és nézőként figyeled (Tab: a másik csapat nézete).<br>4. A meccs végén az eredmény magától bekerül a táblába.<br>5. „Link másolása” → kiteszed, és mindenki látja az állást.</div>
       </div>
-      <div class="row" style="margin-top:14px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Bracket létrehozása</button><button id="btnCupBack">Vissza</button></div>
+      <div class="row" style="margin-top:14px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Kupa létrehozása</button><button id="btnCupBack">Vissza</button></div>
     </div>
     <div id="cupView" style="display:none">
       <h2 id="cupTitle" style="margin-bottom:2px">Kupa</h2>
       <p id="cupChampion" class="sub" style="margin-bottom:10px"></p>
-      <p class="mut" id="cupRoNote" style="display:none">Ez a bracket megosztott, csak olvasható nézete.</p>
+      <p class="mut" id="cupRoNote" style="display:none">Ez a kupa megosztott, csak olvasható nézete.</p>
       <div class="brk" id="cupBracket"></div>
       <div id="cupManual" style="display:none;margin-top:12px;background:#0b0f1a;border:1px solid #334066;border-radius:12px;padding:12px"></div>
       <p class="mut" id="cupMsg" style="margin:10px 0 4px"></p>
@@ -239,7 +243,7 @@
     <button class="pri" id="btnDoneMenu">Főmenü</button>
   </div></div>
 
-  <div id="hint">Tipp: ha egy pálya nagyon nem megy, <kbd>Esc</kbd> → „Pálya átugrása”. Ma este a lényeg, hogy jó legyen.</div>
+  <div id="hint">Tipp: ha egy pálya nagyon nem megy, <kbd>Esc</kbd> → „Pálya átugrása”. A lényeg, hogy jó legyen a hangulat.</div>
 </div>
 </div>
 
@@ -271,7 +275,7 @@ const LEVELS = [
 #.........h........#####
 #....h.......h.........#
 ########################`},
-{name:'Egy nyomon', tip:'Egy széles rés – egymás után, de a kötél nem érhet a tüskéhez.', par:60, map:`
+{name:'Egy nyomon', tip:'Egy cella széles rések – egymás után, de a kötél nem érhet a tüskékhez.', par:60, map:`
 ########################
 #1..#....#....#....#...#
 #2..#....#....#....#...#
@@ -287,7 +291,7 @@ const LEVELS = [
 #...#....#....#....#.EE#
 #...#....#....#....#...#
 ########################`},
-{name:'Inga', tip:'Az őrjáratok ritmusra járnak. Számoljátok ki, mikor szabad az út.', par:60, map:`
+{name:'Inga', tip:'Az őrjáratok ritmusra járnak. Figyeljétek ki, mikor szabad az út.', par:60, map:`
 ########################
 #1...#.......#.........#
 #2...#.......#.........#
@@ -335,7 +339,7 @@ const LEVELS = [
 #...h....h....h....h.EE#
 #........h....h....h.EE#
 ########################`, mov:[{t:'p',path:[[1,5],[22,5]],s:7},{t:'p',path:[[22,10],[1,10]],s:7}]},
-{name:'Kereszttűz', tip:'Őrjáratok két irányból. Az egyikőtök a másik szeme.', par:80, map:`
+{name:'Kereszttűz', tip:'Őrjáratok két irányból. Az egyikőtök figyeljen, a másik menjen.', par:80, map:`
 ########################
 #......................#
 #......................#
@@ -367,7 +371,7 @@ const LEVELS = [
 #.###################..#
 #....................EE#
 ########################`, mov:[{t:'p',path:[[9,1],[9,8]],s:6},{t:'p',path:[[11,8],[11,1]],s:6},{t:'p',path:[[14,10],[2,10]],s:7},{t:'p',path:[[19,1],[19,11]],s:7},{t:'p',path:[[21,11],[21,1]],s:5},{t:'p',path:[[2,13],[20,13]],s:8}]},
-{name:'Őrség', tip:'Világzáró. Mindent egyszerre – és a kötélre is figyelni.', par:120, map:`
+{name:'Őrség', tip:'Világzáró pálya. Minden egyszerre jön – és a kötélre is figyelni kell.', par:120, map:`
 ########################
 #1..h...............h..#
 #2..h...............h..#
@@ -385,7 +389,7 @@ const LEVELS = [
 ########################`, mov:[{t:'p',path:[[6,1],[6,13]],s:6},{t:'p',path:[[10,13],[10,1]],s:6},{t:'p',path:[[14,1],[14,13]],s:7},{t:'p',path:[[18,10],[18,1]],s:7},{t:'p',path:[[1,6],[22,6]],s:8},{t:'p',path:[[22,8],[1,8]],s:8}]},
 
 // ---------- 2. VILÁG: GÉPEZET ----------
-{name:'Nyomólap', tip:'Aki a lapon áll, nyitva tartja az ajtót. A túloldalon is van lap.', par:60, rope:175, map:`
+{name:'Nyomólap', tip:'Aki a lapon áll, nyitva tartja az ajtót. A túloldalon is van egy lap.', par:60, rope:175, map:`
 ########################
 #..........#...........#
 #..........#...........#
@@ -449,7 +453,7 @@ const LEVELS = [
 #.....#......#.........#
 #.....########.........#
 ########################`, mov:[{t:'p',path:[[6,2],[13,2]],s:6},{t:'p',path:[[13,6],[6,6]],s:6},{t:'p',path:[[13,7],[1,7]],s:6},{t:'p',path:[[14,8],[14,13]],s:5},{t:'p',path:[[22,1],[22,13]],s:6},{t:'p',path:[[16,8],[16,12]],s:5},{t:'p',path:[[20,12],[15,12]],s:5}]},
-{name:'Időzített', tip:'A gomb 4,5 másodpercre nyitja az ajtót. Nyomás, és rohanás!', par:70, map:`
+{name:'Időzített', tip:'A gomb 4,5 másodpercre nyitja az ajtót. Nyomd meg, és rohanjatok!', par:70, map:`
 ########################
 #..............#.......#
 #..1...........#.......#
@@ -497,7 +501,7 @@ const LEVELS = [
 #.......#...........EE.#
 #.......#..............#
 ########################`, mov:[{t:'p',path:[[11,1],[11,13]],s:6},{t:'p',path:[[16,13],[16,1]],s:6},{t:'p',path:[[20,1],[20,9]],s:7},{t:'p',path:[[9,4],[22,4]],s:6}]},
-{name:'Gépház', tip:'Világzáró: kulcs, gomb, lapok. Tervezzetek, aztán tempó.', par:150, map:`
+{name:'Gépház', tip:'Világzáró pálya: kulcs, gomb, lapok. Előbb tervezzetek, aztán tempó.', par:150, map:`
 ########################
 #..1.........#.........#
 #............#....*....#
@@ -579,7 +583,7 @@ const LEVELS = [
 #......h......h......#.#
 #......h......h......#E#
 ########################`, mov:[{t:'t',c:[20,5],rate:1.1,s:280},{t:'t',c:[2,10],rate:1.2,s:280,ph:0.6},{t:'p',path:[[1,4],[22,4]],s:7},{t:'p',path:[[22,9],[1,9]],s:7},{t:'p',path:[[12,5],[12,10]],s:5}]},
-{name:'Óramű', tip:'Két lézer, két lap. Aki tart, az nem tud elugrani – időzítsetek.', par:110, rope:170, map:`
+{name:'Óramű', tip:'Két lézer, két lap. Aki a lapon áll, nem tud elugrani – időzítsetek.', par:110, rope:170, map:`
 ########################
 #............#.........#
 #..1.........#.........#
@@ -627,7 +631,7 @@ const LEVELS = [
 #......................#
 #......................#
 ########################`, mov:[{t:'l',c:[6,7],len:4,s:80,a0:0,arms:2},{t:'l',c:[11,7],len:4,s:-80,a0:90,arms:2},{t:'l',c:[16,7],len:4,s:80,a0:45,arms:2},{t:'p',path:[[1,2],[22,2]],s:7},{t:'p',path:[[22,12],[1,12]],s:7}]},
-{name:'Aréna', tip:'Világzáró. Minden, ami veszélyes – egy helyen.', par:150, map:`
+{name:'Aréna', tip:'Világzáró pálya. Minden, ami veszélyes – egy helyen.', par:150, map:`
 ########################
 #......................#
 #......................#
@@ -757,7 +761,7 @@ const LEVELS = [
 #......#...........#####
 #......#...............#
 ########################`, mov:[{t:'p',path:[[16,1],[16,7]],s:6},{t:'l',c:[20,4],len:3,s:80,a0:0},{t:'p',path:[[3,7],[3,13]],s:5},{t:'p',path:[[9,7],[9,13]],s:6},{t:'p',path:[[12,13],[12,7]],s:6},{t:'p',path:[[15,8],[22,8]],s:6}]},
-{name:'Nagy gépház', tip:'Világzáró. Lap, gomb, törékeny padló – és rövid kötél.', par:180, rope:130, map:`
+{name:'Nagy gépház', tip:'Világzáró pálya. Lap, gomb, törékeny padló – és rövid kötél.', par:180, rope:130, map:`
 ########################
 #..1......#............#
 #.........#......*.....#
@@ -807,7 +811,7 @@ const LEVELS = [
 ########################
 ########################
 ########################`, mov:[{t:'p',path:[[5,1],[5,3]],s:4},{t:'p',path:[[12,3],[12,1]],s:4},{t:'p',path:[[19,1],[19,3]],s:5},{t:'p',path:[[6,7],[6,5]],s:4},{t:'p',path:[[10,5],[10,7]],s:4},{t:'p',path:[[17,7],[17,5]],s:5},{t:'p',path:[[20,5],[20,7]],s:3}]},
-{name:'Lézerkert', tip:'Négy lézer, két löveg. Mozgásban maradni.', par:140, map:`
+{name:'Lézerkert', tip:'Négy lézer, két löveg. Maradjatok mozgásban.', par:140, map:`
 ########################
 #......................#
 #......................#
@@ -1132,7 +1136,7 @@ function drawFace(x,y,f,col,ex,ey){
 }
 function drawGhosts(){ const ot=1-myTeam(); const a=S2.p[0],b=S2.p[1]; ctx.save(); ctx.globalAlpha=.32; ctx.strokeStyle=TEAMCOL[ot][0]; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.setLineDash([]);
   for(let i=0;i<2;i++){ const p=S2.p[i]; ctx.fillStyle=TEAMCOL[ot][i]; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
-  ctx.restore(); if(S2.ph==='fail'){ ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle=TEAMCOL[ot][0]; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('↻ ellenfél elölről', (a.x+b.x)/2, (a.y+b.y)/2-24); ctx.restore(); } }
+  ctx.restore(); if(S2.ph==='fail'){ ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle=TEAMCOL[ot][0]; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('↻ az ellenfél elölről kezd', (a.x+b.x)/2, (a.y+b.y)/2-24); ctx.restore(); } }
 function raceOverlay(){ const me=myTeam(); ctx.textAlign='center';
   if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); }
   if(RACE.ph==='point'){ const win=RACE.winner===me&&!NET.spectator; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(NET.spectator?`${TEAMNAME[RACE.winner]} ért be előbb!`:win?'Pont nektek!':`${TEAMNAME[RACE.winner]} ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${RACE.idx+1<RACE.list.length&&!(RACE.target&&Math.max(...RACE.score)>=RACE.target)?'   ·   következő: '+LEVELS[RACE.list[RACE.idx+1]||0].name:''}`,W/2,H/2+54); } }
@@ -1230,15 +1234,15 @@ function render(now){
   const gemsLeft=S.gems.filter(x=>!x).length;
   if(RACE.on){ ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
     // eredmény
-    const me=myTeam(); const parts=[[TEAMNAME[0].toUpperCase()+' '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' '+TEAMNAME[1].toUpperCase(),TEAMCOL[1][0],'bold 15px system-ui'],[`     ${RACE.target?'first to '+RACE.target+'  ·  ':''}${RACE.idx+1}. pálya   ·   ${NET.spectator?'nézed: '+TEAMNAME[me]+' (Tab: váltás)':'te: '+TEAMNAME[me]}`,'#8b94b3','13px system-ui']];
+    const me=myTeam(); const parts=[[TEAMNAME[0].toUpperCase()+' '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' '+TEAMNAME[1].toUpperCase(),TEAMCOL[1][0],'bold 15px system-ui'],[`     ${RACE.target?RACE.target+' nyert pályáig  ·  ':''}${RACE.idx+1}. pálya   ·   ${NET.spectator?'nézed: '+TEAMNAME[me]+' (Tab: váltás)':'te: '+TEAMNAME[me]}`,'#8b94b3','13px system-ui']];
     let tw=0; for(const q of parts){ ctx.font=q[2]; tw+=ctx.measureText(q[0]).width; } let xx=W/2-tw/2; ctx.textAlign='left'; for(const q of parts){ ctx.font=q[2]; ctx.fillStyle=q[1]; ctx.fillText(q[0],xx,29); xx+=ctx.measureText(q[0]).width; }
   } else ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
   if(RACE.on) raceOverlay();
   // új elem tipp
   if(FX.banner&&S.ph==='play'){ const a=Math.min(1,FX.banner.t/0.5,(7-FX.banner.t)/0.4); ctx.save(); ctx.globalAlpha=a; const items=FX.banner.items; const bw=Math.min(620,180+items.length*230), bx=W/2-bw/2, by=48; ctx.fillStyle='rgba(8,11,20,.9)'; rr(bx,by,bw,items.length>1?58:40,10); ctx.fill(); ctx.strokeStyle='rgba(255,213,74,.5)'; ctx.lineWidth=1; rr(bx+.5,by+.5,bw-1,(items.length>1?58:40)-1,10); ctx.stroke(); ctx.textAlign='left'; items.forEach((k,i)=>{ const [tt,tx]=ELEM_TIPS[k]; ctx.font='bold 13px system-ui'; const lw=ctx.measureText('ÚJ: '+tt).width; ctx.fillStyle='#ffd54a'; ctx.fillText('ÚJ: '+tt,bx+14,by+18+i*20); ctx.fillStyle='#e8ecf7'; ctx.font='12px system-ui'; ctx.fillText(tx,bx+14+lw+8,by+18+i*20); }); ctx.restore(); }
   // overlay
-  if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füst.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
-  if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag: ${lv.par} mp alatt)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
+  if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füstölsz.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
+  if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag ${lv.par} mp alatt jár)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
 }
 
 // ============================================================
@@ -1273,15 +1277,15 @@ function freeSeatIn(team){ for(const i of [team*2,team*2+1]) if(!NET.seats[i]) r
 function moveToTeam(seat,team){ if(seat<0||!NET.seats[seat]) return false; if((seat>>1)===team) return false; let f=freeSeatIn(team); if(f<0){ f=seat^2; const tmp=NET.seats[f]; NET.seats[f]=NET.seats[seat]; NET.seats[seat]=tmp; if(seat===NET.seat) NET.seat=f; else if(f===NET.seat) NET.seat=seat; return true; } NET.seats[f]=NET.seats[seat]; NET.seats[seat]=null; if(seat===NET.seat) NET.seat=f; return true; }
 function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx),names:TEAMNAME,cup:!!CUP.match}); }catch(e){} } }); }
 function teamsHtml(isHost){
-  const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">'; if(isHost&&NET.spectator) h='<p class="mut" style="margin:0">Nézőként hostolsz – nem játszol, csak futtatod a meccset.</p>'+h;
+  const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">'; if(isHost&&NET.spectator) h='<p class="mut" style="margin:0">Néző vagy – nem játszol, csak futtatod a meccset.</p>'+h;
   for(let t=0;t<2;t++){ const col=TEAMCOL[t][0]; h+=`<div style="flex:1;min-width:200px;background:#0b0f1a;border:1px solid ${col}55;border-radius:12px;padding:10px"><div style="color:${col};font-weight:700;margin-bottom:6px">${esc(TEAMNAME[t].toUpperCase())}${CUP.match||TEAMNAME[t]!==['Kék','Zöld'][t]?'':' CSAPAT'}</div>`;
     for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${FACES[sp.f|0][0]} ${esc(sp.n)}${me?' (te)':''}</span>${(isHost||me)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
     h+='</div>'; }
-  h+='</div>'; if(n>=3&&n<4) h+='<p class="mut">Hárman: vagy jöjjön még egy fő, vagy lépjen ki egy, és ketten coopot játszhattok.</p>';
+  h+='</div>'; if(n>=3&&n<4) h+='<p class="mut">Hárman vagytok: vagy jöjjön még egy fő, vagy lépjen ki valaki, és ketten párosban játszhattok.</p>';
   if(n===2&&(NET.seats[0]&&NET.seats[1]||NET.seats[2]&&NET.seats[3])===false) h+='';
   return h; }
 function bindTeamButtons(root,isHost){ root.querySelectorAll('button.mv').forEach(b=>{ b.onclick=()=>{ const seat=+b.dataset.seat, team=+b.dataset.team; if(isHost){ if(moveToTeam(seat,team)){ updateLobby(); sendLobby(); } } else { const c=conn0(); if(c&&c.open) c.send({t:'team',team}); } }; }); }
-function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>${CUP.match||TEAMNAME[0]!=='Kék'?'kupameccs':'2v2 verseny'}</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>coop</b> jön. Várunk, hogy a gazda indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
+function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>${CUP.match||TEAMNAME[0]!=='Kék'?'kupameccs':'2v2 verseny'}</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>páros játék</b> jön. Várunk, hogy a szoba gazdája indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
 function PCOL(pi){ return TEAMCOL[myTeam()][pi]; }
 function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
 function peerId(code){ return 'kotelek-v1-'+code.toUpperCase(); }
@@ -1294,12 +1298,12 @@ function updateLobby(){
   const n=playerCount();
   let html='';
   if(n===1){ html='Várakozás a társakra…'; }
-  else if(n===2){ html='<b style="color:var(--ok)">Ketten vagytok.</b> Indíthatod a coopot – vagy várjatok még kettőre a 2v2-höz.'; }
+  else if(n===2){ html='<b style="color:var(--ok)">Ketten vagytok.</b> Indíthatod a páros játékot – vagy várjatok még két főre a 2v2-höz.'; }
   else if(n===3){ html='<b>Hárman vagytok.</b> Még egy fő kell a 2v2-höz.'; }
   else { html='<b style="color:var(--ok)">Mind a négyen itt vagytok!</b> Indulhat a 2v2 verseny – aki előbb beér, pontot kap, életek nincsenek.'; }
   $('lobbyMsg').innerHTML=html; const tb=$('hostTeams'); tb.innerHTML=teamsHtml(true); bindTeamButtons(tb,true);
   $('lobbyStart').style.display=((n===2&&!NET.spectator)||n===4)?'block':'none';
-  $('btnStartHost').textContent=CUP.match?'Kupameccs indítása':(n===4?'2v2 verseny indítása az 1. pályától':'Coop indítása az 1. pályától');
+  $('btnStartHost').textContent=CUP.match?'Kupameccs indítása':(n===4?'2v2 verseny indítása az 1. pályától':'Páros játék indítása az 1. pályától');
   $('lvgridHost').style.display=CUP.match?'none':'grid'; $('lobbyLvHint').style.display=CUP.match?'none':'block';
   $('raceOpts').style.display=(n===4&&!CUP.match)?'block':'none';
   $('lobbyHint').textContent='';
@@ -1327,7 +1331,7 @@ function joinRoom(code){
   const peer=newPeer(undefined); NET.peer=peer;
   peer.on('open',()=>{
     const conn=peer.connect(peerId(code),{reliable:true}); NET.conns=[conn];
-    const to=setTimeout(()=>{ if(!conn.open){ $('joinMsg').innerHTML='<span class="err">Nem találom a szobát.</span> Jó a kód? A társadnál nyitva van a lobby?'; } },8000);
+    const to=setTimeout(()=>{ if(!conn.open){ $('joinMsg').innerHTML='<span class="err">Nem találom a szobát.</span> Jó a kód? A szoba gazdájánál nyitva van még a szoba?'; } },8000);
     conn.on('open',()=>{ clearTimeout(to); conn.send({t:'hello',n:myName(),f:PROF.f}); show('ovGuestWait'); pingLoop(); });
     conn.on('data',d=>{
       if(d.t==='s'){ applySnap(d); }
@@ -1401,7 +1405,7 @@ function raceUpdate(dt,bitsA,bitsB){
 }
 function showRaceDone(){
   const [a,b]=RACE.score; const w=a===b?'Döntetlen!':(a>b?`${TEAMNAME[0]} nyert!`:`${TEAMNAME[1]} nyert!`);
-  $('doneTime').textContent=`${w}  ${a} : ${b}`; const dA=(myTeam()===0?S:S2)||S, dB=(myTeam()===0?S2:S)||S2; $('doneDeaths').textContent=`Újrakezdések – ${TEAMNAME[0]}: ${(myTeam()===0?dA:dB)?.totd??'?'} · ${TEAMNAME[1]}: ${(myTeam()===0?dB:dA)?.totd??'?'}. `+(CUP.returning?'Az eredmény bekerült a bracketbe.':(a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.'));
+  $('doneTime').textContent=`${w}  ${a} : ${b}`; const dA=(myTeam()===0?S:S2)||S, dB=(myTeam()===0?S2:S)||S2; $('doneDeaths').textContent=`Újrakezdések – ${TEAMNAME[0]}: ${(myTeam()===0?dA:dB)?.totd??'?'} · ${TEAMNAME[1]}: ${(myTeam()===0?dB:dA)?.totd??'?'}. `+(CUP.returning?'Az eredmény bekerült a kupatáblába.':(a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.'));
   $('btnDoneMenu').textContent=CUP.returning?'Vissza a kupához':'Főmenü';
   $('ovDone').querySelector('h2').textContent='🏁 Vége a versenynek'; show('ovDone');
 }
@@ -1409,9 +1413,11 @@ function showRaceDone(){
 // ============================================================
 //  HANG (procedurális zene + effektek, Web Audio)
 // ============================================================
-const AUDIO={ctx:null,master:null,musicGain:null,sfxGain:null,music:true,sfx:true,started:false,next:0,step:0,timer:null,rev:null,lp:null};
-try{ const sv=JSON.parse(localStorage.getItem('kotelek_audio')||'{}'); if(sv.music===false) AUDIO.music=false; if(sv.sfx===false) AUDIO.sfx=false; }catch(e){}
-function audioSave(){ try{ localStorage.setItem('kotelek_audio',JSON.stringify({music:AUDIO.music,sfx:AUDIO.sfx})); }catch(e){} }
+const AUDIO={ctx:null,master:null,musicGain:null,sfxGain:null,music:true,sfx:true,mv:60,sv:70,started:false,next:0,step:0,timer:null,rev:null,lp:null};
+try{ const sv=JSON.parse(localStorage.getItem('kotelek_audio')||'{}'); if(sv.music===false) AUDIO.music=false; if(sv.sfx===false) AUDIO.sfx=false; if(typeof sv.mv==='number') AUDIO.mv=sv.mv; if(typeof sv.sv==='number') AUDIO.sv=sv.sv; }catch(e){}
+function audioSave(){ try{ localStorage.setItem('kotelek_audio',JSON.stringify({music:AUDIO.music,sfx:AUDIO.sfx,mv:AUDIO.mv,sv:AUDIO.sv})); }catch(e){} }
+function musicLevel(){ return AUDIO.music?0.5*Math.pow(AUDIO.mv/60,1.6):0; }
+function sfxLevel(){ return AUDIO.sfx?0.6*Math.pow(AUDIO.sv/70,1.6):0; }
 function audioInit(){
   if(AUDIO.ctx) { if(AUDIO.ctx.state==='suspended') AUDIO.ctx.resume(); return; }
   const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
@@ -1422,8 +1428,8 @@ function audioInit(){
   for(let ch=0;ch<2;ch++){ const d=buf.getChannelData(ch); for(let i=0;i<len;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4)*0.5; } }
   const rev=c.createConvolver(); rev.buffer=buf; const revG=c.createGain(); revG.gain.value=0.35; rev.connect(revG); revG.connect(AUDIO.master); AUDIO.rev=rev;
   AUDIO.lp=c.createBiquadFilter(); AUDIO.lp.type='lowpass'; AUDIO.lp.frequency.value=1800; AUDIO.lp.Q.value=0.4;
-  AUDIO.musicGain=c.createGain(); AUDIO.musicGain.gain.value=AUDIO.music?0.5:0; AUDIO.musicGain.connect(AUDIO.lp); AUDIO.lp.connect(AUDIO.master); AUDIO.lp.connect(rev);
-  AUDIO.sfxGain=c.createGain(); AUDIO.sfxGain.gain.value=AUDIO.sfx?0.6:0; AUDIO.sfxGain.connect(AUDIO.master); AUDIO.sfxGain.connect(rev);
+  AUDIO.musicGain=c.createGain(); AUDIO.musicGain.gain.value=musicLevel(); AUDIO.musicGain.connect(AUDIO.lp); AUDIO.lp.connect(AUDIO.master); AUDIO.lp.connect(rev);
+  AUDIO.sfxGain=c.createGain(); AUDIO.sfxGain.gain.value=sfxLevel(); AUDIO.sfxGain.connect(AUDIO.master); AUDIO.sfxGain.connect(rev);
   AUDIO.next=c.currentTime+0.1; AUDIO.timer=setInterval(musicTick,120); AUDIO.started=true;
 }
 // akkordmenet (Hz): Am – F – C – G, majd Am – F – Dm – E
@@ -1454,9 +1460,11 @@ function musicTick(){
     AUDIO.next+=BEAT; AUDIO.step++;
   }
 }
-function setMusic(on){ AUDIO.music=on; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.linearRampToValueAtTime(on?0.5:0,AUDIO.ctx.currentTime+0.3); } updateAudioButtons(); }
-function setSfx(on){ AUDIO.sfx=on; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=on?0.6:0; } updateAudioButtons(); }
-function updateAudioButtons(){ document.querySelectorAll('.btnMusic').forEach(b=>{ b.textContent=(AUDIO.music?'♫ Zene: BE':'♫ Zene: KI'); b.classList.toggle('off',!AUDIO.music); }); document.querySelectorAll('.btnSfx').forEach(b=>{ b.textContent=(AUDIO.sfx?'🔊 Hangok: BE':'🔇 Hangok: KI'); b.classList.toggle('off',!AUDIO.sfx); }); }
+function setMusic(on){ AUDIO.music=on; if(on&&AUDIO.mv===0) AUDIO.mv=60; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.cancelScheduledValues(AUDIO.ctx.currentTime); AUDIO.musicGain.gain.linearRampToValueAtTime(musicLevel(),AUDIO.ctx.currentTime+0.25); } updateAudioButtons(); }
+function setMusicVol(v){ AUDIO.mv=Math.max(0,Math.min(100,v|0)); if(AUDIO.mv>0&&!AUDIO.music) AUDIO.music=true; if(AUDIO.mv===0) AUDIO.music=false; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.cancelScheduledValues(AUDIO.ctx.currentTime); AUDIO.musicGain.gain.linearRampToValueAtTime(musicLevel(),AUDIO.ctx.currentTime+0.08); } updateAudioButtons(); }
+function setSfxVol(v){ AUDIO.sv=Math.max(0,Math.min(100,v|0)); if(AUDIO.sv>0&&!AUDIO.sfx) AUDIO.sfx=true; if(AUDIO.sv===0) AUDIO.sfx=false; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=sfxLevel(); } updateAudioButtons(); }
+function setSfx(on){ AUDIO.sfx=on; if(on&&AUDIO.sv===0) AUDIO.sv=70; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=sfxLevel(); } updateAudioButtons(); }
+function updateAudioButtons(){ document.querySelectorAll('.btnMusic').forEach(b=>{ b.textContent=AUDIO.music?'♫':'♫̸'; b.title=AUDIO.music?'Zene némítása':'Zene bekapcsolása'; b.style.opacity=AUDIO.music?'1':'.45'; }); document.querySelectorAll('.btnSfx').forEach(b=>{ b.textContent=AUDIO.sfx?'🔊':'🔇'; b.title=AUDIO.sfx?'Hangok némítása':'Hangok bekapcsolása'; b.style.opacity=AUDIO.sfx?'1':'.45'; }); document.querySelectorAll('.volMusic').forEach(r=>{ r.value=AUDIO.music?AUDIO.mv:0; }); document.querySelectorAll('.volSfx').forEach(r=>{ r.value=AUDIO.sfx?AUDIO.sv:0; }); document.querySelectorAll('.volMusicV').forEach(e=>e.textContent=(AUDIO.music?AUDIO.mv:0)+'%'); document.querySelectorAll('.volSfxV').forEach(e=>e.textContent=(AUDIO.sfx?AUDIO.sv:0)+'%'); }
 // effektek
 function sfx(name){
   if(!AUDIO.ctx||!AUDIO.sfx) return; const c=AUDIO.ctx, t=c.currentTime, d=AUDIO.sfxGain;
@@ -1503,7 +1511,7 @@ function cupRecord(id,sa,sb){
 function cupTeam(i){ return i===null||i===undefined?null:(CUP.data.teams[i]||('Csapat '+(i+1))); }
 function cupMatchHtml(id,ro){
   const d=CUP.data, M=d.m[id]; const ta=cupTeam(M.a), tb=cupTeam(M.b); const done=M.w!==null; const ready=ta&&tb&&!done&&!ro;
-  const row=(name,sc,win,idx)=>`<div class="cm-row ${win?'win':''}">${name?`<span class="cm-name">${esc(name)}</span>`:'<span class="cm-name mut">– várakozik –</span>'}<span class="cm-sc">${done?sc:''}</span></div>`;
+  const row=(name,sc,win,idx)=>`<div class="cm-row ${win?'win':''}">${name?`<span class="cm-name">${esc(name)}</span>`:'<span class="cm-name mut">– még eldől –</span>'}<span class="cm-sc">${done?sc:''}</span></div>`;
   return `<div class="cm ${done?'done':''} ${ready?'ready':''}" data-id="${id}">
     <div class="cm-title">${CUP_ROUNDS[id[0]].name}${id.length>1?' '+id[1]:''}</div>
     ${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}
@@ -1540,7 +1548,7 @@ function cupStartMatch(id){
   CUP.match={id,target:R.target,pool:R.pool.slice()};
   TEAMNAME[0]=cupTeam(M.a); TEAMNAME[1]=cupTeam(M.b);
   hostRoom(true);
-  $('lobbyCup').style.display='block'; $('lobbyCup').innerHTML=`<b>${R.name}:</b> <span style="color:${TEAMCOL[0][0]}">${esc(TEAMNAME[0])}</span> (kék) vs <span style="color:${TEAMCOL[1][0]}">${esc(TEAMNAME[1])}</span> (zöld) · first to ${R.target}<br><span class="mut">Te nézőként hostolsz. A négy játékos a kóddal lép be, és a saját csapatát választja. Amint mind a négyen bent vannak, indíthatod.</span>`;
+  $('lobbyCup').style.display='block'; $('lobbyCup').innerHTML=`<b>${R.name}:</b> <span style="color:${TEAMCOL[0][0]}">${esc(TEAMNAME[0])}</span> (kék) vs <span style="color:${TEAMCOL[1][0]}">${esc(TEAMNAME[1])}</span> (zöld) · ${R.target} nyert pályáig<br><span class="mut">Te nézőként futtatod a meccset. A négy játékos a kóddal lép be, és a saját csapatát választja. Amint mind a négyen bent vannak, indíthatod.</span>`;
 }
 function cupAfterMatch(){
   if(!CUP.match) return; const [a,b]=RACE.score; if(a!==b) cupRecord(CUP.match.id,a,b); CUP.match=null; CUP.returning=true;
@@ -1582,9 +1590,9 @@ function cupOpen(){
 function cupSetupInit(){
   $('btnCupCreate').onclick=()=>{ const teams=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8); while(teams.length<8) teams.push('Csapat '+(teams.length+1)); cupNew($('cupName').value.trim(),teams); cupOpen(); };
   $('btnCupShuffle').onclick=()=>{ const t=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean); for(let i=t.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [t[i],t[j]]=[t[j],t[i]]; } $('cupTeams').value=t.join('\n'); };
-  $('btnCupNew').onclick=()=>{ if(confirm('Biztos törlöd a kupát, és újat kezdesz?')){ CUP.data=null; try{localStorage.removeItem('kotelek_cup');}catch(e){} cupOpen(); } };
-  $('btnCupLink').onclick=async()=>{ const l=cupLink(); try{ await navigator.clipboard.writeText(l); $('cupMsg').textContent='Link a vágólapon – tedd ki Discordra, bárki megnézheti az állást.'; }catch(e){ $('cupMsg').textContent=l; } };
-  $('btnCupText').onclick=async()=>{ const t=cupText(); try{ await navigator.clipboard.writeText(t); $('cupMsg').textContent='Szöveg a vágólapon – Discordon formázva jelenik meg.'; }catch(e){ $('cupMsg').textContent=t; } };
+  $('btnCupNew').onclick=()=>{ if(confirm('Biztos törlöd ezt a kupát, és újat kezdesz?')){ CUP.data=null; try{localStorage.removeItem('kotelek_cup');}catch(e){} cupOpen(); } };
+  $('btnCupLink').onclick=async()=>{ const l=cupLink(); try{ await navigator.clipboard.writeText(l); $('cupMsg').textContent='A link a vágólapon van – tedd ki Discordra, bárki megnézheti az állást.'; }catch(e){ $('cupMsg').textContent=l; } };
+  $('btnCupText').onclick=async()=>{ const t=cupText(); try{ await navigator.clipboard.writeText(t); $('cupMsg').textContent='A szöveg a vágólapon van – Discordon szépen formázva jelenik meg.'; }catch(e){ $('cupMsg').textContent=t; } };
   $('btnCupPng').onclick=()=>cupPng();
   $('btnCupBack').onclick=()=>show('ovMenu');
   $('btnCupViewBack').onclick=()=>{ location.hash=''; show('ovMenu'); };
@@ -1601,13 +1609,15 @@ function show(id){ hideAll(); $(id).classList.add('show'); if(id==='ovMenu') men
 function buildGrid(id,onPick){ const grid=$(id); grid.innerHTML=''; const best=loadBest(); LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.className='w'+(Math.floor(i/WORLD)+1); const bb=best[i]; b.innerHTML=`${i+1}. ${lv.name}<small>${bb?'★'.repeat(bb.stars)+' '+fmt(bb.t):'–'}</small>`; b.onclick=()=>onPick(i); grid.appendChild(b); }); }
 function startGame(L){ PAUSED=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(L); S.tot=0; S.totd=0; hideAll(); }
 function startLocal(L){ cleanupNet(); NET.mode='local'; startGame(L); }
-function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} elhalálozás`; show('ovPause'); } else hideAll(); }
-function showDone(){ $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd} alkalommal kezdtétek újra. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
+function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} újrakezdés`; show('ovPause'); } else hideAll(); }
+function showDone(){ $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd}-szor kezdtétek elölről. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
 function toMenu(){ PAUSED=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; $('btnDoneMenu').textContent='Főmenü'; S=null; S2=null; RACE.on=false; if(CUP.returning){ CUP.returning=false; broadcast({t:'menu'}); cleanupNet(); NET.mode=null; NET.spectator=false; cupOpen(); return; } if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
 
 $('chkInf').onchange=e=>{ OPT.inf=e.target.checked; };
 document.querySelectorAll('.btnMusic').forEach(b=>b.onclick=()=>{ audioInit(); setMusic(!AUDIO.music); });
 document.querySelectorAll('.btnSfx').forEach(b=>b.onclick=()=>{ audioInit(); setSfx(!AUDIO.sfx); sfx('ui'); });
+document.querySelectorAll('.volMusic').forEach(r=>{ r.oninput=()=>{ audioInit(); setMusicVol(+r.value); }; });
+document.querySelectorAll('.volSfx').forEach(r=>{ r.oninput=()=>{ audioInit(); setSfxVol(+r.value); }; r.onchange=()=>sfx('gem'); });
 updateAudioButtons();
 document.querySelectorAll('button:not(.btnMusic):not(.btnSfx)').forEach(b=>b.addEventListener('click',()=>sfx('ui')));
 function menuStars(){ const b=loadBest(); let st=0,n=0; for(const k in b){ st+=b[k].stars; n++; } $('menuStars').textContent=n?`★ ${st}/${LEVELS.length*3} csillag · ${n} pálya teljesítve`:''; }
@@ -1618,7 +1628,7 @@ renderFaces();
 $('btnHelp').onclick=()=>show('ovHelp'); $('btnHelp2').onclick=()=>{ show('ovHelp'); $('btnHelpBack').onclick=()=>{ show('ovPause'); $('btnHelpBack').onclick=()=>show('ovMenu'); }; };
 $('btnHelpBack').onclick=()=>show('ovMenu');
 $('btnFull').onclick=()=>{ const el=document.documentElement; if(!document.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen).call(el); } else { document.exitFullscreen(); } setTimeout(fit,300); };
-$('btnShare').onclick=async()=>{ let t; if(RACE.on){ t=`🏁 Kötelék 2v2: ${TEAMNAME[0]} ${RACE.score[0]} : ${RACE.score[1]} ${TEAMNAME[1]}`; } else { const b=loadBest(); let st=0; for(const k in b) st+=b[k].stars; t=`🎉 Végigjátszottuk a Kötelék 40 pályáját! ⏱ ${fmt(S.tot)} · ☠ ${S.totd} újrakezdés · ★ ${st}/${LEVELS.length*3}`; } try{ await navigator.clipboard.writeText(t); $('shareMsg').textContent='Vágólapon – mehet Discordra.'; }catch(e){ $('shareMsg').textContent=t; } };
+$('btnShare').onclick=async()=>{ let t; if(RACE.on){ t=`🏁 Kötelék 2v2: ${TEAMNAME[0]} ${RACE.score[0]} : ${RACE.score[1]} ${TEAMNAME[1]}`; } else { const b=loadBest(); let st=0; for(const k in b) st+=b[k].stars; t=`🎉 Végigjátszottuk a Kötelék mind a 40 pályáját! ⏱ ${fmt(S.tot)} · ☠ ${S.totd} újrakezdés · ★ ${st}/${LEVELS.length*3}`; } try{ await navigator.clipboard.writeText(t); $('shareMsg').textContent='A vágólapon van – mehet Discordra.'; }catch(e){ $('shareMsg').textContent=t; } };
 $('btnHost').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } hostRoom(); };
 $('btnJoinShow').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } $('joinMsg').textContent=''; show('ovJoin'); setTimeout(()=>$('inCode').focus(),50); };
 $('btnJoin').onclick=()=>{ const c=$('inCode').value.trim().toUpperCase(); if(c.length!==4){ $('joinMsg').textContent='4 betű kell.'; return; } joinRoom(c); };
