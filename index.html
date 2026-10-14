@@ -1491,7 +1491,7 @@ function sfx(name){
 //  KUPA (8 csapatos egyenes kieséses bracket, a szervező hostol)
 // ============================================================
 const CUP={data:null, match:null, view:false};
-const CUP_ROUNDS={q:{name:'Negyeddöntő',target:3,pool:[2,5,8,12,16,18,22,26,29]},s:{name:'Elődöntő',target:3,pool:[6,11,15,19,23,27,30,34,36]},b:{name:'Bronzmeccs',target:3,pool:[4,9,13,20,24,28,32,35,38]},f:{name:'Döntő',target:5,pool:[7,10,14,17,21,25,31,33,37,39,0,3,1]}};
+const CUP_ROUNDS={q:{name:'Negyeddöntő',target:3,pool:[9,11,12,15,16,18,22]},s:{name:'Elődöntő',target:3,pool:[14,19,20,21,23,25,26]},b:{name:'Bronzmeccs',target:3,pool:[13,17,24,27,28,30,32]},f:{name:'Döntő',target:5,pool:[29,31,33,34,35,36,37,38,39]}};
 const CUP_ORDER=['q1','q2','q3','q4','s1','s2','b','f'];
 function cupLoad(){ try{ CUP.data=JSON.parse(localStorage.getItem('kotelek_cup')||'null'); }catch(e){ CUP.data=null; } }
 function cupSave(){ try{ localStorage.setItem('kotelek_cup',JSON.stringify(CUP.data)); }catch(e){} }
