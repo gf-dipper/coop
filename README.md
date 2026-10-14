@@ -44,17 +44,17 @@ Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
    Aki előbb ér be (mindkét tag a célon, minden kristállyal), pontot kap. **Életek nincsenek**: ha elhaltok, csak ti kezditek elölről a pályát, az ellenfél közben halad.
 5. A verseny végén az összesített pontszám dönt; az eredmény egy gombbal másolható Discordra.
 
-### Kupa (Discord-bajnokság, 8 csapat)
+### Kupa (Discord-bajnokság, 2 / 4 / 8 / 16 csapat)
 
 A főmenü **🏆 Kupa** pontja a szervezőnek való:
 
-1. Beírod a kupa nevét és a 8 csapatnevet (soronként egy; a sorrend a seedelés, a 🎲 Sorsolás keveri) → **Kupa létrehozása**. Negyeddöntők és elődöntők 3 nyert pályáig, a döntő 5-ig, van bronzmeccs. Minden körnek fix pályakészlete van, így a párhuzamos meccsek ugyanazokon a pályákon mennek.
+1. Kiválasztod a csapatok számát (2, 4, 8 vagy 16 – alapból 8), beírod a kupa nevét és a csapatneveket (soronként egy; a sorrend adja a párokat, a 🎲 Sorsolás keveri) → **Kupa létrehozása**. Alapból: negyeddöntők és elődöntők 3 nyert pályáig, a döntő 5-ig, van bronzmeccs, és minden körnek saját, nehezedő pályakészlete van (bemelegítő pályák nélkül). A ⚙ Beállításoknál körönként átállítható a nyert pályák száma és kattintgatva a pályakészlet, ki-/bekapcsolható a bronzmeccs, és választható véletlen pályasorrend – később, a kupa nézetből is.
 2. Egy meccsnél **▶ Indítás** → a játék szobát nyit a két csapat nevével, te **nézőként hostolsz** (nem játszol). A kódot kiteszed Discordra, a 4 játékos belép, mindenki a saját csapatát választja, te indítod a meccset. Játék közben a **Tab** a másik csapat nézetére vált.
 3. A meccs végén az eredmény magától bekerül a bracketbe, a győztes továbblép (a vesztes elődöntős a bronzmeccsbe). Ha valami elcsúszik: **kézi** eredmény vagy **visszavonás**.
 4. **🔗 Link másolása**: a bracket teljes állása benne van a linkben – kiteszed Discordra, bárki megnyitja és látja (csak olvasás). **💬 Discord-szöveg**: formázott összefoglaló a csatornába. **🖼 Kép letöltése**: PNG bracket.
 5. A kupa a szervező böngészőjében mentődik, bezárás után is megvan.
 
-Tipp a lebonyolításhoz: egy szervező egyszerre egy meccset tud hostolni, tehát a 4 negyeddöntő egymás után megy (kb. 10–15 perc egy meccs). Ha két szervező van, mindkettő a saját gépén futtathatja a saját meccseit, és a kézi eredmény-rögzítéssel kerül össze a bracket.
+Tipp a lebonyolításhoz: egy szervező egyszerre egy meccset tud futtatni, tehát a meccsek egymás után mennek (kb. 10–15 perc egy meccs): 4 csapat ≈ 1 óra, 8 csapat ≈ 2 óra, 16 csapat 3 óra fölött – utóbbinál érdemes rövidebb meccseket (2 nyert pálya) beállítani. Ha két szervező van, mindkettő a saját gépén futtathatja a saját meccseit, és a kézi eredmény-rögzítéssel kerül össze a bracket.
 
 ## Pályaelemek
 

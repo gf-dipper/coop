@@ -49,10 +49,23 @@
   .legend b{display:block;font-size:13px}
   .legend span{color:var(--mut)}
   .brk{position:relative;width:880px;height:392px;margin:34px auto 0;text-align:left}
-  .brk svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-  .brk .cm{position:absolute;width:250px;height:86px;box-sizing:border-box;display:flex;flex-direction:column}
+  .cm.cmc{padding:4px 8px;flex-direction:row;align-items:center;gap:6px}
+  .cmc .cmc-rows{flex:1;min-width:0}
+  .cmc .cm-row{font-size:12px;padding:0;line-height:18px}
+  .cmc .cm-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;display:inline-block}
+  .cmc .cmc-act{display:flex;gap:3px;flex:none}
+  .brk svg{position:absolute;left:0;top:0;width:100%;pointer-events:none}
+  .brk .cm{position:absolute;width:250px;height:86px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}
   .brk .cm .cm-act{margin-top:auto;display:flex;gap:6px;justify-content:flex-end;min-height:22px}
   .brk .cup-colt{position:absolute;top:-4px;width:250px}
+  .cfg{text-align:left;background:#0b0f1a;border:1px solid #334066;border-radius:12px;padding:10px 12px;width:470px;flex:none}
+  .cfg .tabs{display:flex;gap:4px;margin-bottom:8px}
+  .cfg .tabs button{margin:0;padding:5px 10px;font-size:12px;border-radius:8px}
+  .cfg .tabs button.sel{background:#1f3a66;border-color:#4cc3ff}
+  .lvpick{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:6px}
+  .lvpick button{margin:0;padding:4px 0;font-size:11px;border-radius:6px;background:#141a2b;color:var(--mut)}
+  .lvpick button.on{background:#1f3a66;color:var(--txt);border-color:#4cc3ff}
+  .cfg select{background:#141a2b;color:var(--txt);border:1px solid #334066;border-radius:8px;padding:4px 8px;font-size:13px}
   .champ{position:absolute;left:600px;top:124px;width:250px;text-align:center;color:#ffd54a;font-weight:800;font-size:18px;text-shadow:0 0 18px rgba(255,213,74,.5)}
   #ovCup .box{max-height:596px;overflow:hidden;padding:10px 22px 8px}
   #ovCup h2{font-size:22px;margin-bottom:0}
@@ -192,12 +205,19 @@
   <div class="ov" id="ovCup"><div class="box" style="max-width:960px;width:940px;position:relative">
     <div id="cupSetup" style="display:none">
       <h2>🏆 Új kupa</h2>
-      <p class="sub">8 csapat, egyenes kieséses rendszer: a negyeddöntők és az elődöntők 3 nyert pályáig, a döntő 5-ig megy, és van bronzmeccs is. Minden körnek saját pályakészlete van, így minden meccs ugyanazokon a pályákon dől el.</p>
-      <div class="row" style="align-items:flex-start;gap:24px">
-        <div style="text-align:left"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" style="margin:12px 0 4px">Csapatok (soronként egy, 8 db – a sorrend adja a párokat: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…"></textarea></div>
-        <div style="text-align:left;max-width:300px" class="mut"><b style="color:var(--txt)">Hogyan megy?</b><br>1. Létrehozod a kupát.<br>2. Egy meccsnél „Indítás” → kapsz egy szobakódot, kiteszed Discordra.<br>3. A 4 játékos belép, mindenki a saját csapatát választja, te indítod a meccset, és nézőként figyeled (Tab: a másik csapat nézete).<br>4. A meccs végén az eredmény magától bekerül a táblába.<br>5. „Link másolása” → kiteszed, és mindenki látja az állást.</div>
+      <p class="sub" id="cupSetupSub" style="margin-bottom:8px;font-size:14px">8 csapat, egyenes kieséses rendszer. Alapból: negyeddöntő és elődöntő 3, döntő 5 nyert pályáig, bronzmeccs, és minden körnek saját, nehezedő pályakészlete van – de mindezt itt jobbra át is állíthatod.</p>
+      <div style="display:flex;align-items:flex-start;gap:20px;justify-content:center;flex-wrap:nowrap">
+        <div style="text-align:left;width:340px;flex:none"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" id="cupTeamsLbl" style="margin:10px 0 4px">Csapatok (soronként egy, 8 db – a sorrend adja a párokat: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…" style="height:150px"></textarea><div class="mut" id="cupTeamsNote" style="font-size:12px;margin-top:4px"></div></div>
+        <div class="cfg" id="cupCfg">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px"><b>⚙ Beállítások</b><span class="mut" style="font-size:12px">alapból minden ki van töltve, nem kötelező belenyúlni</span></div>
+          <div class="row" style="justify-content:flex-start;gap:14px;margin-bottom:6px"><label class="mut" style="font-size:13px">Csapatok: <select id="cfgN"><option value="2">2</option><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option></select></label><label class="mut" style="font-size:13px"><input type="checkbox" id="cfgBronze" style="width:auto;letter-spacing:0;transform:scale(1.1);margin-right:5px;vertical-align:-1px">Bronzmeccs</label><label class="mut" style="font-size:13px">Pályák sorrendje: <select id="cfgOrder"><option value="fix">növekvő sorszám</option><option value="random">véletlen (meccsenként)</option></select></label></div>
+          <div class="tabs" id="cfgTabs"></div>
+          <div class="row" style="justify-content:flex-start;gap:10px"><span class="mut" style="font-size:13px">Nyert pályák a győzelemhez:</span><select id="cfgTarget"><option>2</option><option>3</option><option>4</option><option>5</option></select><span class="mut" id="cfgCount" style="font-size:12px"></span></div>
+          <div class="lvpick" id="cfgLevels"></div>
+          <div class="row" style="justify-content:space-between;margin-top:6px"><span class="mut" id="cfgHint" style="font-size:12px"></span><button id="cfgReset" style="padding:4px 10px;font-size:12px;margin:0">Alapértelmezés</button></div>
+        </div>
       </div>
-      <div class="row" style="margin-top:14px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Kupa létrehozása</button><button id="btnCupBack">Vissza</button></div>
+      <div class="row" style="margin-top:10px"><button id="btnCupShuffle">🎲 Sorsolás</button><button class="pri" id="btnCupCreate">Kupa létrehozása</button><button id="btnCupBack">Vissza</button></div>
     </div>
     <div id="cupView" style="display:none">
       <div class="row" style="justify-content:space-between;margin-bottom:0"><h2 id="cupTitle" style="margin:0;font-size:20px">Kupa</h2><span id="cupChampion" class="mut" style="font-size:14px"></span></div>
@@ -205,7 +225,7 @@
       <div class="brk" id="cupBracket"></div>
       <div id="cupManual" style="display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0b0f1a;border:1px solid #4cc3ff;border-radius:12px;padding:16px 20px;z-index:3;box-shadow:0 20px 60px rgba(0,0,0,.6)"></div>
       <p class="mut" id="cupMsg" style="margin:4px 0 0;min-height:18px;font-size:13px"></p>
-      <div class="row cup-host-only" style="gap:4px"><button id="btnCupLink" style="padding:8px 14px;font-size:14px">🔗 Link másolása</button><button id="btnCupText" style="padding:8px 14px;font-size:14px">💬 Discord-szöveg</button><button id="btnCupPng" style="padding:8px 14px;font-size:14px">🖼 Kép letöltése</button><button id="btnCupNew" style="color:var(--bad);padding:8px 14px;font-size:14px">Új kupa</button><button id="btnCupBack2" style="padding:8px 14px;font-size:14px">Főmenü</button></div>
+      <div class="row cup-host-only" style="gap:4px"><button id="btnCupLink" style="padding:8px 14px;font-size:14px">🔗 Link másolása</button><button id="btnCupText" style="padding:8px 14px;font-size:14px">💬 Discord-szöveg</button><button id="btnCupPng" style="padding:8px 14px;font-size:14px">🖼 Kép letöltése</button><button id="btnCupEdit" style="padding:8px 14px;font-size:14px">⚙ Beállítások</button><button id="btnCupNew" style="color:var(--bad);padding:8px 14px;font-size:14px">Új kupa</button><button id="btnCupBack2" style="padding:8px 14px;font-size:14px">Főmenü</button></div>
       <div class="row" id="cupRoBar" style="display:none"><button id="btnCupViewBack">A játékhoz</button></div>
     </div>
   </div></div>
@@ -1488,63 +1508,105 @@ function sfx(name){
 ['click','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,()=>{ audioInit(); },{passive:true}));
 
 // ============================================================
-//  KUPA (8 csapatos egyenes kieséses bracket, a szervező hostol)
+//  KUPA (2/4/8/16 csapatos egyenes kieséses tábla, a szervező hostol)
 // ============================================================
-const CUP={data:null, match:null, view:false};
-const CUP_ROUNDS={q:{name:'Negyeddöntő',target:3,pool:[9,11,12,15,16,18,22]},s:{name:'Elődöntő',target:3,pool:[14,19,20,21,23,25,26]},b:{name:'Bronzmeccs',target:3,pool:[13,17,24,27,28,30,32]},f:{name:'Döntő',target:5,pool:[29,31,33,34,35,36,37,38,39]}};
-const CUP_ORDER=['q1','q2','q3','q4','s1','s2','b','f'];
-function cupLoad(){ try{ CUP.data=JSON.parse(localStorage.getItem('kotelek_cup')||'null'); }catch(e){ CUP.data=null; } }
-function cupSave(){ try{ localStorage.setItem('kotelek_cup',JSON.stringify(CUP.data)); }catch(e){} }
-function cupNew(name,teams){
-  const m={}; for(const id of CUP_ORDER) m[id]={a:null,b:null,sa:0,sb:0,w:null};
-  m.q1.a=0;m.q1.b=1;m.q2.a=2;m.q2.b=3;m.q3.a=4;m.q3.b=5;m.q4.a=6;m.q4.b=7;
-  CUP.data={name:name||'Kötelék Kupa',teams,m,bronze:true,created:Date.now()}; cupSave();
+const CUP={data:null, match:null, view:false, editing:false, returning:false};
+const CUP_ROUNDS={e:{name:'Nyolcaddöntő',target:2,pool:[3,4,5,6,7,10,13]},q:{name:'Negyeddöntő',target:3,pool:[9,11,12,15,16,18,22]},s:{name:'Elődöntő',target:3,pool:[14,19,20,21,23,25,26]},b:{name:'Bronzmeccs',target:3,pool:[13,17,24,27,28,30,32]},f:{name:'Döntő',target:5,pool:[29,31,33,34,35,36,37,38,39]}};
+function roundKeys(n){ return n>=16?['e','q','s','f']:n>=8?['q','s','f']:n>=4?['s','f']:['f']; }
+function cupDefaultCfg(n){ const r={}; for(const k in CUP_ROUNDS) r[k]={target:CUP_ROUNDS[k].target,pool:CUP_ROUNDS[k].pool.slice()}; return {n:n||8,bronze:true,order:'fix',rounds:r}; }
+function cupCfg(){ return (CUP.data&&CUP.data.cfg)||cupDefaultCfg(CUP.data?CUP.data.n:8); }
+let CFG=null, CFG_TAB='q';
+function cfgKeys(){ const ks=roundKeys(CFG.n); if(CFG.bronze&&CFG.n>=4) ks.splice(ks.length-1,0,'b'); return ks; }
+function cfgRender(){
+  const keys=cfgKeys(); if(!keys.includes(CFG_TAB)) CFG_TAB=keys[0];
+  const tabs=$('cfgTabs'); tabs.innerHTML=''; for(const k of keys){ const b=document.createElement('button'); b.textContent=CUP_ROUNDS[k].name; b.className=k===CFG_TAB?'sel':''; b.onclick=()=>{ CFG_TAB=k; cfgRender(); }; tabs.appendChild(b); }
+  const R=CFG.rounds[CFG_TAB]; $('cfgTarget').value=String(R.target); $('cfgBronze').checked=CFG.bronze; $('cfgOrder').value=CFG.order; $('cfgN').value=String(CFG.n);
+  $('cfgBronze').parentElement.style.display=CFG.n>=4?'inline':'none';
+  const need=R.target*2-1; $('cfgCount').textContent=`${R.pool.length} pálya kiválasztva (legfeljebb ${need} kellhet)`; $('cfgCount').style.color=R.pool.length<need?'var(--bad)':'var(--mut)';
+  const g=$('cfgLevels'); g.innerHTML=''; LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.textContent=i+1; b.title=`${i+1}. ${lv.name} (${Math.floor(i/WORLD)+1}. világ)`; b.className=R.pool.includes(i)?'on':''; b.onclick=()=>{ const ix=R.pool.indexOf(i); if(ix>=0) R.pool.splice(ix,1); else R.pool.push(i); R.pool.sort((a,b)=>a-b); cfgRender(); }; g.appendChild(b); });
+  $('cfgHint').style.color=''; $('cfgHint').textContent=R.pool.length<need?`Még legalább ${need-R.pool.length} pálya kell ehhez a körhöz.`:'Kattints a számokra: ezek a pályák jönnek ebben a körben, sorban.';
+  const n=CFG.n, matches=n-1+(CFG.bronze&&n>=4?1:0); $('cupSetupSub').innerHTML=`${n} csapat, egyenes kieséses rendszer – összesen ${matches} meccs${n>=16?' <b style="color:#ffd54a">(egy szervezővel egymás után ez 3 óra fölött is lehet – érdemes rövidebb meccseket beállítani, vagy két gépen futtatni)</b>':n>=8?' (kb. 2 óra)':' (kb. egy óra)'}. Alapból minden ki van töltve, nem kötelező belenyúlni.`;
+  $('cupTeams').placeholder=Array.from({length:n},(_,i)=>'Csapat '+(i+1)).join('\n');
+  $('cupTeamsLbl').textContent=`Csapatok (soronként egy, ${n} db – a sorrend adja a párokat: 1–2, 3–4, …)`;
 }
+function cfgBind(){ $('cfgTarget').onchange=()=>{ CFG.rounds[CFG_TAB].target=+$('cfgTarget').value; cfgRender(); }; $('cfgBronze').onchange=()=>{ CFG.bronze=$('cfgBronze').checked; cfgRender(); }; $('cfgOrder').onchange=()=>{ CFG.order=$('cfgOrder').value; }; $('cfgN').onchange=()=>{ CFG.n=+$('cfgN').value; cfgRender(); }; $('cfgReset').onclick=()=>{ CFG=cupDefaultCfg(CFG.n); cfgRender(); }; }
+function cfgValid(){ for(const k of cfgKeys()){ const R=CFG.rounds[k]; if(R.pool.length<R.target*2-1) return `${CUP_ROUNDS[k].name}: legalább ${R.target*2-1} pálya kell (most ${R.pool.length}).`; } return null; }
+function cupLoad(){ try{ CUP.data=JSON.parse(localStorage.getItem('kotelek_cup')||'null'); }catch(e){ CUP.data=null; } if(CUP.data) cupMigrate(CUP.data); }
+function cupMigrate(d){ // régi 8-as formátum → általános
+  if(d.rounds) return d; if(d.m){ const m=d.m; d.n=8; d.rounds=[[m.q1,m.q2,m.q3,m.q4],[m.s1,m.s2],[m.f]]; d.b=m.b; delete d.m; if(d.cfg&&!d.cfg.n) d.cfg.n=8; } return d; }
+function cupSave(){ try{ localStorage.setItem('kotelek_cup',JSON.stringify(CUP.data)); }catch(e){} }
+function newMatch(){ return {a:null,b:null,sa:0,sb:0,w:null}; }
+function cupNew(name,teams){
+  const n=CFG?CFG.n:8; const rounds=[]; let cnt=n/2; while(cnt>=1){ rounds.push(Array.from({length:cnt},newMatch)); cnt=cnt/2; }
+  rounds[0].forEach((M,i)=>{ M.a=i*2; M.b=i*2+1; });
+  CUP.data={name:name||'Kötelék Kupa',n,teams,rounds,b:newMatch(),bronze:CFG?CFG.bronze:true,cfg:CFG?JSON.parse(JSON.stringify(CFG)):cupDefaultCfg(n),created:Date.now()}; cupSave();
+}
+function cupM(id){ if(id==='b') return CUP.data.b; const [,r,m]=id.match(/^r(\d+)m(\d+)$/); return CUP.data.rounds[+r][+m]; }
+function cupKey(id){ if(id==='b') return 'b'; const r=+id.match(/^r(\d+)/)[1]; return roundKeys(CUP.data.n)[r]; }
+function cupRoundTitle(id){ if(id==='b') return 'Bronzmeccs'; const [,r,m]=id.match(/^r(\d+)m(\d+)$/).map(Number); const k=roundKeys(CUP.data.n)[r]; return CUP_ROUNDS[k].name+(CUP.data.rounds[r].length>1?' '+(m+1):''); }
+function cupAllIds(){ const ids=[]; CUP.data.rounds.forEach((rr,r)=>rr.forEach((_,m)=>ids.push(`r${r}m${m}`))); if(CUP.data.bronze&&CUP.data.n>=4) ids.push('b'); return ids; }
 function cupRecord(id,sa,sb){
-  const d=CUP.data, M=d.m[id]; M.sa=sa; M.sb=sb; M.w=sa>sb?M.a:M.b; const L=sa>sb?M.b:M.a;
-  const feed={q1:['s1','a'],q2:['s1','b'],q3:['s2','a'],q4:['s2','b'],s1:['f','a'],s2:['f','b']};
-  if(feed[id]){ const [to,side]=feed[id]; d.m[to][side]=M.w; }
-  if(id==='s1') d.m.b.a=L; if(id==='s2') d.m.b.b=L;
+  const d=CUP.data, M=cupM(id); M.sa=sa; M.sb=sb; M.w=sa>sb?M.a:M.b; const L=sa>sb?M.b:M.a;
+  if(id!=='b'){ const [,r,m]=id.match(/^r(\d+)m(\d+)$/).map(Number); const last=d.rounds.length-1;
+    if(r<last){ const nx=d.rounds[r+1][m>>1]; if(m%2===0) nx.a=M.w; else nx.b=M.w; }
+    if(r===last-1){ if(m===0) d.b.a=L; else d.b.b=L; } }
+  cupSave();
+}
+function cupUnrecord(id){
+  const d=CUP.data, M=cupM(id); M.w=null; M.sa=M.sb=0;
+  if(id!=='b'){ const [,r,m]=id.match(/^r(\d+)m(\d+)$/).map(Number); const last=d.rounds.length-1;
+    if(r<last){ const nx=d.rounds[r+1][m>>1]; if(m%2===0) nx.a=null; else nx.b=null; }
+    if(r===last-1){ if(m===0) d.b.a=null; else d.b.b=null; } }
   cupSave();
 }
 function cupTeam(i){ return i===null||i===undefined?null:(CUP.data.teams[i]||('Csapat '+(i+1))); }
-function cupMatchHtml(id,ro){
-  const d=CUP.data, M=d.m[id]; const ta=cupTeam(M.a), tb=cupTeam(M.b); const done=M.w!==null; const ready=ta&&tb&&!done&&!ro;
-  const row=(name,sc,win,idx)=>`<div class="cm-row ${win?'win':''}">${name?`<span class="cm-name">${esc(name)}</span>`:'<span class="cm-name mut">– még eldől –</span>'}<span class="cm-sc">${done?sc:''}</span></div>`;
-  return `<div class="cm ${done?'done':''} ${ready?'ready':''}" data-id="${id}">
-    <div class="cm-title">${CUP_ROUNDS[id[0]].name}${id.length>1?' '+id[1]:''}</div>
-    ${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}
-    <div class="cm-act">${ready?`<button class="pri cup-start" data-id="${id}" style="padding:4px 12px;font-size:12px;margin:0">▶ Indítás</button><button class="cup-man" data-id="${id}" style="padding:4px 9px;font-size:11px;margin:0">kézi</button>`:''}${done&&!ro?`<button class="cup-reset" data-id="${id}" style="padding:2px 8px;font-size:11px;margin:0;color:var(--mut)">visszavonás</button>`:''}</div>
-  </div>`;
-}
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function cupMatchHtml(id,ro,compact){
+  const M=cupM(id); const ta=cupTeam(M.a), tb=cupTeam(M.b); const done=M.w!==null; const ready=ta&&tb&&!done&&!ro;
+  const row=(name,sc,win)=>`<div class="cm-row ${win?'win':''}">${name?`<span class="cm-name">${esc(name)}</span>`:'<span class="cm-name mut">– még eldől –</span>'}<span class="cm-sc">${done?sc:''}</span></div>`;
+  const act=ready?`<button class="pri cup-start" data-id="${id}" style="padding:${compact?'2px 8px':'4px 12px'};font-size:${compact?'11px':'12px'};margin:0">▶${compact?'':' Indítás'}</button><button class="cup-man" data-id="${id}" style="padding:${compact?'2px 6px':'4px 9px'};font-size:11px;margin:0">kézi</button>`:(done&&!ro?`<button class="cup-reset" data-id="${id}" style="padding:2px 8px;font-size:11px;margin:0;color:var(--mut)">${compact?'↺':'visszavonás'}</button>`:'');
+  if(compact) return `<div class="cm cmc ${done?'done':''} ${ready?'ready':''}" data-id="${id}"><div class="cmc-rows">${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}</div><div class="cmc-act">${act}</div></div>`;
+  return `<div class="cm ${done?'done':''} ${ready?'ready':''}" data-id="${id}"><div class="cm-title">${cupRoundTitle(id)}</div>${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}<div class="cm-act">${act}</div></div>`;
+}
+function cupLayout(){
+  const d=CUP.data, R=d.rounds.length, n=d.n; const compact=n>=16; const H=compact?48:86, GAP=compact?0:14; const BW=compact?196:250;
+  const cols=R; const totalW=880; const sp=cols>1?Math.min(300,Math.floor((totalW-BW)/(cols-1))):0; const off=Math.floor((totalW-(BW+sp*(cols-1)))/2); const X=Array.from({length:cols},(_,i)=>off+i*sp);
+  const first=d.rounds[0].length; const Y=[]; Y[0]=Array.from({length:first},(_,i)=>i*(H+GAP));
+  for(let r=1;r<R;r++){ Y[r]=Y[r-1].filter((_,i)=>i%2===0).map((y,i)=>(Y[r-1][i*2]+Y[r-1][i*2+1])/2); }
+  const height=first*(H+GAP)-GAP; const bronzeY=Y[R-1][0]+H+ (compact?22:30);
+  return {X,Y,H,GAP,BW,compact,height,bronzeY,R};
+}
 function cupRender(ro){
-  const d=CUP.data; if(!d) return;
-  $('cupTitle').textContent=d.name;
-  const BW=250, X=[0,300,600], QY=[6,106,206,306], SY=[56,256], FY=156, BY=306;
-  const pos=(id,x,y)=>cupMatchHtml(id,ro).replace('class="cm ',`style="left:${x}px;top:${y}px" class="cm `);
-  let h=`<svg viewBox="0 0 880 392">`; const ln=(x1,y1,x2,y2)=>{ const mx=(x1+x2)/2; return `<path d="M${x1},${y1} H${mx} V${y2} H${x2}" fill="none" stroke="#3a4a7a" stroke-width="2" stroke-linejoin="round"/>`; };
-  QY.forEach((y,i)=>{ h+=ln(X[0]+BW,y+43,X[1],SY[i>>1]+43); }); SY.forEach(y=>{ h+=ln(X[1]+BW,y+43,X[2],FY+43); });
-  h+=`</svg><div class="cup-colt" style="left:${X[0]}px;top:-26px">Negyeddöntők</div><div class="cup-colt" style="left:${X[1]}px;top:-26px">Elődöntők</div><div class="cup-colt" style="left:${X[2]}px;top:-26px">Döntő</div><div class="cup-colt" style="left:${X[2]}px;top:${BY-20}px">Bronzmeccs</div>`;
-  ['q1','q2','q3','q4'].forEach((id,i)=>h+=pos(id,X[0],QY[i])); ['s1','s2'].forEach((id,i)=>h+=pos(id,X[1],SY[i])); h+=pos('f',X[2],FY); if(d.bronze) h+=pos('b',X[2],BY);
-  if(d.m.f.w!==null) h+=`<div class="champ">🏆 ${esc(cupTeam(d.m.f.w))}</div>`;
-  $('cupBracket').innerHTML=h;
-  const f=d.m.f; $('cupChampion').innerHTML=f.w!==null?`🏆 Bajnok: <b style="color:#ffd54a">${esc(cupTeam(f.w))}</b>${d.m.b.w!==null?` · 🥉 ${esc(cupTeam(d.m.b.w))}`:''}`:'';
+  const d=CUP.data; if(!d) return; $('cupTitle').textContent=d.name;
+  const L=cupLayout(); const keys=roundKeys(d.n); const bronze=d.bronze&&d.n>=4;
+  const totalH=Math.max(L.height, bronze?L.bronzeY+L.H:0)+2;
+  const brk=$('cupBracket'); brk.style.height=totalH+'px';
+  let h=`<svg viewBox="0 0 880 ${totalH}" style="height:${totalH}px">`; const ln=(x1,y1,x2,y2)=>{ const mx=(x1+x2)/2; return `<path d="M${x1},${y1} H${mx} V${y2} H${x2}" fill="none" stroke="#3a4a7a" stroke-width="2" stroke-linejoin="round"/>`; };
+  for(let r=0;r<L.R-1;r++) L.Y[r].forEach((y,i)=>{ h+=ln(L.X[r]+L.BW,y+L.H/2,L.X[r+1],L.Y[r+1][i>>1]+L.H/2); });
+  h+='</svg>';
+  keys.forEach((k,r)=>{ h+=`<div class="cup-colt" style="left:${L.X[r]}px;top:-26px;width:${L.BW}px">${CUP_ROUNDS[k].name}${d.rounds[r].length>1?'k':''}</div>`; });
+  d.rounds.forEach((rr,r)=>rr.forEach((_,m)=>{ h+=cupMatchHtml(`r${r}m${m}`,ro,L.compact).replace('class="cm ',`style="left:${L.X[r]}px;top:${L.Y[r][m]}px;width:${L.BW}px;height:${L.H}px" class="cm `); }));
+  if(bronze){ const bx=L.X[L.R-1]; h+=`<div class="cup-colt" style="left:${bx}px;top:${L.bronzeY-20}px;width:${L.BW}px">Bronzmeccs</div>`+cupMatchHtml('b',ro,L.compact).replace('class="cm ',`style="left:${bx}px;top:${L.bronzeY}px;width:${L.BW}px;height:${L.H}px" class="cm `); }
+  const f=d.rounds[L.R-1][0];
+  if(f.w!==null) h+=`<div class="champ" style="left:${L.X[L.R-1]}px;top:${L.Y[L.R-1][0]-(L.compact?26:34)}px;width:${L.BW}px;font-size:${L.compact?'15px':'18px'}">🏆 ${esc(cupTeam(f.w))}</div>`;
+  brk.innerHTML=h;
+  $('cupChampion').innerHTML=f.w!==null?`🏆 Bajnok: <b style="color:#ffd54a">${esc(cupTeam(f.w))}</b>${bronze&&d.b.w!==null?` · 🥉 ${esc(cupTeam(d.b.w))}`:''}`:`${d.n} csapat · ${cupAllIds().filter(id=>cupM(id).w!==null).length}/${cupAllIds().length} meccs lejátszva`;
   if(ro) return;
   document.querySelectorAll('.cup-start').forEach(b=>b.onclick=()=>cupStartMatch(b.dataset.id));
   document.querySelectorAll('.cup-man').forEach(b=>b.onclick=()=>cupManual(b.dataset.id));
-  document.querySelectorAll('.cup-reset').forEach(b=>b.onclick=()=>{ const id=b.dataset.id; const M=d.m[id]; M.w=null; M.sa=M.sb=0; const feed={q1:['s1','a'],q2:['s1','b'],q3:['s2','a'],q4:['s2','b'],s1:['f','a'],s2:['f','b']}; if(feed[id]){ const [to,side]=feed[id]; d.m[to][side]=null; } if(id==='s1') d.m.b.a=null; if(id==='s2') d.m.b.b=null; cupSave(); cupRender(false); });
+  document.querySelectorAll('.cup-reset').forEach(b=>b.onclick=()=>{ cupUnrecord(b.dataset.id); cupRender(false); });
 }
 function cupManual(id){
-  const M=CUP.data.m[id]; const t=CUP_ROUNDS[id[0]].target;
+  const M=cupM(id); const t=cupCfg().rounds[cupKey(id)].target;
   const box=$('cupManual'); box.style.display='block';
   box.innerHTML=`<b>Kézi eredmény – ${esc(cupTeam(M.a))} vs ${esc(cupTeam(M.b))}</b><div class="row" style="margin-top:8px"><input id="manA" style="width:70px;letter-spacing:0;font-size:18px" value="${t}"> : <input id="manB" style="width:70px;letter-spacing:0;font-size:18px" value="0"><button class="pri" id="manOk">Rögzítés</button><button id="manX">Mégse</button></div>`;
   $('manOk').onclick=()=>{ const a=+$('manA').value||0,b=+$('manB').value||0; if(a===b){ alert('Döntetlen nem lehet.'); return; } cupRecord(id,a,b); box.style.display='none'; cupRender(false); };
   $('manX').onclick=()=>{ box.style.display='none'; };
 }
 function cupStartMatch(id){
-  const M=CUP.data.m[id]; const R=CUP_ROUNDS[id[0]];
-  CUP.match={id,target:R.target,pool:R.pool.slice()};
+  const M=cupM(id); const cfg=cupCfg(); const k=cupKey(id); const R={name:cupRoundTitle(id),target:cfg.rounds[k].target,pool:cfg.rounds[k].pool.slice()};
+  if(cfg.order==='random'){ for(let i=R.pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [R.pool[i],R.pool[j]]=[R.pool[j],R.pool[i]]; } }
+  CUP.match={id,target:R.target,pool:R.pool};
   TEAMNAME[0]=cupTeam(M.a); TEAMNAME[1]=cupTeam(M.b);
   hostRoom(true);
   $('lobbyCup').style.display='block'; $('lobbyCup').innerHTML=`<b>${R.name}:</b> <span style="color:${TEAMCOL[0][0]}">${esc(TEAMNAME[0])}</span> (kék) vs <span style="color:${TEAMCOL[1][0]}">${esc(TEAMNAME[1])}</span> (zöld) · ${R.target} nyert pályáig<br><span class="mut">Te nézőként futtatod a meccset. A négy játékos a kóddal lép be, és a saját csapatát választja. Amint mind a négyen bent vannak, indíthatod.</span>`;
@@ -1553,50 +1615,67 @@ function cupAfterMatch(){
   if(!CUP.match) return; const [a,b]=RACE.score; if(a!==b) cupRecord(CUP.match.id,a,b); CUP.match=null; CUP.returning=true;
 }
 function cupEncode(){ return btoa(unescape(encodeURIComponent(JSON.stringify(CUP.data)))); }
-function cupDecode(s){ try{ return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch(e){ return null; } }
+function cupDecode(s){ try{ return cupMigrate(JSON.parse(decodeURIComponent(escape(atob(s))))); }catch(e){ return null; } }
 function cupLink(){ return location.origin+location.pathname+'#cup='+cupEncode(); }
 function cupText(){
-  const d=CUP.data; const nm=i=>cupTeam(i)||'?'; const m=id=>{ const M=d.m[id]; if(M.a===null||M.b===null) return `${nm(M.a)} vs ${nm(M.b)}`; return M.w===null?`${nm(M.a)} vs ${nm(M.b)}`:`**${nm(M.w)}** ${M.sa}:${M.sb} ${nm(M.w===M.a?M.b:M.a)}`; };
-  let t=`🏆 **${d.name}**\n\n**Negyeddöntők**\n`+['q1','q2','q3','q4'].map((id,i)=>`${i+1}. ${m(id)}`).join('\n');
-  t+=`\n\n**Elődöntők**\n1. ${m('s1')}\n2. ${m('s2')}\n\n**Döntő**\n${m('f')}`;
-  if(d.bronze) t+=`\n\n**Bronzmeccs**\n${m('b')}`;
-  if(d.m.f.w!==null) t+=`\n\n👑 Bajnok: **${nm(d.m.f.w)}**`;
+  const d=CUP.data; const nm=i=>cupTeam(i)||'?'; const keys=roundKeys(d.n);
+  const m=M=>{ if(M.a===null||M.b===null) return `${nm(M.a)} vs ${nm(M.b)}`; return M.w===null?`${nm(M.a)} vs ${nm(M.b)}`:`**${nm(M.w)}** ${M.sa}:${M.sb} ${nm(M.w===M.a?M.b:M.a)}`; };
+  let t=`🏆 **${d.name}** (${d.n} csapat)\n`;
+  d.rounds.forEach((rr,r)=>{ t+=`\n**${CUP_ROUNDS[keys[r]].name}${rr.length>1?'k':''}**\n`+rr.map((M,i)=>(rr.length>1?(i+1)+'. ':'')+m(M)).join('\n')+'\n'; });
+  if(d.bronze&&d.n>=4) t+=`\n**Bronzmeccs**\n${m(d.b)}\n`;
+  const f=d.rounds[d.rounds.length-1][0]; if(f.w!==null) t+=`\n👑 Bajnok: **${nm(f.w)}**`;
   return t;
 }
 function cupPng(){
-  const d=CUP.data; const c=document.createElement('canvas'); c.width=1200; c.height=700; const x=c.getContext('2d');
-  const bg=x.createLinearGradient(0,0,0,700); bg.addColorStop(0,'#141a30'); bg.addColorStop(1,'#07090f'); x.fillStyle=bg; x.fillRect(0,0,1200,700);
-  x.fillStyle='#4cc3ff'; x.font='bold 40px system-ui'; x.textAlign='center'; x.fillText(d.name,600,60);
-  x.fillStyle='#8b94b3'; x.font='14px system-ui'; x.fillText('Kötelék – 2v2 kupa',600,86);
+  const d=CUP.data; const L=cupLayout(); const keys=roundKeys(d.n); const bronze=d.bronze&&d.n>=4;
+  const SC=1.3, PADX=40, PADY=110; const W2=Math.round(880*SC+PADX*2), H2=Math.round((Math.max(L.height,bronze?L.bronzeY+L.H:0))*SC+PADY+50);
+  const c=document.createElement('canvas'); c.width=W2; c.height=H2; const x=c.getContext('2d');
+  const bg=x.createLinearGradient(0,0,0,H2); bg.addColorStop(0,'#141a30'); bg.addColorStop(1,'#07090f'); x.fillStyle=bg; x.fillRect(0,0,W2,H2);
+  x.fillStyle='#4cc3ff'; x.font='bold 40px system-ui'; x.textAlign='center'; x.fillText(d.name,W2/2,56); x.fillStyle='#8b94b3'; x.font='14px system-ui'; x.fillText(`Kötelék – 2v2 kupa · ${d.n} csapat`,W2/2,82);
   const nm=i=>cupTeam(i)||'–';
-  const box=(id,px,py,w)=>{ const M=d.m[id]; const done=M.w!==null; x.fillStyle='#1b2238'; x.strokeStyle=done?'#5be28a':'#2b3658'; x.lineWidth=2; rrc(x,px,py,w,74,10); x.fill(); x.stroke();
-    x.textAlign='left'; x.font='12px system-ui'; x.fillStyle='#8b94b3'; x.fillText(CUP_ROUNDS[id[0]].name+(id.length>1?' '+id[1]:''),px+12,py+18);
-    [[M.a,M.sa,M.w===M.a&&done],[M.b,M.sb,M.w===M.b&&done]].forEach(([t,s,wn],k)=>{ x.font=(wn?'bold ':'')+'16px system-ui'; x.fillStyle=wn?'#ffd54a':(t===null?'#56607f':'#e8ecf7'); x.fillText(nm(t),px+12,py+40+k*22); x.textAlign='right'; x.fillText(done?String(s):'',px+w-12,py+40+k*22); x.textAlign='left'; }); };
-  const rrc=(x,px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
+  const rrc=(px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
+  const box=(M,title,px,py,w,h)=>{ const done=M.w!==null; x.fillStyle='#1b2238'; x.strokeStyle=done?'#5be28a':'#2b3658'; x.lineWidth=2; rrc(px,py,w,h,10); x.fill(); x.stroke();
+    const comp=L.compact; let ty=py+(comp?20:38); if(!comp){ x.textAlign='left'; x.font='12px system-ui'; x.fillStyle='#8b94b3'; x.fillText(title,px+12,py+18); }
+    [[M.a,M.sa,M.w===M.a&&done],[M.b,M.sb,M.w===M.b&&done]].forEach(([t,s,wn],k)=>{ x.font=(wn?'bold ':'')+(comp?'15px':'17px')+' system-ui'; x.fillStyle=wn?'#ffd54a':(t===null?'#56607f':'#e8ecf7'); x.textAlign='left'; x.fillText(nm(t),px+12,ty+k*(comp?24:24)); x.textAlign='right'; x.fillText(done?String(s):'',px+w-12,ty+k*(comp?24:24)); }); };
   const line=(x1,y1,x2,y2)=>{ x.strokeStyle='#34406a'; x.lineWidth=2; x.beginPath(); x.moveTo(x1,y1); x.lineTo((x1+x2)/2,y1); x.lineTo((x1+x2)/2,y2); x.lineTo(x2,y2); x.stroke(); };
-  const W1=260; const qy=[120,250,380,510]; ['q1','q2','q3','q4'].forEach((id,i)=>box(id,60,qy[i],W1));
-  const sy=[185,445]; ['s1','s2'].forEach((id,i)=>box(id,440,sy[i],W1));
-  box('f',820,315,W1); if(d.bronze) box('b',820,560,W1);
-  qy.forEach((y,i)=>line(60+W1,y+37,440,sy[i>>1]+37)); sy.forEach(y=>line(440+W1,y+37,820,315+37));
-  if(d.m.f.w!==null){ x.textAlign='center'; x.fillStyle='#ffd54a'; x.font='bold 26px system-ui'; x.fillText('🏆 '+nm(d.m.f.w),950,270); }
-  x.textAlign='center'; x.fillStyle='#56607f'; x.font='12px system-ui'; x.fillText(new Date().toLocaleString('hu-HU'),600,685);
+  const P=(v)=>v*SC; const H=P(L.H), BW=P(L.BW);
+  for(let r=0;r<L.R-1;r++) L.Y[r].forEach((y,i)=>line(PADX+P(L.X[r])+BW,PADY+P(y)+H/2,PADX+P(L.X[r+1]),PADY+P(L.Y[r+1][i>>1])+H/2));
+  keys.forEach((k,r)=>{ x.textAlign='center'; x.fillStyle='#8b94b3'; x.font='bold 13px system-ui'; x.fillText((CUP_ROUNDS[k].name+(d.rounds[r].length>1?'K':'')).toUpperCase(),PADX+P(L.X[r])+BW/2,PADY-14); });
+  d.rounds.forEach((rr,r)=>rr.forEach((M,m)=>box(M,cupRoundTitle(`r${r}m${m}`),PADX+P(L.X[r]),PADY+P(L.Y[r][m]),BW,H)));
+  if(bronze){ x.textAlign='center'; x.fillStyle='#8b94b3'; x.font='bold 13px system-ui'; x.fillText('BRONZMECCS',PADX+P(L.X[L.R-1])+BW/2,PADY+P(L.bronzeY)-10); box(d.b,'Bronzmeccs',PADX+P(L.X[L.R-1]),PADY+P(L.bronzeY),BW,H); }
+  const f=d.rounds[L.R-1][0]; if(f.w!==null){ x.textAlign='center'; x.fillStyle='#ffd54a'; x.font='bold 26px system-ui'; x.fillText('🏆 '+nm(f.w),PADX+P(L.X[L.R-1])+BW/2,PADY+P(L.Y[L.R-1][0])-34); }
+  x.textAlign='center'; x.fillStyle='#56607f'; x.font='12px system-ui'; x.fillText(new Date().toLocaleString('hu-HU'),W2/2,H2-14);
   const a=document.createElement('a'); a.download=(d.name||'kupa').replace(/[^\wáéíóöőúüű-]+/gi,'_')+'.png'; a.href=c.toDataURL('image/png'); a.click();
 }
 function cupOpen(){
-  cupLoad(); if(CUP.data){ $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(false); } else { $('cupSetup').style.display='block'; $('cupView').style.display='none'; }
+  cupLoad(); if(CUP.data){ $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(false); } else { cupShowSetup(false); }
   show('ovCup');
 }
+function cupShowSetup(edit){
+  CUP.editing=edit; CFG=edit?JSON.parse(JSON.stringify(cupCfg())):cupDefaultCfg(8); CFG_TAB='q';
+  $('cupSetup').style.display='block'; $('cupView').style.display='none';
+  $('cupSetup').querySelector('h2').textContent=edit?'⚙ Kupa beállításai':'🏆 Új kupa';
+  $('btnCupCreate').textContent=edit?'Mentés':'Kupa létrehozása';
+  const played=edit&&cupAllIds().some(id=>cupM(id).w!==null);
+  if(edit){ $('cupName').value=CUP.data.name; $('cupTeams').value=CUP.data.teams.join('\n'); } else { $('cupName').value=''; $('cupTeams').value=''; }
+  $('cupTeams').disabled=played; $('cfgN').disabled=!!edit; $('btnCupShuffle').style.display=played?'none':'inline-block'; $('cupTeamsNote').textContent=played?'A csapatok már nem módosíthatók, mert van lejátszott meccs.':(edit?'A csapatok száma utólag nem módosítható.':'');
+  cfgRender();
+}
 function cupSetupInit(){
-  $('btnCupCreate').onclick=()=>{ const teams=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8); while(teams.length<8) teams.push('Csapat '+(teams.length+1)); cupNew($('cupName').value.trim(),teams); cupOpen(); };
+  $('btnCupCreate').onclick=()=>{ const err=cfgValid(); if(err){ $('cfgHint').textContent=err; $('cfgHint').style.color='var(--bad)'; return; }
+    const n=CFG.n; const teams=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,n); while(teams.length<n) teams.push('Csapat '+(teams.length+1));
+    if(CUP.editing){ const d=CUP.data; d.name=$('cupName').value.trim()||d.name; if(!$('cupTeams').disabled) d.teams=teams; CFG.n=d.n; d.cfg=JSON.parse(JSON.stringify(CFG)); d.bronze=CFG.bronze; cupSave(); CUP.editing=false; cupOpen(); return; }
+    cupNew($('cupName').value.trim(),teams); cupOpen(); };
+  cfgBind(); $('btnCupEdit').onclick=()=>cupShowSetup(true);
   $('btnCupShuffle').onclick=()=>{ const t=$('cupTeams').value.split('\n').map(s=>s.trim()).filter(Boolean); for(let i=t.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [t[i],t[j]]=[t[j],t[i]]; } $('cupTeams').value=t.join('\n'); };
   $('btnCupNew').onclick=()=>{ if(confirm('Biztos törlöd ezt a kupát, és újat kezdesz?')){ CUP.data=null; try{localStorage.removeItem('kotelek_cup');}catch(e){} cupOpen(); } };
   $('btnCupLink').onclick=async()=>{ const l=cupLink(); try{ await navigator.clipboard.writeText(l); $('cupMsg').textContent='A link a vágólapon van – tedd ki Discordra, bárki megnézheti az állást.'; }catch(e){ $('cupMsg').textContent=l; } };
   $('btnCupText').onclick=async()=>{ const t=cupText(); try{ await navigator.clipboard.writeText(t); $('cupMsg').textContent='A szöveg a vágólapon van – Discordon szépen formázva jelenik meg.'; }catch(e){ $('cupMsg').textContent=t; } };
   $('btnCupPng').onclick=()=>cupPng();
-  $('btnCupBack').onclick=()=>show('ovMenu');
+  $('btnCupBack').onclick=()=>{ if(CUP.editing){ CUP.editing=false; cupOpen(); } else show('ovMenu'); };
   $('btnCupViewBack').onclick=()=>{ location.hash=''; show('ovMenu'); };
   // megosztott link megnyitása (csak olvasás)
-  if(location.hash.startsWith('#cup=')){ const d=cupDecode(location.hash.slice(5)); if(d){ const keep=CUP.data; CUP.data=d; $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(true); document.querySelectorAll('.cup-host-only').forEach(e=>e.style.display='none'); $('cupRoNote').style.display='block'; $('cupRoBar').style.display='flex'; show('ovCup'); CUP.view=true; } }
+  if(location.hash.startsWith('#cup=')){ const d=cupDecode(location.hash.slice(5)); if(d){ CUP.data=d; $('cupSetup').style.display='none'; $('cupView').style.display='block'; cupRender(true); document.querySelectorAll('.cup-host-only').forEach(e=>e.style.display='none'); $('cupRoNote').style.display='block'; $('cupRoBar').style.display='flex'; show('ovCup'); CUP.view=true; } }
 }
 
 // ============================================================
