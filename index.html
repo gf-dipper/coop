@@ -55,8 +55,8 @@
   .cmc .cm-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;display:inline-block}
   .cmc .cmc-act{display:flex;gap:3px;flex:none}
   .brk svg{position:absolute;left:0;top:0;width:100%;pointer-events:none}
-  .brk .cm{position:absolute;width:250px;height:86px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}
-  .brk .cm .cm-act{margin-top:auto;display:flex;gap:6px;justify-content:flex-end;min-height:22px}
+  .brk .cm{position:absolute;width:250px;height:100px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}
+  .brk .cm .cm-act{margin-top:auto;display:flex;gap:6px;justify-content:flex-end;height:24px;align-items:center}
   .brk .cup-colt{position:absolute;top:-4px;width:250px}
   .cfg{text-align:left;background:#0b0f1a;border:1px solid #334066;border-radius:12px;padding:10px 12px;width:470px;flex:none}
   .cfg .tabs{display:flex;gap:4px;margin-bottom:8px}
@@ -75,8 +75,8 @@
   .cm{background:#0b0f1a;border:1px solid #2b3658;border-radius:12px;padding:7px 11px}
   .cm.ready{border-color:#3a8ff0;box-shadow:0 0 0 1px rgba(76,195,255,.25)}
   .cm.done{border-color:#2e6b4a}
-  .cm-title{color:var(--mut);font-size:11px;margin-bottom:2px}
-  .cm-row{display:flex;justify-content:space-between;padding:1px 0;font-size:14px}
+  .cm-title{color:var(--mut);font-size:11px;line-height:14px;margin-bottom:3px}
+  .cm-row{display:flex;justify-content:space-between;padding:0;font-size:14px;line-height:20px}
   .cm-row.win{color:#ffd54a;font-weight:700}
   .cm-sc{font-family:ui-monospace,monospace;min-width:18px;text-align:right}
   textarea{background:#0b0f1a;border:1px solid #334066;color:var(--txt);border-radius:10px;padding:10px;font-size:15px;width:320px;height:190px;font-family:inherit}
@@ -1569,7 +1569,7 @@ function cupMatchHtml(id,ro,compact){
   return `<div class="cm ${done?'done':''} ${ready?'ready':''}" data-id="${id}"><div class="cm-title">${cupRoundTitle(id)}</div>${row(ta,M.sa,done&&M.w===M.a)}${row(tb,M.sb,done&&M.w===M.b)}<div class="cm-act">${act}</div></div>`;
 }
 function cupLayout(){
-  const d=CUP.data, R=d.rounds.length, n=d.n; const compact=n>=16; const H=compact?48:86, GAP=compact?0:14; const BW=compact?196:250;
+  const d=CUP.data, R=d.rounds.length, n=d.n; const compact=n>=16; const H=compact?48:100, GAP=compact?0:12; const BW=compact?196:250;
   const cols=R; const totalW=880; const sp=cols>1?Math.min(300,Math.floor((totalW-BW)/(cols-1))):0; const off=Math.floor((totalW-(BW+sp*(cols-1)))/2); const X=Array.from({length:cols},(_,i)=>off+i*sp);
   const first=d.rounds[0].length; const Y=[]; Y[0]=Array.from({length:first},(_,i)=>i*(H+GAP));
   for(let r=1;r<R;r++){ Y[r]=Y[r-1].filter((_,i)=>i%2===0).map((y,i)=>(Y[r-1][i*2]+Y[r-1][i*2+1])/2); }
