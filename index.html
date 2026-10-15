@@ -38,6 +38,9 @@
   .vol span{font-size:11px;color:var(--mut);min-width:28px;text-align:right}
   .bar label{color:var(--mut);font-size:12.5px;background:rgba(20,26,43,.9);border:1px solid #334066;border-radius:20px;padding:7px 12px;cursor:pointer;white-space:nowrap}
   .stars2{color:#ffd54a;font-size:12.5px}
+  .weekly{display:block;width:100%;margin:0 0 12px;padding:8px 14px;font-size:13px;letter-spacing:0;text-transform:none;border-radius:12px;background:linear-gradient(90deg,rgba(255,213,74,.12),rgba(20,26,43,.9));border:1px solid rgba(255,213,74,.4);color:var(--txt);text-align:left;cursor:pointer;line-height:1.35}
+  .weekly:hover{border-color:#ffd54a}
+  .weekly .mut{font-size:12px}
   .prof{display:flex;gap:12px;justify-content:center;align-items:center;margin:0 0 14px;flex-wrap:nowrap}
   .prof input{width:300px;letter-spacing:0;text-transform:none;font-size:14px;padding:7px 12px;font-family:inherit;text-align:left;margin:0}
   .faces{display:flex;gap:4px;flex-wrap:nowrap;justify-content:center}
@@ -45,6 +48,12 @@
   #profPrev{width:92px;height:92px;border-radius:14px;flex:none;background:radial-gradient(circle at 50% 40%,#1b2744,#0b0f1a 75%);border:1px solid #334066}
   .faces button{margin:0;padding:5px 7px;font-size:17px;border-radius:9px;line-height:1}
   .faces button.sel{border-color:#4cc3ff;background:#1f3a66}
+  #doneStats{text-align:left;font-size:13px;max-height:230px;overflow:auto;margin:6px 0 2px}
+  #doneStats table{width:100%;border-collapse:collapse}
+  #doneStats td,#doneStats th{padding:3px 6px;border-bottom:1px solid #263050;white-space:nowrap}
+  #doneStats th{color:var(--mut);font-weight:600;font-size:12px;text-align:left}
+  #doneStats .sum{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;color:var(--mut)}
+  #doneStats .sum b{color:var(--txt)}
   .legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;text-align:left;font-size:13px;margin:12px 0}
   .legend div{display:flex;gap:10px;align-items:center}
   .legend i{display:inline-block;width:22px;height:22px;border-radius:5px;flex:none;border:1px solid rgba(255,255,255,.15)}
@@ -130,6 +139,7 @@
       <button class="card" id="btnLocal"><b><span class="ic">🎮</span>Egy gépen</b><span class="d">Kék: WASD · Narancs: nyilak. Gyors próbának vagy kanapéról.</span></button>
       <button class="card" id="btnCup"><b><span class="ic">🏆</span>Kupa</b><span class="d">Kieséses kupa 2–16 csapattal, szervezőknek. Az eredmény magától beíródik.</span></button>
     </div>
+    <button class="weekly" id="btnWeekly"></button>
     <div class="prof"><canvas id="profPrev" width="92" height="92" title="Így nézel ki a pályán"></canvas><div class="profR"><input id="profName" maxlength="14" placeholder="A neved – ezt látják a többiek"><div class="faces" id="faces"></div></div></div>
     <div class="bar">
       <button id="btnHelp">❓ Súgó</button>
@@ -139,7 +149,7 @@
       <div class="vol"><button class="btnSfx" title="Hangok némítása">🔊</button><input type="range" class="volSfx" min="0" max="100" step="1"><span class="volSfxV"></span></div>
       <label><input type="checkbox" id="chkInf" style="width:auto;letter-spacing:0;transform:scale(1.15);margin-right:6px;vertical-align:-2px">Végtelen élet</label>
     </div>
-    <div class="ctrl"><span class="stars2" id="menuStars"></span><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / nyilak – mozgás</span><span><kbd>Esc</kbd> – szünet, pálya átugrása (gazda)</span><span>a kötelet a tüske, őrjárat és lézer elvágja</span></div>
+    <div class="ctrl"><span class="stars2" id="menuStars"></span><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / nyilak / 🎮 – mozgás</span><span><kbd>Esc</kbd> – szünet, pálya átugrása (gazda)</span><span>a kötelet a tüske, őrjárat és lézer elvágja</span></div>
     <p class="mut" id="menuErr"></p>
   </div></div>
 
@@ -161,8 +171,10 @@
     <p id="lobbyMsg">Szoba nyitása…</p>
     <div id="hostTeams"></div>
     <p class="mut" id="lobbyHint"></p>
+    <div id="vetoBox"></div>
+    <p class="mut" id="fairRow" style="display:none;margin:4px 0"><label style="cursor:pointer"><input type="checkbox" id="chkFair" style="width:auto;letter-spacing:0;transform:scale(1.1);margin-right:6px;vertical-align:-2px">Egyenlő esély – a saját gombnyomásaid a vendégek késésével késleltetve (<span id="fairMs">0</span> ms)</label></p>
     <div id="lobbyStart" style="display:none">
-      <div id="raceOpts" style="display:none" class="mut">Verseny hossza: <select id="selRounds" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="5">5 pálya</option><option value="10" selected>10 pálya</option><option value="20">20 pálya</option><option value="40">az összes</option></select></div>
+      <div id="raceOpts" style="display:none" class="mut">Verseny hossza: <select id="selRounds" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="5">5 pálya</option><option value="10" selected>10 pálya</option><option value="20">20 pálya</option><option value="40">az összes</option></select> &nbsp; Pálya-tiltás: <select id="selVeto" style="font-size:15px;letter-spacing:0;width:auto;padding:6px 10px"><option value="0">nincs</option><option value="1" selected>1–1 pálya</option><option value="2">2–2 pálya</option></select></div>
       <p class="mut" id="lobbyLvHint">Honnan induljatok? (páros módban a legjobb időitek megmaradnak ezen a gépen)</p>
       <div class="lvgrid" id="lvgridHost"></div>
       <button class="pri" id="btnStartHost">Indítás az 1. pályától</button>
@@ -173,8 +185,17 @@
   <!-- Vendég várakozás -->
   <div class="ov" id="ovGuestWait"><div class="box">
     <h2>Csatlakozva!</h2>
-    <p class="sub" id="guestWho">Csatlakozva. Várunk a többiekre…</p><div id="guestTeams"></div><p class="mut">A → gombbal átülhetsz a másik csapatba. A játékot a szoba gazdája indítja.</p>
+    <p class="sub" id="guestWho">Csatlakozva. Várunk a többiekre…</p><div id="guestTeams"></div><div id="vetoBoxG"></div><p class="mut" id="guestLobbyNote">A → gombbal átülhetsz a másik csapatba. A játékot a szoba gazdája indítja.</p>
     <button id="btnGuestBack">Kilépés</button>
+  </div></div>
+
+  <!-- Heti kihívás -->
+  <div class="ov" id="ovWeekly"><div class="box">
+    <h2>📅 Heti kihívás</h2>
+    <p class="sub">Minden héten ugyanaz az 5 pálya mindenkinek, egymás után, összidőre. Életek nincsenek, de minden újrakezdés számít. A végén egy másolható eredménysort kaptok Discordra – hasonlítsátok össze a többiekkel!</p>
+    <p id="weeklyInfo" style="margin:6px 0 14px"></p>
+    <div class="row"><button class="pri" id="btnWeeklyLocal">🎮 Egy gépen</button><button id="btnWeeklyHost">🌐 Szobát nyitok hozzá</button><button id="btnWeeklyBack">Vissza</button></div>
+    <p class="mut">Online: a társad a kóddal belép, és a szobából indítod a heti kihívást.</p>
   </div></div>
 
   <!-- Helyi pályaválasztó -->
@@ -214,7 +235,7 @@
         <div style="text-align:left;width:340px;flex:none"><div class="mut" style="margin-bottom:4px">Kupa neve</div><input class="plain" id="cupName" placeholder="pl. Péntek Esti Kötelék Kupa"><div class="mut" id="cupTeamsLbl" style="margin:10px 0 4px">Csapatok (soronként egy, 8 db – a sorrend adja a párokat: 1–2, 3–4, …)</div><textarea id="cupTeams" placeholder="Csapat 1&#10;Csapat 2&#10;…" style="height:150px"></textarea><div class="mut" id="cupTeamsNote" style="font-size:12px;margin-top:4px"></div></div>
         <div class="cfg" id="cupCfg">
           <div class="row" style="justify-content:space-between;margin-bottom:6px"><b>⚙ Beállítások</b><span class="mut" style="font-size:12px">alapból minden ki van töltve, nem kötelező belenyúlni</span></div>
-          <div class="row" style="justify-content:flex-start;gap:14px;margin-bottom:6px"><label class="mut" style="font-size:13px">Csapatok: <select id="cfgN"><option value="2">2</option><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option></select></label><label class="mut" style="font-size:13px"><input type="checkbox" id="cfgBronze" style="width:auto;letter-spacing:0;transform:scale(1.1);margin-right:5px;vertical-align:-1px">Bronzmeccs</label><label class="mut" style="font-size:13px">Pályák sorrendje: <select id="cfgOrder"><option value="fix">növekvő sorszám</option><option value="random">véletlen (meccsenként)</option></select></label></div>
+          <div class="row" style="justify-content:flex-start;gap:14px;margin-bottom:6px"><label class="mut" style="font-size:13px">Csapatok: <select id="cfgN"><option value="2">2</option><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option></select></label><label class="mut" style="font-size:13px"><input type="checkbox" id="cfgBronze" style="width:auto;letter-spacing:0;transform:scale(1.1);margin-right:5px;vertical-align:-1px">Bronzmeccs</label><label class="mut" style="font-size:13px">Pályák sorrendje: <select id="cfgOrder"><option value="fix">növekvő sorszám</option><option value="random">véletlen (meccsenként)</option></select></label><label class="mut" style="font-size:13px" title="A meccs előtt a két csapat felváltva kitilt ennyi-ennyi pályát a kör készletéből">Pálya-tiltás: <select id="cfgVeto"><option value="0">nincs</option><option value="1" selected>1–1 pálya</option><option value="2">2–2 pálya</option></select></label></div>
           <div class="tabs" id="cfgTabs"></div>
           <div class="row" style="justify-content:flex-start;gap:10px"><span class="mut" style="font-size:13px">Nyert pályák a győzelemhez:</span><select id="cfgTarget"><option>2</option><option>3</option><option>4</option><option>5</option></select><span class="mut" id="cfgCount" style="font-size:12px"></span></div>
           <div class="lvpick" id="cfgLevels"></div>
@@ -261,6 +282,7 @@
     <h2>🎉 Végigjátszottátok!</h2>
     <p class="big" id="doneTime"></p>
     <p class="mut" id="doneDeaths"></p>
+    <div id="doneStats"></div>
     <div class="row"><button id="btnShare">📋 Eredmény másolása</button></div><p class="mut" id="shareMsg"></p>
     <p class="sub">Ha még bírjátok: a pályaválasztóból bármelyiket újra mehetitek, és vadászhatjátok a 3 csillagot.</p>
     <button class="pri" id="btnDoneMenu">Főmenü</button>
@@ -935,7 +957,7 @@ const LEVELS = [
 // ============================================================
 const CELL=40, COLS=24, ROWS=15, W=960, H=600, PR=13;
 const ACC=1800, MAXV=230, FRIC=9, DEF_ROPE=150, SNAP=1.45, TIMED=4.5, LIVES=8, FRAG_T=0.7, WORLD=8;
-const OPT={inf:false};
+const OPT={inf:false,fair:true}; try{ const o=JSON.parse(localStorage.getItem('kotelek_opt')||'{}'); if(o.fair===false) OPT.fair=false; }catch(e){}
 const GFX={light:true,bloom:true}; try{ Object.assign(GFX,JSON.parse(localStorage.getItem('kotelek_gfx')||'{}')); }catch(e){}
 const PROF={n:'',f:0}; try{ Object.assign(PROF,JSON.parse(localStorage.getItem('kotelek_prof')||'{}')); }catch(e){}
 function profSave(){ try{ localStorage.setItem('kotelek_prof',JSON.stringify(PROF)); }catch(e){} }
@@ -997,7 +1019,7 @@ let S=null; // futó állapot
 function newState(L){
   const st=STATICS[L];
   const lives=(S&&Math.floor(S.L/WORLD)===Math.floor(L/WORLD))?S.lives:LIVES;
-  S={L,st,p:[{x:0,y:0,vx:0,vy:0,key:false},{x:0,y:0,vx:0,vy:0,key:false}],gems:[],kg:[],kd:[],fr:[],tt:0,bullets:[],tm:0,lt:0,ph:'play',phT:0,deaths:0,tot:S?S.tot:0,totd:S?S.totd:0,tension:0,snapAt:0,shots:[],stars:0,clearTime:0,lives};
+  S={L,st,p:[{x:0,y:0,vx:0,vy:0,key:false},{x:0,y:0,vx:0,vy:0,key:false}],gems:[],kg:[],kd:[],fr:[],tt:0,bullets:[],tm:0,lt:0,ph:'play',phT:0,deaths:0,tot:S?S.tot:0,totd:S?S.totd:0,tension:0,snapAt:0,shots:[],stars:0,clearTime:0,lives,pd:[0,0]};
   resetLevel();
 }
 function resetLevel(){
@@ -1054,10 +1076,10 @@ function update(dt,bits){
     if(S.tt>0) S.tt-=dt;
     // veszélyek
     for(let i=0;i<2;i++){ const p=S.p[i];
-      for(const h of st.hazards){ const hx=(h[0]+.5)*CELL,hy=(h[1]+.5)*CELL; if(Math.abs(p.x-hx)<PR+10&&Math.abs(p.y-hy)<PR+10){fail('spike');return;} }
-      for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); if(Math.hypot(p.x-q.x,p.y-q.y)<PR+pt.r-2){fail('patrol');return;} }
-      for(const l of st.lasers){ for(const sg of laserSegs(l,S.tm)){ if(segDist(p.x,p.y,sg.x1,sg.y1,sg.x2,sg.y2)<PR+2){fail('laser');return;} } }
-      const fc=Math.floor(p.x/CELL),frr=Math.floor(p.y/CELL); const fi=st.frIdx[frr*COLS+fc]; if(fi!==undefined){ if(S.fr[fi]===-1) S.fr[fi]=FRAG_T; else if(S.fr[fi]===-2){fail('hole');return;} }
+      for(const h of st.hazards){ const hx=(h[0]+.5)*CELL,hy=(h[1]+.5)*CELL; if(Math.abs(p.x-hx)<PR+10&&Math.abs(p.y-hy)<PR+10){fail('spike',i);return;} }
+      for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); if(Math.hypot(p.x-q.x,p.y-q.y)<PR+pt.r-2){fail('patrol',i);return;} }
+      for(const l of st.lasers){ for(const sg of laserSegs(l,S.tm)){ if(segDist(p.x,p.y,sg.x1,sg.y1,sg.x2,sg.y2)<PR+2){fail('laser',i);return;} } }
+      const fc=Math.floor(p.x/CELL),frr=Math.floor(p.y/CELL); const fi=st.frIdx[frr*COLS+fc]; if(fi!==undefined){ if(S.fr[fi]===-1) S.fr[fi]=FRAG_T; else if(S.fr[fi]===-2){fail('hole',i);return;} }
     }
     for(let i=0;i<S.fr.length;i++){ if(S.fr[i]>=0){ S.fr[i]-=dt; if(S.fr[i]<=0) S.fr[i]=-2; } }
     // kötél elvágása
@@ -1068,18 +1090,30 @@ function update(dt,bits){
     }
     // lövegek
     st.turrets.forEach((t,ti)=>{ S.shots[ti]-=dt; if(S.shots[ti]<=0){ S.shots[ti]+=t.rate; let best=null,bd=1e9; for(const p of S.p){const d2=Math.hypot(p.x-t.x,p.y-t.y); if(d2<bd){bd=d2;best=p;}} const ang=Math.atan2(best.y-t.y,best.x-t.x); S.bullets.push({x:t.x+Math.cos(ang)*24,y:t.y+Math.sin(ang)*24,vx:Math.cos(ang)*t.s,vy:Math.sin(ang)*t.s,life:6}); } });
-    for(let i=S.bullets.length-1;i>=0;i--){ const bl=S.bullets[i]; bl.x+=bl.vx*dt; bl.y+=bl.vy*dt; bl.life-=dt; const c=Math.floor(bl.x/CELL),r=Math.floor(bl.y/CELL); const ch=(c<0||r<0||c>=COLS||r>=ROWS)?'#':st.grid[r][c]; if(bl.life<=0||ch==='#'||(ch==='G'&&S.gems.some(g=>!g))){S.bullets.splice(i,1);continue;} for(const p of S.p){ if(Math.hypot(p.x-bl.x,p.y-bl.y)<PR+5){fail('bullet');return;} } }
+    for(let i=S.bullets.length-1;i>=0;i--){ const bl=S.bullets[i]; bl.x+=bl.vx*dt; bl.y+=bl.vy*dt; bl.life-=dt; const c=Math.floor(bl.x/CELL),r=Math.floor(bl.y/CELL); const ch=(c<0||r<0||c>=COLS||r>=ROWS)?'#':st.grid[r][c]; if(bl.life<=0||ch==='#'||(ch==='G'&&S.gems.some(g=>!g))){S.bullets.splice(i,1);continue;} for(let pi=0;pi<2;pi++){ const p=S.p[pi]; if(Math.hypot(p.x-bl.x,p.y-bl.y)<PR+5){fail('bullet',pi);return;} } }
     // cél
     const allGems=S.gems.every(g=>g);
     const inExit=p=>st.exits.some(([c,r])=>p.x>c*CELL&&p.x<(c+1)*CELL&&p.y>r*CELL&&p.y<(r+1)*CELL);
     if(allGems&&inExit(S.p[0])&&inExit(S.p[1])){ S.ph='clear'; S.phT=2.8; S.clearTime=S.lt; const par=LEVELS[S.L].par||60; S.stars=S.lt<=par?3:S.lt<=par*1.6?2:1; if(!RACE.on) saveBest(S.L,S.lt,S.stars); }
   } else if(S.ph==='fail'){ S.phT-=dt; S.tot+=dt; if(S.phT<=0){ if(S.lives<=0){ const tot=S.tot,totd=S.totd; const ws=Math.floor(S.L/WORLD)*WORLD; S=null; newState(ws); S.tot=tot; S.totd=totd; } else resetLevel(); } }
-  else if(S.ph==='clear'){ if(RACE.on) return; S.phT-=dt; if(S.phT<=0){ if(S.L+1<LEVELS.length){ newState(S.L+1); S.lt=0; } else { S.ph='done'; } } }
+  else if(S.ph==='clear'){ if(RACE.on) return; S.phT-=dt; if(S.phT<=0){ if(WEEKLY.on){ weeklyAdvance(); } else if(S.L+1<LEVELS.length){ newState(S.L+1); S.lt=0; } else { S.ph='done'; } } }
 }
-function fail(why){ S.ph='fail'; S.deaths++; S.totd++; S.failWhy=why; if(!OPT.inf&&!RACE.on) S.lives--; S.phT=S.lives<=0?2.6:0.9; flash(); }
+function fail(why,pi){ S.ph='fail'; S.deaths++; S.totd++; S.failWhy=why; if(pi!==undefined&&S.pd) S.pd[pi]++; if(!OPT.inf&&!RACE.on&&!WEEKLY.on) S.lives--; S.phT=S.lives<=0?2.6:0.9; flash(); }
 function flash(){ const f=$('flash'); f.style.background='rgba(255,80,100,.45)'; setTimeout(()=>f.style.background='rgba(255,80,100,0)',120); }
 
 // legjobb idők
+// ---- Heti kihívás: a hét sorszámából származó 5 pálya, mindenkinek ugyanaz, összidőre ----
+const WEEKLY={on:false,pending:false,list:[],idx:0,times:[],stars:[],deaths:0};
+function isoWeek(d){ d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=d.getUTCDay()||7; d.setUTCDate(d.getUTCDate()+4-day); const y0=new Date(Date.UTC(d.getUTCFullYear(),0,1)); return {y:d.getUTCFullYear(),w:Math.ceil(((d-y0)/86400000+1)/7)}; }
+function weeklyKey(){ const {y,w}=isoWeek(new Date()); return `${y}-${String(w).padStart(2,'0')}`; }
+function weeklyLevels(key){ let h=0; for(const ch of key) h=(h*31+ch.charCodeAt(0))>>>0; let a=h||1; const rnd=()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; const pool=[]; for(let i=3;i<LEVELS.length;i++) pool.push(i); const out=[]; while(out.length<5&&pool.length){ out.push(pool.splice(Math.floor(rnd()*pool.length),1)[0]); } return out.sort((x,y)=>x-y); }
+function weeklyLoad(){ try{ return JSON.parse(localStorage.getItem('kotelek_weekly')||'{}'); }catch(e){ return {}; } }
+function weeklySave(key,rec){ try{ const all=weeklyLoad(); if(!all[key]||rec.t<all[key].t) all[key]=rec; localStorage.setItem('kotelek_weekly',JSON.stringify(all)); }catch(e){} }
+function weeklySquares(stars){ return stars.map(s=>s>=3?'🟩':s===2?'🟨':s===1?'🟥':'⬛').join(''); }
+function weeklyText(rec){ const {y,w}=isoWeek(new Date()); return `📅 Kötelék – ${w}. heti kihívás (${y})\n⏱ ${fmt(rec.t)} · ☠ ${rec.d} újrakezdés\n${weeklySquares(rec.s)}`; }
+function startWeekly(){ const key=weeklyKey(); WEEKLY.on=true; WEEKLY.pending=false; WEEKLY.key=key; WEEKLY.list=weeklyLevels(key); WEEKLY.idx=0; WEEKLY.times=[]; WEEKLY.stars=[]; WEEKLY.deaths=0; PAUSED=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(WEEKLY.list[0]); S.tot=0; S.totd=0; hideAll(); }
+function weeklyAdvance(){ WEEKLY.times.push(+S.lt.toFixed(1)); WEEKLY.stars.push(S.stars); if(WEEKLY.idx+1<WEEKLY.list.length){ WEEKLY.idx++; const tot=S.tot,totd=S.totd; newState(WEEKLY.list[WEEKLY.idx]); S.tot=tot; S.totd=totd; S.lt=0; } else { S.ph='done'; } }
+function weeklyPanelHtml(){ const key=weeklyKey(); const {y,w}=isoWeek(new Date()); const lv=weeklyLevels(key); const best=weeklyLoad()[key]; return `<b>${w}. hét</b> · ${lv.map(L=>(L+1)+'. '+esc(LEVELS[L].name)).join(' · ')}<br><span class="mut">${best?`Legjobb időtök: <b style="color:var(--txt)">${fmt(best.t)}</b> · ☠ ${best.d} · ${weeklySquares(best.s)}`:'Még nem játszottátok ezen a héten.'}</span>`; }
 function loadBest(){ try{return JSON.parse(localStorage.getItem('kotelek_best')||'{}')}catch(e){return {}} }
 function saveBest(L,t,stars){ try{ const b=loadBest(); if(!b[L]||t<b[L].t) b[L]={t,stars}; localStorage.setItem('kotelek_best',JSON.stringify(b)); }catch(e){} }
 
@@ -1119,7 +1153,7 @@ function updateFX(dt){
   FX.prevGems=S.gems.slice(); FX.prevKg=S.kg.slice();
   if(S.ph==='fail'&&FX.prevPh!=='fail'){ fxFail(S.failWhy); sfx((S.failWhy==='rope'||S.failWhy==='ropecut')?'snap':'fail'); }
   if(S.ph==='clear'&&FX.prevPh!=='clear'){ for(const p of S.p) spawnParts(p.x,p.y,30,'#5be28a',220,3.5,0.9); if(!RACE.on) sfx('clear'); }
-  if(RACE.on){ if(RACE.ph==='point'&&FX.prevRph!=='point') sfx(RACE.winner===myTeam()?'clear':'point'); if(RACE.ph==='count'){ const n=Math.ceil(RACE.t-0.2); if(n!==FX.prevCnt){ sfx(n>0?'count':'go'); FX.prevCnt=n; } } FX.prevRph=RACE.ph; }
+  if(RACE.on){ if(RACE.ph==='point'&&FX.prevRph!=='point') sfx(RACE.winner===myTeam()?'clear':'point'); if(RACE.ph==='count'){ const n=Math.ceil(RACE.t-0.2); if(n!==FX.prevCnt){ sfx(n>0?'count':'go'); FX.prevCnt=n; } if(FX.prevRph!=='count'){ const sit=raceSituation(); if(sit&&sit.snd) sfx(sit.snd); } } FX.prevRph=RACE.ph; }
   FX.prevPh=S.ph;
   if(S.ph==='play'){ for(let i=0;i<2;i++){ const t=FX.trails[i], p=S.p[i]; t.push({x:p.x,y:p.y}); if(t.length>14) t.shift(); } }
   for(const b of BLINK){ if(b.on>0){ b.on-=dt; } else { b.t-=dt; if(b.t<=0){ b.on=0.12; b.t=2+Math.random()*4; } } }
@@ -1266,9 +1300,44 @@ function drawGlowPass(t){
 function drawGhosts(){ const ot=1-myTeam(); const a=S2.p[0],b=S2.p[1]; ctx.save(); ctx.globalAlpha=.32; ctx.strokeStyle=TEAMCOL[ot][0]; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.setLineDash([]);
   for(let i=0;i<2;i++){ const p=S2.p[i]; ctx.fillStyle=TEAMCOL[ot][i]; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
   ctx.restore(); if(S2.ph==='fail'){ ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle=TEAMCOL[ot][0]; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('↻ az ellenfél elölről kezd', (a.x+b.x)/2, (a.y+b.y)/2-24); ctx.restore(); } }
+// Helyzet a következő pálya előtt: meccslabda, egyenlítés, utolsó pálya…  → felirat a visszaszámlálás alatt
+function raceSituation(){
+  const [a,b]=RACE.score, n=RACE.list.length, i=RACE.idx; const tgt=RACE.target||Math.floor(n/2)+1; // hány pont kell a biztos győzelemhez
+  const mpA=a===tgt-1, mpB=b===tgt-1;
+  if(mpA&&mpB) return {txt:'MINDENT ELDÖNTŐ PÁLYA!',col:'#ffd54a',snd:'hype'};
+  if(!RACE.target&&i===n-1) return {txt:'UTOLSÓ PÁLYA!',col:'#ffd54a',snd:'hype'};
+  if(mpA||mpB) return {txt:`MECCSLABDA – ${TEAMNAME[mpA?0:1].toUpperCase()}`,col:TEAMCOL[mpA?0:1][0],snd:'hype'};
+  if(i>0&&a===b) return {txt:`EGYENLÍTÉS – ${a}:${b}`,col:'#e8ecf7',snd:'equal'};
+  if(i>0&&Math.abs(a-b)>=2) return {txt:`${TEAMNAME[a>b?0:1].toUpperCase()} VEZET ${Math.max(a,b)}:${Math.min(a,b)}`,col:TEAMCOL[a>b?0:1][0],snd:null};
+  return null;
+}
+// Egy csapat haladása a pályán 0..1: kristályok 70%, utána a célhoz közeledés 30%
+function teamProgress(st){ const tot=st.gems.length, got=st.gems.filter(x=>x).length; let p=tot?got/tot*0.7:0; const all=got===tot; if(all){ const ex=st.st.exits[0]; if(ex){ const ex_=(ex[0]+.5)*CELL, ey=(ex[1]+.5)*CELL; const d=Math.max(...st.p.map(q=>Math.hypot(q.x-ex_,q.y-ey))); const far=Math.hypot(W,H); p=(tot?0.7:0)+(tot?0.3:1)*(1-Math.min(1,d/far)); } } if(st.ph==='clear') p=1; return p; }
+function drawLeadBar(x,y,w,A,B){ const pa=teamProgress(A), pb=teamProgress(B); ctx.fillStyle='rgba(255,255,255,.08)'; rr(x,y,w,8,4); ctx.fill(); ctx.fillStyle=TEAMCOL[0][0]; rr(x,y,w*pa,8,4); ctx.fill(); ctx.fillStyle=TEAMCOL[1][0]; rr(x+w-w*pb,y,w*pb,8,4); ctx.fill(); ctx.textAlign='center'; ctx.font='bold 11px system-ui'; const diff=pa-pb; ctx.fillStyle=Math.abs(diff)<0.08?'#8b94b3':TEAMCOL[diff>0?0:1][0]; ctx.fillText(Math.abs(diff)<0.08?'fej fej mellett':`${TEAMNAME[diff>0?0:1]} vezet`,x+w/2,y+21); }
+let VIEW=null; // osztott nézet: {x,y,s} – a render() ebbe a téglalapba, kicsinyítve rajzol, HUD nélkül
+function renderSplit(now){
+  const A=S,B=S2; const t=now/1000;
+  ctx.fillStyle='#0e1322'; ctx.fillRect(0,0,W,H);
+  const vy=112, vs=0.5;
+  for(let tm=0;tm<2;tm++){ S=tm===0?A:B; S2=tm===0?B:A; NET.viewTeam=tm; VIEW={x:tm*W/2,y:vy,s:vs}; render(now); VIEW=null;
+    // keret + címke
+    const x0=tm*W/2; ctx.strokeStyle=TEAMCOL[tm][0]+'88'; ctx.lineWidth=2; ctx.strokeRect(x0+1,vy+1,W/2-2,H*vs-2);
+    const st=S; const gems=st.gems.filter(x=>!x).length; ctx.textAlign='left'; ctx.fillStyle='rgba(8,11,20,.85)'; rr(x0+8,vy+8,200,24,7); ctx.fill(); ctx.fillStyle=TEAMCOL[tm][0]; ctx.font='bold 13px system-ui'; ctx.fillText(TEAMNAME[tm].toUpperCase(),x0+18,vy+25); ctx.fillStyle='#e8ecf7'; ctx.font='12px system-ui'; ctx.fillText(`⏱ ${fmt(st.lt)}   ${gems?'◆ '+gems:'✓ kristályok'}   ☠ ${st.totd}`,x0+18+ctx.measureText(TEAMNAME[tm].toUpperCase()).width+14,vy+25);
+  }
+  S=A; S2=B; NET.viewTeam=0;
+  // eredményjelző felül
+  const lv=LEVELS[A.L]; ctx.fillStyle='rgba(8,11,20,.9)'; rr(8,16,W-16,80,12); ctx.fill(); ctx.strokeStyle='rgba(120,150,255,.18)'; ctx.lineWidth=1; rr(8.5,16.5,W-17,79,12); ctx.stroke();
+  ctx.textAlign='center'; ctx.font='bold 40px system-ui'; ctx.fillStyle='#e8ecf7'; ctx.fillText(`${RACE.score[0]}  :  ${RACE.score[1]}`,W/2,66);
+  ctx.textAlign='right'; ctx.fillStyle=TEAMCOL[0][0]; ctx.font='bold 26px system-ui'; ctx.fillText(TEAMNAME[0].toUpperCase(),W/2-90,64); ctx.textAlign='left'; ctx.fillStyle=TEAMCOL[1][0]; ctx.fillText(TEAMNAME[1].toUpperCase(),W/2+90,64);
+  ctx.textAlign='center'; ctx.fillStyle='#8b94b3'; ctx.font='13px system-ui'; ctx.fillText(`${RACE.idx+1}. pálya: ${lv.name}${RACE.target?'   ·   '+RACE.target+' nyert pályáig':'   ·   '+RACE.list.length+' pálya'}   ·   Tab: nézet váltása`,W/2,87);
+  // alsó sáv: kristályok csapatonként
+  const by=vy+H*vs+14; drawLeadBar(W/2-260,by+8,520,A,B); for(let tm=0;tm<2;tm++){ const st=tm===0?A:B; const tot=st.gems.length, got=st.gems.filter(x=>x).length; const x0=tm*W/2+20, bw=W/2-40; ctx.textAlign=tm===0?'left':'right'; ctx.fillStyle='#8b94b3'; ctx.font='12px system-ui'; ctx.fillText(tot?`kristály ${got}/${tot}${got===tot?' – irány a cél!':''}`:'nincs kristály – irány a cél!',tm===0?x0:x0+bw,by+36); }
+  const pA=computePinfo(); for(let tm=0;tm<2;tm++){ const x0=tm*W/2+20; ctx.textAlign=tm===0?'left':'right'; ctx.fillStyle='#aab4d6'; ctx.font='13px system-ui'; ctx.fillText(pA[tm].map(q=>FACES[q.f|0][0]+' '+q.n).join('   '),tm===0?x0:x0+W/2-40,by+58); }
+  if(RACE.ph!=='play') raceOverlay();
+}
 function raceOverlay(){ const me=myTeam(); ctx.textAlign='center';
-  if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); }
-  if(RACE.ph==='point'){ const win=RACE.winner===me&&!NET.spectator; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(NET.spectator?`${TEAMNAME[RACE.winner]} ért be előbb!`:win?'Pont nektek!':`${TEAMNAME[RACE.winner]} ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${RACE.idx+1<RACE.list.length&&!(RACE.target&&Math.max(...RACE.score)>=RACE.target)?'   ·   következő: '+LEVELS[RACE.list[RACE.idx+1]||0].name:''}`,W/2,H/2+54); } }
+  if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); const sit=raceSituation(); if(sit){ ctx.save(); const pulse=1+0.04*Math.sin(performance.now()/120); ctx.translate(W/2,H/2-90); ctx.scale(pulse,pulse); ctx.font='bold 30px system-ui'; const tw=ctx.measureText(sit.txt).width+44; ctx.fillStyle='rgba(8,11,20,.9)'; rr(-tw/2,-26,tw,46,12); ctx.fill(); ctx.strokeStyle=sit.col; ctx.lineWidth=2; rr(-tw/2,-26,tw,46,12); ctx.stroke(); ctx.shadowColor=sit.col; ctx.shadowBlur=18; ctx.fillStyle=sit.col; ctx.fillText(sit.txt,0,9); ctx.restore(); } }
+  if(RACE.ph==='point'){ const win=RACE.winner===me&&!NET.spectator; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(NET.spectator?`${TEAMNAME[RACE.winner]} ért be előbb!`:win?'Pont nektek!':`${TEAMNAME[RACE.winner]} ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${RACE.idx+1<RACE.list.length&&!(RACE.target&&Math.max(...RACE.score)>=RACE.target)?'   ·   következő: '+LEVELS[RACE.list[RACE.idx+1]||0].name:''}`,W/2,H/2+54); const [a,b]=RACE.score; const tgt=RACE.target||Math.floor(RACE.list.length/2)+1; const over=Math.max(a,b)>=tgt; if(over){ ctx.fillStyle='#ffd54a'; ctx.font='bold 20px system-ui'; ctx.fillText(`🏆 ${TEAMNAME[a>b?0:1]} nyerte a meccset!`,W/2,H/2+92); } else if(a===b&&RACE.idx>0){ ctx.fillStyle='#e8ecf7'; ctx.font='bold 18px system-ui'; ctx.fillText('Egyenlítés!',W/2,H/2+92); } } }
 function renderMenu(t){
   const bg=ctx.createRadialGradient(W/2,H*0.4,60,W/2,H/2,760); bg.addColorStop(0,'#17203a'); bg.addColorStop(1,'#06080f'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
   // lassan úszó rács (perspektíva-szerű)
@@ -1291,6 +1360,7 @@ function render(now){
   if(!S){ renderMenu(t); renderPreview(t); return; }
   const st=S.st, g=st.grid;
   if(FLOOR.L!==S.L) buildFloor(S.L);
+  if(VIEW){ ctx.save(); ctx.beginPath(); ctx.rect(VIEW.x,VIEW.y,W*VIEW.s,H*VIEW.s); ctx.clip(); ctx.translate(VIEW.x,VIEW.y); ctx.scale(VIEW.s,VIEW.s); }
   ctx.save();
   if(FX.shake>0){ const k=FX.shake*22; ctx.translate((Math.random()-.5)*k,(Math.random()-.5)*k); }
   ctx.drawImage(FLOOR.cv,0,0);
@@ -1342,7 +1412,7 @@ function render(now){
     if(tn>0.5){ ctx.globalAlpha=.5+Math.sin(t*25)*.3; ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(mx,my,b.x,b.y); ctx.stroke(); }
     ctx.restore(); }
   // játékosok
-  if(RACE.on&&S2) drawGhosts();
+  if(RACE.on&&S2&&!VIEW) drawGhosts();
   for(let i=0;i<2;i++){ const p=S.p[i], col=PCOL(i), dark=i===0?'#1a6a9a':'#9a5410';
     const vx=p.vx,vy=p.vy,v=Math.hypot(vx,vy); const ang=Math.atan2(vy,vx); const str=1+Math.min(0.22,v/MAXV*0.22); const jit=S.tension>0.5?(Math.random()-.5)*S.tension*4:0;
     const px=p.x+jit, py=p.y+jit*0.6;
@@ -1357,6 +1427,7 @@ function render(now){
   if(GFX.light){ drawLightmap(); ctx.save(); ctx.globalCompositeOperation='multiply'; ctx.drawImage(LIGHT,0,0,W,H); ctx.restore(); }
   if(GFX.bloom){ drawGlowPass(t); ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.18; ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high'; ctx.drawImage(GLOW,0,0,W,H); ctx.globalAlpha=0.08; ctx.drawImage(GLOW,-4,-4,W+8,H+8); ctx.restore(); }
   ctx.restore();
+  if(VIEW){ if(S.ph==='fail'){ ctx.fillStyle='rgba(11,15,26,.5)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.fillStyle='#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText('Elölről!',W/2,H/2+14); } ctx.restore(); return; }
   if(S.ph==='fail'&&S.phT>0.55&&GFX.bloom){ ctx.save(); ctx.globalCompositeOperation='screen'; ctx.globalAlpha=0.35; const k=(S.phT-0.55)*12; ctx.drawImage(cv,k,0); ctx.drawImage(cv,-k,0); ctx.restore(); }
   // HUD
   const lv=LEVELS[S.L];
@@ -1370,34 +1441,48 @@ function render(now){
     const me=myTeam(); const parts=[[TEAMNAME[0].toUpperCase()+' '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' '+TEAMNAME[1].toUpperCase(),TEAMCOL[1][0],'bold 15px system-ui'],[`     ${RACE.target?RACE.target+' nyert pályáig  ·  ':''}${RACE.idx+1}. pálya   ·   ${NET.spectator?'nézed: '+TEAMNAME[me]+' (Tab: váltás)':'te: '+TEAMNAME[me]}`,'#8b94b3','13px system-ui']];
     let tw=0; for(const q of parts){ ctx.font=q[2]; tw+=ctx.measureText(q[0]).width; } let xx=W/2-tw/2; ctx.textAlign='left'; for(const q of parts){ ctx.font=q[2]; ctx.fillStyle=q[1]; ctx.fillText(q[0],xx,29); xx+=ctx.measureText(q[0]).width; }
   } else ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
+  if(RACE.on&&S2&&RACE.ph==='play'){ const A=myTeam()===0?S:S2, B=myTeam()===0?S2:S; ctx.fillStyle='rgba(8,11,20,.75)'; rr(W/2-140,H-44,280,38,10); ctx.fill(); drawLeadBar(W/2-120,H-36,240,A,B); }
   if(RACE.on) raceOverlay();
   // új elem tipp
   if(FX.banner&&S.ph==='play'){ const a=Math.min(1,FX.banner.t/0.5,(7-FX.banner.t)/0.4); ctx.save(); ctx.globalAlpha=a; const items=FX.banner.items; const bw=Math.min(620,180+items.length*230), bx=W/2-bw/2, by=48; ctx.fillStyle='rgba(8,11,20,.9)'; rr(bx,by,bw,items.length>1?58:40,10); ctx.fill(); ctx.strokeStyle='rgba(255,213,74,.5)'; ctx.lineWidth=1; rr(bx+.5,by+.5,bw-1,(items.length>1?58:40)-1,10); ctx.stroke(); ctx.textAlign='left'; items.forEach((k,i)=>{ const [tt,tx]=ELEM_TIPS[k]; ctx.font='bold 13px system-ui'; const lw=ctx.measureText('ÚJ: '+tt).width; ctx.fillStyle='#ffd54a'; ctx.fillText('ÚJ: '+tt,bx+14,by+18+i*20); ctx.fillStyle='#e8ecf7'; ctx.font='12px system-ui'; ctx.fillText(tx,bx+14+lw+8,by+18+i*20); }); ctx.restore(); }
   // overlay
   if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füstölsz.',bullet:'Telitalálat.',hole:'Leszakadt a padló!'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
-  if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag ${lv.par} mp alatt jár)`,W/2,H/2+46); if(S.L+1<LEVELS.length){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[S.L+1].name}`,W/2,H/2+76);} }
+  if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag ${lv.par} mp alatt jár)`,W/2,H/2+46); const nxt=WEEKLY.on?(WEEKLY.idx+1<WEEKLY.list.length?WEEKLY.list[WEEKLY.idx+1]:-1):(S.L+1<LEVELS.length?S.L+1:-1); if(nxt>=0){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[nxt].name}${WEEKLY.on?`  (${WEEKLY.idx+2}/${WEEKLY.list.length})`:''}`,W/2,H/2+76);} }
 }
 
 // ============================================================
 //  BEMENET
 // ============================================================
 const keys={};
-window.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; keys[e.code]=true; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault(); if(e.code==='Escape') onEsc(); if(e.code==='KeyR'&&S&&!RACE.on&&NET.mode!=='online'||e.code==='KeyR'&&S&&!RACE.on&&NET.seat===0&&!NET.spectator){ if(S.ph==='play'||S.ph==='fail'){ resetLevel(); S.lt=0; } } if(e.code==='Tab'&&NET.spectator&&S){ e.preventDefault(); NET.viewTeam^=1; } });
+window.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; keys[e.code]=true; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault(); if(e.code==='Escape') onEsc(); if(e.code==='KeyR'&&S&&!RACE.on&&NET.mode!=='online'||e.code==='KeyR'&&S&&!RACE.on&&NET.seat===0&&!NET.spectator){ if(S.ph==='play'||S.ph==='fail'){ resetLevel(); S.lt=0; } } if(e.code==='Tab'&&NET.spectator&&S){ e.preventDefault(); NET.viewMode=(NET.viewMode+1)%3; NET.viewTeam=NET.viewMode===2?1:0; } });
 window.addEventListener('keyup',e=>{ keys[e.code]=false; });
 window.addEventListener('blur',()=>{ for(const k in keys) keys[k]=false; });
-function bitsWASD(){ return (keys.KeyW?1:0)|(keys.KeyS?2:0)|(keys.KeyA?4:0)|(keys.KeyD?8:0); }
-function bitsArrows(){ return (keys.ArrowUp?1:0)|(keys.ArrowDown?2:0)|(keys.ArrowLeft?4:0)|(keys.ArrowRight?8:0); }
+// ---- Kontroller (Gamepad API): bal kar vagy D-pad; egy gépen az 1. kontroller a kék, a 2. a narancs; online bármelyik a tiéd. Start = szünet ----
+const PAD={bits:[0,0],any:0,startWas:false,n:0};
+function padPoll(){ const gps=navigator.getGamepads?navigator.getGamepads():[]; let k=0, any=0, start=false; PAD.bits=[0,0];
+  for(const g of gps){ if(!g||!g.connected) continue; const ax=g.axes[0]||0, ay=g.axes[1]||0, b=i=>g.buttons[i]&&g.buttons[i].pressed; let bits=0; if(ay<-0.45||b(12)) bits|=1; if(ay>0.45||b(13)) bits|=2; if(ax<-0.45||b(14)) bits|=4; if(ax>0.45||b(15)) bits|=8; if(k<2) PAD.bits[k]=bits; any|=bits; if(b(9)) start=true; k++; }
+  PAD.any=any; PAD.n=k; if(start&&!PAD.startWas&&S) onEsc(); PAD.startWas=start; }
+window.addEventListener('gamepadconnected',e=>{ const id=(e.gamepad&&e.gamepad.id||'').split('(')[0].trim(); toast(`🎮 Kontroller csatlakoztatva${id?': '+id:''}`); });
+window.addEventListener('gamepaddisconnected',()=>{ toast('🎮 Kontroller leválasztva'); });
+function toast(msg){ let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(8,11,20,.95);border:1px solid #334066;color:#e8ecf7;padding:8px 14px;border-radius:20px;font-size:13px;z-index:50;transition:opacity .4s;pointer-events:none'; document.body.appendChild(t); } t.textContent=msg; t.style.opacity='1'; clearTimeout(t._to); t._to=setTimeout(()=>{ t.style.opacity='0'; },2600); }
+function bitsWASD(){ return (keys.KeyW?1:0)|(keys.KeyS?2:0)|(keys.KeyA?4:0)|(keys.KeyD?8:0)|(NET.mode==='local'?PAD.bits[0]:PAD.any); }
+function bitsArrows(){ return (keys.ArrowUp?1:0)|(keys.ArrowDown?2:0)|(keys.ArrowLeft?4:0)|(keys.ArrowRight?8:0)|(NET.mode==='local'?PAD.bits[1]:0); }
 
 // ============================================================
 //  HÁLÓZAT (PeerJS, host-autoritatív)
 // ============================================================
-const NET={mode:null, me:0, seat:0, seats:[null,null,null,null], peer:null, conns:[], ping:0, remoteBits:[0,0,0,0], lastSent:-1, lastSentAt:0, lastSnap:0, code:''};
+const NET={mode:null, me:0, seat:0, seats:[null,null,null,null], peer:null, conns:[], ping:0, remoteBits:[0,0,0,0], lastSent:-1, lastSentAt:0, lastSnap:0, code:'', rtt:[0,0,0], hq:[]};
+// Egyenlő esély: a gazda gépén fut a játék, ezért az ő gombnyomása azonnal hat, a vendégeké csak egy oda-út után.
+// Ha be van kapcsolva, a gazda saját bemenetét a vendégek átlagos egyirányú késésével késleltetjük (max 150 ms).
+function hostDelay(){ if(!OPT.fair||NET.mode!=='online'||NET.spectator||NET.seat!==0) return 0; const r=[]; NET.conns.forEach((c,i)=>{ if(c.open&&seatOfConn(i)>=0&&NET.rtt[i]>0) r.push(NET.rtt[i]); }); if(!r.length) return 0; return Math.min(150,r.reduce((a,b)=>a+b,0)/r.length/2); }
+function hostBits(now){ const b=bitsWASD()|bitsArrows(); const d=hostDelay(); if(d<=0){ NET.hq.length=0; return b; } NET.hq.push({t:now,k:b}); while(NET.hq.length>1&&NET.hq[1].t<=now-d) NET.hq.shift(); return NET.hq[0].t<=now-d?NET.hq[0].k:0; }
+function hostPingLoop(){ if(NET.mode!=='online'||NET.seat!==0&&!NET.spectator) return; NET.conns.forEach(c=>{ if(c.open){ try{ c.send({t:'ping',ts:performance.now(),h:1}); }catch(e){} } }); setTimeout(hostPingLoop,2000); }
 // RACE: 2v2 verseny állapota. S = a nézett csapat állapota, S2 = a másik csapaté (szellemek)
 const RACE={on:false, score:[0,0], ph:'count', t:0, winner:-1, start:0, end:0, wonBy:0, list:[], idx:0, target:0};
 let S2=null;
 const TEAMCOL=[[BLUE,ORG],['#5be28a','#ff6cb5']];
 const TEAMNAME=['Kék','Zöld'];
-NET.spectator=false; NET.viewTeam=0;
+NET.spectator=false; NET.viewTeam=0; NET.viewMode=0; // néző: 0 = osztott, 1 = A csapat, 2 = B csapat
 function occupied(){ return [0,1,2,3].filter(i=>NET.seats[i]); }
 function myTeam(){ if(NET.spectator) return NET.viewTeam; return RACE.on?(NET.seat>>1):0; }
 function myPi(){ if(NET.spectator) return -1; if(NET.mode!=='online') return 0; return RACE.on?(NET.seat&1):Math.max(0,occupied().indexOf(NET.seat)); }
@@ -1408,22 +1493,22 @@ function pInfo(i){ if(NET.mode==='local') return {n:i===0?'WASD':'NYILAK',f:i===
 function seatOfConn(idx){ return NET.seats.findIndex(x=>x&&x.c===idx); }
 function freeSeatIn(team){ for(const i of [team*2,team*2+1]) if(!NET.seats[i]) return i; return -1; }
 function moveToTeam(seat,team){ if(seat<0||!NET.seats[seat]) return false; if((seat>>1)===team) return false; let f=freeSeatIn(team); if(f<0){ f=seat^2; const tmp=NET.seats[f]; NET.seats[f]=NET.seats[seat]; NET.seats[seat]=tmp; if(seat===NET.seat) NET.seat=f; else if(f===NET.seat) NET.seat=seat; return true; } NET.seats[f]=NET.seats[seat]; NET.seats[seat]=null; if(seat===NET.seat) NET.seat=f; return true; }
-function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx),names:TEAMNAME,cup:!!CUP.match}); }catch(e){} } }); }
+function sendLobby(){ NET.conns.forEach((c,idx)=>{ if(c.open){ try{ c.send({t:'lobby',seats:NET.seats,you:seatOfConn(idx),names:TEAMNAME,cup:!!CUP.match,veto:vetoState()}); }catch(e){} } }); }
 function teamsHtml(isHost){
   const n=playerCount(); let h='<div class="row" style="gap:14px;align-items:stretch;margin:10px 0">'; if(isHost&&NET.spectator) h='<p class="mut" style="margin:0">Néző vagy – nem játszol, csak futtatod a meccset.</p>'+h;
   for(let t=0;t<2;t++){ const col=TEAMCOL[t][0]; h+=`<div style="flex:1;min-width:200px;background:#0b0f1a;border:1px solid ${col}55;border-radius:12px;padding:10px"><div style="color:${col};font-weight:700;margin-bottom:6px">${esc(TEAMNAME[t].toUpperCase())}${CUP.match||TEAMNAME[t]!==['Kék','Zöld'][t]?'':' CSAPAT'}</div>`;
-    for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${FACES[sp.f|0][0]} ${esc(sp.n)}${me?' (te)':''}</span>${(isHost||me)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
+    for(const i of [t*2,t*2+1]){ const sp=NET.seats[i]; if(sp){ const me=i===NET.seat; h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="color:${TEAMCOL[t][i&1]}">${FACES[sp.f|0][0]} ${esc(sp.n)}${me?' (te)':''}${sp.c>=0&&sp.p?` <span class="mut" style="font-size:11px">${sp.p} ms</span>`:''}</span>${(isHost||me)&&!VETO.on&&!(NET.vetoG&&!isHost)?`<button data-seat="${i}" data-team="${1-t}" class="mv" style="padding:3px 9px;font-size:12px;margin:0">${freeSeatIn(1-t)>=0?'→':'⇄'} ${TEAMNAME[1-t]}</button>`:''}</div>`; } else h+=`<div class="mut" style="padding:4px 0">– üres –</div>`; }
     h+='</div>'; }
   h+='</div>'; if(n>=3&&n<4) h+='<p class="mut">Hárman vagytok: vagy jöjjön még egy fő, vagy lépjen ki valaki, és ketten párosban játszhattok.</p>';
   if(n===2&&(NET.seats[0]&&NET.seats[1]||NET.seats[2]&&NET.seats[3])===false) h+='';
   return h; }
 function bindTeamButtons(root,isHost){ root.querySelectorAll('button.mv').forEach(b=>{ b.onclick=()=>{ const seat=+b.dataset.seat, team=+b.dataset.team; if(isHost){ if(moveToTeam(seat,team)){ updateLobby(); sendLobby(); } } else { const c=conn0(); if(c&&c.open) c.send({t:'team',team}); } }; }); }
-function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>${CUP.match||TEAMNAME[0]!=='Kék'?'kupameccs':'2v2 verseny'}</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>páros játék</b> jön. Várunk, hogy a szoba gazdája indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
+function renderGuestLobby(){ const box=$('guestTeams'); box.innerHTML=teamsHtml(false); bindTeamButtons(box,false); const vb=$('vetoBoxG'); vb.innerHTML=vetoHtml(NET.vetoG,NET.seat>>1); bindVeto(vb,false); $('guestLobbyNote').style.display=NET.vetoG?'none':'block'; const n=playerCount(); $('guestWho').innerHTML=n>=4?`Négyen vagytok – <b>${CUP.match||TEAMNAME[0]!=='Kék'?'kupameccs':'2v2 verseny'}</b> jön. Te a <b style="color:${TEAMCOL[NET.seat>>1][NET.seat&1]}">${TEAMNAME[NET.seat>>1]} csapatban</b> vagy (a ${(NET.seat&1)===0?'világosabb':'sötétebb'} figura). Átülhetsz a másik csapatba, ha ott van hely.`:n===2?'Ketten vagytok – <b>páros játék</b> jön. Várunk, hogy a szoba gazdája indítson.':`${n} játékos a szobában. Várunk a többiekre…`; }
 function PCOL(pi){ return TEAMCOL[myTeam()][pi]; }
 function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
 function peerId(code){ return 'kotelek-v1-'+code.toUpperCase(); }
 function newPeer(id){ return new Peer(id,{debug:1}); }
-function cleanupNet(){ for(const c of NET.conns){ try{ c.close(); }catch(e){} } try{ if(NET.peer) NET.peer.destroy(); }catch(e){} NET.conns=[]; NET.peer=null; RACE.on=false; S2=null; }
+function cleanupNet(){ vetoCancel(); WEEKLY.pending=false; for(const c of NET.conns){ try{ c.close(); }catch(e){} } try{ if(NET.peer) NET.peer.destroy(); }catch(e){} NET.conns=[]; NET.peer=null; RACE.on=false; S2=null; }
 function conn0(){ return NET.conns[0]; }
 function broadcast(msg){ for(const c of NET.conns){ if(c.open){ try{ c.send(msg); }catch(e){} } } }
 function slotName(i){ return i===0?'Te (gazda)':'Vendég '+i; }
@@ -1435,25 +1520,28 @@ function updateLobby(){
   else if(n===3){ html='<b>Hárman vagytok.</b> Még egy fő kell a 2v2-höz.'; }
   else { html='<b style="color:var(--ok)">Mind a négyen itt vagytok!</b> Indulhat a 2v2 verseny – aki előbb beér, pontot kap, életek nincsenek.'; }
   $('lobbyMsg').innerHTML=html; const tb=$('hostTeams'); tb.innerHTML=teamsHtml(true); bindTeamButtons(tb,true);
-  $('lobbyStart').style.display=((n===2&&!NET.spectator)||n===4)?'block':'none';
-  $('btnStartHost').textContent=CUP.match?'Kupameccs indítása':(n===4?'2v2 verseny indítása az 1. pályától':'Páros játék indítása az 1. pályától');
-  $('lvgridHost').style.display=CUP.match?'none':'grid'; $('lobbyLvHint').style.display=CUP.match?'none':'block';
+  $('lobbyStart').style.display=(((n===2&&!NET.spectator)||n===4)&&!VETO.on)?'block':'none';
+  const vb=$('vetoBox'); vb.innerHTML=vetoHtml(vetoState(),NET.spectator?-1:(NET.seat>>1)); bindVeto(vb,true);
+  $('btnStartHost').textContent=CUP.match?'Kupameccs indítása':WEEKLY.pending?'📅 Heti kihívás indítása':(n===4?'2v2 verseny indítása az 1. pályától':'Páros játék indítása az 1. pályától');
+  if(WEEKLY.pending&&n>=2) $('lobbyMsg').innerHTML='<b style="color:#ffd54a">Heti kihívás</b> – ketten indulhattok: '+weeklyPanelHtml();
+  $('lvgridHost').style.display=(CUP.match||WEEKLY.pending)?'none':'grid'; $('lobbyLvHint').style.display=(CUP.match||WEEKLY.pending)?'none':'block';
   $('raceOpts').style.display=(n===4&&!CUP.match)?'block':'none';
   $('lobbyHint').textContent='';
-  buildGrid('lvgridHost',L=>{ if(playerCount()===4) startRace(L); else startGame(L); });
+  $('fairRow').style.display=(!NET.spectator&&n>=2)?'block':'none'; $('chkFair').checked=OPT.fair; $('fairMs').textContent=Math.round(hostDelay());
+  buildGrid('lvgridHost',L=>{ if(playerCount()===4){ if(VETO.on) return; VETO.startL=L; vetoBegin(); } else startGame(L); });
 }
 function hostRoom(spectator){
-  cleanupNet(); NET.mode='online'; NET.me=0; NET.spectator=!!spectator; NET.viewTeam=0; if(!spectator){ TEAMNAME[0]='Kék'; TEAMNAME[1]='Zöld'; CUP.match=null; } NET.seat=spectator?-1:0; NET.seats=[spectator?null:{n:myName()||'Gazda',c:-1,f:PROF.f},null,null,null]; NET.code=makeCode(); $('lobbyCup').style.display='none';
+  const wk=WEEKLY.pending; cleanupNet(); WEEKLY.pending=wk; NET.mode='online'; NET.me=0; NET.spectator=!!spectator; NET.viewTeam=0; if(!spectator){ TEAMNAME[0]='Kék'; TEAMNAME[1]='Zöld'; CUP.match=null; } NET.seat=spectator?-1:0; NET.seats=[spectator?null:{n:myName()||'Gazda',c:-1,f:PROF.f},null,null,null]; NET.code=makeCode(); $('lobbyCup').style.display='none';
   $('codeShow').textContent=NET.code; $('lobbyMsg').textContent='Szoba nyitása…'; $('lobbyStart').style.display='none'; show('ovLobby');
   const peer=newPeer(peerId(NET.code)); NET.peer=peer;
-  peer.on('open',()=>{ updateLobby(); });
+  peer.on('open',()=>{ updateLobby(); hostPingLoop(); });
   peer.on('error',e=>{ if(e.type==='unavailable-id'){ hostRoom(); return; } $('lobbyMsg').innerHTML='<span class="err">Hiba: '+e.type+'</span> – próbáld újra, vagy nézd meg a netet.'; });
   peer.on('connection',conn=>{
     if(NET.conns.length>=3||S){ conn.on('open',()=>{ conn.send({t:'full'}); setTimeout(()=>conn.close(),500); }); return; }
     NET.conns.push(conn);
     const idx=()=>NET.conns.indexOf(conn);
     conn.on('open',()=>{ const f=NET.seats.findIndex(x=>!x); NET.seats[f]={n:'Vendég '+(idx()+1),c:idx(),f:0}; updateLobby(); sendLobby(); });
-    conn.on('data',d=>{ if(d.t==='in'){ const st=seatOfConn(idx()); if(st>=0) NET.remoteBits[st]=d.k; } else if(d.t==='hello'){ const st=seatOfConn(idx()); if(st>=0){ NET.seats[st].n=(String(d.n||'').trim().slice(0,14))||('Vendég '+(idx()+1)); NET.seats[st].f=Math.max(0,Math.min(FACES.length-1,d.f|0)); updateLobby(); sendLobby(); } } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } else if(d.t==='team'&&!S){ if(moveToTeam(seatOfConn(idx()),d.team)){ updateLobby(); sendLobby(); } } });
+    conn.on('data',d=>{ if(d.t==='in'){ const st=seatOfConn(idx()); if(st>=0) NET.remoteBits[st]=d.k; } else if(d.t==='hello'){ const st=seatOfConn(idx()); if(st>=0){ NET.seats[st].n=(String(d.n||'').trim().slice(0,14))||('Vendég '+(idx()+1)); NET.seats[st].f=Math.max(0,Math.min(FACES.length-1,d.f|0)); updateLobby(); sendLobby(); } } else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); } else if(d.t==='pong'){ const i=idx(); NET.rtt[i]=Math.round(performance.now()-d.ts); const st=seatOfConn(i); if(st>=0&&NET.seats[st]){ NET.seats[st].p=NET.rtt[i]; if(!S){ updateLobby(); sendLobby(); } } } else if(d.t==='team'&&!S&&!VETO.on){ if(moveToTeam(seatOfConn(idx()),d.team)){ updateLobby(); sendLobby(); } } else if(d.t==='ban'&&!S){ const st=seatOfConn(idx()); if(st>=0) vetoBan(d.L|0,st>>1); } });
     conn.on('close',()=>{ lost(); });
     conn.on('error',()=>{ lost(); });
   });
@@ -1469,7 +1557,8 @@ function joinRoom(code){
     conn.on('data',d=>{
       if(d.t==='s'){ applySnap(d); }
       else if(d.t==='pong'){ NET.ping=Math.round(performance.now()-d.ts); }
-      else if(d.t==='lobby'){ NET.seats=d.seats; NET.seat=d.you; NET.me=d.you; if(d.names){ TEAMNAME[0]=d.names[0]; TEAMNAME[1]=d.names[1]; } if(!S) renderGuestLobby(); }
+      else if(d.t==='ping'){ conn.send({t:'pong',ts:d.ts}); }
+      else if(d.t==='lobby'){ NET.seats=d.seats; NET.seat=d.you; NET.me=d.you; if(d.names){ TEAMNAME[0]=d.names[0]; TEAMNAME[1]=d.names[1]; } NET.vetoG=d.veto||null; if(!S) renderGuestLobby(); }
       else if(d.t==='full'){ $('joinMsg').innerHTML='<span class="err">Ez a szoba tele van, vagy már megy a játék.</span>'; show('ovJoin'); }
       else if(d.t==='menu'){ S=null; S2=null; RACE.on=false; show('ovGuestWait'); renderGuestLobby(); }
     });
@@ -1493,14 +1582,14 @@ function unpackState(S,d){
 }
 function sendSnap(){
   if(!NET.conns.length||!S) return;
-  const msg={t:'s',inf:OPT.inf,pz:PAUSED,race:RACE.on,A:packState(S),pi:computePinfo()};
-  if(RACE.on){ msg.B=packState(S2); msg.sc=RACE.score; msg.rph=RACE.ph; msg.rt=RACE.t; msg.rw=RACE.winner; msg.rs=RACE.idx; msg.re=RACE.list.length; msg.rwb=RACE.wonBy; msg.tg=RACE.target; msg.nm=TEAMNAME; }
+  const msg={t:'s',inf:OPT.inf,pz:PAUSED,race:RACE.on,A:packState(S),pi:computePinfo()}; if(WEEKLY.on) msg.wk={key:WEEKLY.key,list:WEEKLY.list,idx:WEEKLY.idx,stars:WEEKLY.stars};
+  if(RACE.on){ msg.B=packState(S2); msg.sc=RACE.score; msg.rph=RACE.ph; msg.rt=RACE.t; msg.rw=RACE.winner; msg.rs=RACE.idx; msg.re=RACE.list.length; msg.rwb=RACE.wonBy; msg.tg=RACE.target; msg.nm=TEAMNAME; if(RACE.ph==='done') msg.rst=RACE.stats; }
   broadcast(msg);
 }
 function applySnap(d){
-  OPT.inf=d.inf; if(d.pi) NET.pinfo=d.pi;
+  OPT.inf=d.inf; if(d.pi) NET.pinfo=d.pi; if(d.wk){ if(!WEEKLY.on){ WEEKLY.on=true; WEEKLY.saved=false; } Object.assign(WEEKLY,d.wk); } else WEEKLY.on=false;
   if(d.race){
-    RACE.on=true; RACE.score=d.sc; RACE.ph=d.rph; RACE.t=d.rt; RACE.winner=d.rw; RACE.idx=d.rs; RACE.start=0; RACE.end=d.re; RACE.wonBy=d.rwb; RACE.list=new Array(d.re).fill(0); RACE.target=d.tg||0; if(d.nm){ TEAMNAME[0]=d.nm[0]; TEAMNAME[1]=d.nm[1]; }
+    RACE.on=true; RACE.score=d.sc; RACE.ph=d.rph; RACE.t=d.rt; RACE.winner=d.rw; RACE.idx=d.rs; RACE.start=0; RACE.end=d.re; RACE.wonBy=d.rwb; RACE.list=new Array(d.re).fill(0); RACE.target=d.tg||0; if(d.nm){ TEAMNAME[0]=d.nm[0]; TEAMNAME[1]=d.nm[1]; } if(d.rst) RACE.stats=d.rst;
     const mine=myTeam()===0?d.A:d.B, other=myTeam()===0?d.B:d.A;
     if(!S||S.L!==mine.L){ const keep=S; S=null; newState(mine.L); hideAll(); }
     if(!S2||S2.L!==other.L){ const tmp=S; S=null; newState(other.L); S2=S; S=tmp; }
@@ -1514,9 +1603,44 @@ function applySnap(d){
 }
 
 // ---- 2v2 verseny vezérlés (host) ----
+// ---- Pálya-tiltás (veto): a meccs előtt a két csapat felváltva kitilt pályákat a készletből ----
+const VETO={on:false,pool:[],bans:[],turn:0,per:0,deadline:0,list:null,timer:null,keep:0};
+const VETO_SEC=25;
+function vetoBegin(){
+  let pool, per, keep;
+  if(CUP.match){ pool=CUP.match.pool.slice(); keep=CUP.match.target*2-1; per=Math.min(CUP.match.veto|0,Math.floor((pool.length-keep)/2)); }
+  else { const n=parseInt($('selRounds').value||'10'); per=+($('selVeto').value||0); pool=[]; const L0=VETO.startL||0; VETO.startL=0; for(let i=L0;i<Math.min(LEVELS.length,L0+n+2*per);i++) pool.push(i); keep=Math.min(n,LEVELS.length); per=Math.min(per,Math.floor((pool.length-keep)/2)); }
+  if(per<=0||playerCount()<4){ VETO.list=null; startRace(pool[0]||0); return; }
+  VETO.on=true; VETO.pool=pool; VETO.bans=[]; VETO.turn=0; VETO.per=per; VETO.keep=keep; VETO.list=null; VETO.deadline=performance.now()+VETO_SEC*1000;
+  clearInterval(VETO.timer); VETO.timer=setInterval(vetoTick,500);
+  updateLobby(); sendLobby();
+}
+function vetoBan(L,team){
+  if(!VETO.on||team!==VETO.turn||!VETO.pool.includes(L)||VETO.bans.some(b=>b.L===L)) return false;
+  VETO.bans.push({L,team}); sfx('ui');
+  if(VETO.bans.length>=VETO.per*2){ VETO.list=VETO.pool.filter(l=>!VETO.bans.some(b=>b.L===l)); clearInterval(VETO.timer); VETO.timer=setTimeout(()=>{ VETO.on=false; if(CUP.match) CUP.match.pool=VETO.list.slice(); startRace(0); },1800); }
+  else { VETO.turn^=1; VETO.deadline=performance.now()+VETO_SEC*1000; }
+  updateLobby(); sendLobby(); return true;
+}
+function vetoTick(){ if(!VETO.on||VETO.list) return; if(performance.now()>=VETO.deadline){ const free=VETO.pool.filter(l=>!VETO.bans.some(b=>b.L===l)); vetoBan(free[Math.floor(Math.random()*free.length)],VETO.turn); } else { updateLobby(); sendLobby(); } }
+function vetoCancel(){ VETO.on=false; VETO.list=null; clearInterval(VETO.timer); clearTimeout(VETO.timer); }
+function vetoState(){ return VETO.on?{pool:VETO.pool,bans:VETO.bans,turn:VETO.turn,per:VETO.per,left:Math.max(0,Math.ceil((VETO.deadline-performance.now())/1000)),done:!!VETO.list,list:VETO.list}:null; }
+function vetoHtml(v,myTeamIdx){
+  if(!v) return '';
+  const can=myTeamIdx===v.turn&&!v.done; const tn=TEAMNAME[v.turn];
+  let h=`<div style="background:#0b0f1a;border:1px solid #334066;border-radius:12px;padding:10px 12px;margin:8px 0;text-align:left">`;
+  h+=`<div style="display:flex;justify-content:space-between;align-items:center"><b>🚫 Pálya-tiltás</b><span class="mut" style="font-size:13px">${v.done?'<span style="color:var(--ok)">Kész – indul a meccs!</span>':`<span style="color:${TEAMCOL[v.turn][0]}">${esc(tn)}</span> tilt… <b>${v.left} mp</b>`}</span></div>`;
+  h+=`<div class="mut" style="font-size:12px;margin:2px 0 8px">${v.done?`Ezek a pályák maradtak, ebben a sorrendben: ${v.list.map(l=>l+1).join(', ')}.`:`Mindkét csapat ${v.per} pályát tilt ki felváltva; ${can?'<b style="color:var(--txt)">te jössz – kattints egy pályára!</b>':'várj, amíg a másik csapat választ.'} Ha lejár az idő, véletlen pálya esik ki.`}</div>`;
+  h+=`<div style="display:flex;flex-wrap:wrap;gap:6px">`;
+  for(const L of v.pool){ const b=v.bans.find(x=>x.L===L); const col=b?TEAMCOL[b.team][0]:null; h+=`<button class="vch" data-l="${L}" ${(!can||b)?'disabled':''} style="margin:0;padding:5px 9px;font-size:12px;letter-spacing:0;text-transform:none;border-radius:8px;${b?`opacity:.55;text-decoration:line-through;border-color:${col};color:${col}`:can?'border-color:#4cc3ff;cursor:pointer':''}">${L+1}. ${esc(LEVELS[L].name)}</button>`; }
+  h+=`</div></div>`; return h;
+}
+function bindVeto(root,isHost){ root.querySelectorAll('button.vch').forEach(b=>{ b.onclick=()=>{ const L=+b.dataset.l; if(isHost){ vetoBan(L,NET.seat>>1); } else { const c=conn0(); if(c&&c.open) c.send({t:'ban',L}); } }; }); }
 function startRace(L){
-  PAUSED=false; sendLobby(); RACE.on=true; RACE.score=[0,0];
+  PAUSED=false; sendLobby(); RACE.on=true; RACE.score=[0,0]; RACE.stats=[];
+  const vl=VETO.list; VETO.on=false; VETO.list=null; clearInterval(VETO.timer);
   if(CUP.match){ RACE.list=CUP.match.pool.slice(); RACE.target=CUP.match.target; }
+  else if(vl){ RACE.list=vl.slice(); RACE.target=0; }
   else { const end=Math.min(LEVELS.length,L+parseInt($('selRounds').value||'10')); RACE.list=[]; for(let i=L;i<end;i++) RACE.list.push(i); RACE.target=0; }
   RACE.idx=0; RACE.start=0; RACE.end=RACE.list.length; raceLevel(RACE.list[0]); hideAll();
 }
@@ -1531,16 +1655,40 @@ function raceUpdate(dt,bitsA,bitsB){
     const A=S,B=S2;
     S=A; update(dt,bitsA); S=B; update(dt,bitsB); S=A;
     const aWin=A.ph==='clear', bWin=B.ph==='clear';
-    if(aWin||bWin){ RACE.winner=aWin?0:1; RACE.score[RACE.winner]++; RACE.wonBy=(aWin?A:B).lt; RACE.ph='point'; RACE.t=3.5; }
+    if(aWin||bWin){ RACE.winner=aWin?0:1; RACE.score[RACE.winner]++; RACE.wonBy=(aWin?A:B).lt; RACE.ph='point'; RACE.t=3.5; (RACE.stats||(RACE.stats=[])).push({L:A.L,w:RACE.winner,t:+RACE.wonBy.toFixed(1),g:[[A.gems.filter(x=>x).length,A.gems.length],[B.gems.filter(x=>x).length,B.gems.length]],d:[A.totd,B.totd],pd:[A.pd.slice(),B.pd.slice()],sc:RACE.score.slice()}); }
     return;
   }
   if(RACE.ph==='point'){ RACE.t-=dt; if(RACE.t<=0){ const won=RACE.target>0&&Math.max(...RACE.score)>=RACE.target; if(!won&&RACE.idx+1<RACE.list.length){ RACE.idx++; raceLevel(RACE.list[RACE.idx]); } else { RACE.ph='done'; cupAfterMatch(); showRaceDone(); } } return; }
 }
+function raceSummary(){
+  const st=RACE.stats||[]; const pi=NET.pinfo||computePinfo(); const names=t=>pi[t].map(q=>q.n||'?');
+  const out={rows:[],lines:[]}; if(!st.length) return out;
+  let fastest=null; const deaths=[0,0], pd=[[0,0],[0,0]]; let behind=[false,false]; let streak=[0,0],best=[0,0];
+  st.forEach((r,i)=>{ const lv=LEVELS[r.L]; const loser=1-r.w; const lg=r.g[loser]; out.rows.push({n:i+1,name:lv.name,w:r.w,t:r.t,loserTxt:lg[1]?`◆ ${lg[0]}/${lg[1]}`:'a cél előtt',d:r.d,sc:r.sc});
+    if(!fastest||r.t<fastest.t) fastest={t:r.t,w:r.w,name:lv.name};
+    deaths[0]+=r.d[0]; deaths[1]+=r.d[1]; for(let t=0;t<2;t++) for(let k=0;k<2;k++) pd[t][k]+=r.pd[t][k];
+    const a=r.sc[0],b=r.sc[1]; if(a<b) behind[0]=true; if(b<a) behind[1]=true; streak[r.w]++; streak[1-r.w]=0; best[r.w]=Math.max(best[r.w],streak[r.w]); });
+  const [a,b]=RACE.score; const win=a===b?-1:(a>b?0:1);
+  if(fastest) out.lines.push(['⚡','Leggyorsabb pálya',`${TEAMNAME[fastest.w]} – ${fastest.name} (${fmt(fastest.t)})`]);
+  out.lines.push(['☠','Újrakezdések',`${TEAMNAME[0]}: ${deaths[0]} · ${TEAMNAME[1]}: ${deaths[1]}`]);
+  if(win>=0&&behind[win]) out.lines.push(['🔄','Fordítás',`${TEAMNAME[win]} hátrányból nyert`]);
+  const bs=Math.max(...best); if(bs>=3) out.lines.push(['🔥','Sorozat',`${TEAMNAME[best[0]>=best[1]?0:1]} – ${bs} pálya zsinórban`]);
+  const pl=[]; for(let t=0;t<2;t++) for(let k=0;k<2;k++) pl.push({n:names(t)[k],t,d:pd[t][k]}); pl.sort((x,y)=>x.d-y.d);
+  if(pl.length){ out.lines.push(['🧊','Legóvatosabb',`${pl[0].n} (${pl[0].d} saját hiba)`]); const last=pl[pl.length-1]; if(last.d>0&&last!==pl[0]) out.lines.push(['🤕','Legbalesetesebb',`${last.n} (${last.d})`]); }
+  return out;
+}
+function raceStatsHtml(){ const sm=raceSummary(); if(!sm.rows.length) return '';
+  let h='<table><tr><th>#</th><th>Pálya</th><th>Nyerte</th><th>Idő</th><th>A másik</th><th>☠</th><th>Állás</th></tr>';
+  for(const r of sm.rows) h+=`<tr><td class="mut">${r.n}</td><td>${esc(r.name)}</td><td style="color:${TEAMCOL[r.w][0]}">${esc(TEAMNAME[r.w])}</td><td>${fmt(r.t)}</td><td class="mut">${r.loserTxt}</td><td class="mut">${r.d[0]}–${r.d[1]}</td><td>${r.sc[0]}:${r.sc[1]}</td></tr>`;
+  h+='</table><div class="sum">'+sm.lines.map(l=>`<span>${l[0]} ${l[1]}: <b>${esc(l[2])}</b></span>`).join('')+'</div>'; return h; }
+function raceDiscordText(){ const sm=raceSummary(); const [a,b]=RACE.score; const head=`🏁 **${TEAMNAME[0]} ${a} : ${b} ${TEAMNAME[1]}**${CUP.match||CUP.returning?' – kupameccs':' – Kötelék 2v2'}`; if(!sm.rows.length) return head;
+  const rows=sm.rows.map(r=>`${r.n}. ${r.name} – **${TEAMNAME[r.w]}** (${fmt(r.t)}) · ${r.loserTxt} · ☠ ${r.d[0]}–${r.d[1]} · ${r.sc[0]}:${r.sc[1]}`);
+  return [head,...rows,'',...sm.lines.map(l=>`${l[0]} ${l[1]}: ${l[2]}`)].join('\n'); }
 function showRaceDone(){
   const [a,b]=RACE.score; const w=a===b?'Döntetlen!':(a>b?`${TEAMNAME[0]} nyert!`:`${TEAMNAME[1]} nyert!`);
-  $('doneTime').textContent=`${w}  ${a} : ${b}`; const dA=(myTeam()===0?S:S2)||S, dB=(myTeam()===0?S2:S)||S2; $('doneDeaths').textContent=`Újrakezdések – ${TEAMNAME[0]}: ${(myTeam()===0?dA:dB)?.totd??'?'} · ${TEAMNAME[1]}: ${(myTeam()===0?dB:dA)?.totd??'?'}. `+(CUP.returning?'Az eredmény bekerült a kupatáblába.':(a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.'));
+  $('doneTime').textContent=`${w}  ${a} : ${b}`; const dA=(myTeam()===0?S:S2)||S, dB=(myTeam()===0?S2:S)||S2; $('doneDeaths').textContent=((RACE.stats&&RACE.stats.length)?'':`Újrakezdések – ${TEAMNAME[0]}: ${(myTeam()===0?dA:dB)?.totd??'?'} · ${TEAMNAME[1]}: ${(myTeam()===0?dB:dA)?.totd??'?'}. `)+(CUP.returning?'Az eredmény bekerült a kupatáblába.':(a===b?'Egy visszavágó?':'Visszavágó a pályaválasztóból bármikor.'));
   $('btnDoneMenu').textContent=CUP.returning?'Vissza a kupához':'Főmenü';
-  $('ovDone').querySelector('h2').textContent='🏁 Vége a versenynek'; show('ovDone');
+  $('doneStats').innerHTML=raceStatsHtml(); $('ovDone').querySelector('h2').textContent='🏁 Vége a versenynek'; show('ovDone');
 }
 
 // ============================================================
@@ -1647,6 +1795,8 @@ function sfx(name){
     case 'go': blip(880,1320,0.3,'square',0.15); break;
     case 'ui': blip(520,780,0.08,'sine',0.12); break;
     case 'crack': noise(0.15,0.3,1500); break;
+    case 'hype': [392,523.25,659.25,783.99,1046.5].forEach((f,i)=>{ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=f; const gg=c.createGain(); gg.gain.setValueAtTime(0,t+i*0.06); gg.gain.linearRampToValueAtTime(0.09,t+i*0.06+0.02); gg.gain.exponentialRampToValueAtTime(0.001,t+i*0.06+0.5); o.connect(gg); gg.connect(d); o.start(t+i*0.06); o.stop(t+i*0.06+0.55); }); noise(0.3,0.25,1200); break;
+    case 'equal': blip(523.25,783.99,0.25,'triangle',0.18); blip(783.99,523.25,0.3,'triangle',0.12); break;
   }
 }
 // első kattintásra indul (böngésző-szabály)
@@ -1658,23 +1808,23 @@ function sfx(name){
 const CUP={data:null, match:null, view:false, editing:false, returning:false};
 const CUP_ROUNDS={e:{name:'Nyolcaddöntő',target:2,pool:[3,4,5,6,7,10,13]},q:{name:'Negyeddöntő',target:3,pool:[9,11,12,15,16,18,22]},s:{name:'Elődöntő',target:3,pool:[14,19,20,21,23,25,26]},b:{name:'Bronzmeccs',target:3,pool:[13,17,24,27,28,30,32]},f:{name:'Döntő',target:5,pool:[29,31,33,34,35,36,37,38,39]}};
 function roundKeys(n){ return n>=16?['e','q','s','f']:n>=8?['q','s','f']:n>=4?['s','f']:['f']; }
-function cupDefaultCfg(n){ const r={}; for(const k in CUP_ROUNDS) r[k]={target:CUP_ROUNDS[k].target,pool:CUP_ROUNDS[k].pool.slice()}; return {n:n||8,bronze:true,order:'fix',rounds:r}; }
+function cupDefaultCfg(n){ const r={}; for(const k in CUP_ROUNDS) r[k]={target:CUP_ROUNDS[k].target,pool:CUP_ROUNDS[k].pool.slice()}; return {n:n||8,bronze:true,order:'fix',veto:1,rounds:r}; }
 function cupCfg(){ return (CUP.data&&CUP.data.cfg)||cupDefaultCfg(CUP.data?CUP.data.n:8); }
 let CFG=null, CFG_TAB='q';
 function cfgKeys(){ const ks=roundKeys(CFG.n); if(CFG.bronze&&CFG.n>=4) ks.splice(ks.length-1,0,'b'); return ks; }
 function cfgRender(){
   const keys=cfgKeys(); if(!keys.includes(CFG_TAB)) CFG_TAB=keys[0];
   const tabs=$('cfgTabs'); tabs.innerHTML=''; for(const k of keys){ const b=document.createElement('button'); b.textContent=CUP_ROUNDS[k].name; b.className=k===CFG_TAB?'sel':''; b.onclick=()=>{ CFG_TAB=k; cfgRender(); }; tabs.appendChild(b); }
-  const R=CFG.rounds[CFG_TAB]; $('cfgTarget').value=String(R.target); $('cfgBronze').checked=CFG.bronze; $('cfgOrder').value=CFG.order; $('cfgN').value=String(CFG.n);
+  const R=CFG.rounds[CFG_TAB]; $('cfgTarget').value=String(R.target); $('cfgBronze').checked=CFG.bronze; $('cfgOrder').value=CFG.order; $('cfgVeto').value=String(CFG.veto===undefined?1:CFG.veto); $('cfgN').value=String(CFG.n);
   $('cfgBronze').parentElement.style.display=CFG.n>=4?'inline':'none';
-  const need=R.target*2-1; $('cfgCount').textContent=`${R.pool.length} pálya kiválasztva (legfeljebb ${need} kellhet)`; $('cfgCount').style.color=R.pool.length<need?'var(--bad)':'var(--mut)';
+  const need=R.target*2-1; const vt=CFG.veto===undefined?1:CFG.veto; const vEff=Math.max(0,Math.min(vt,Math.floor((R.pool.length-need)/2))); $('cfgCount').textContent=`${R.pool.length} pálya kiválasztva (legfeljebb ${need} kellhet${vt?`, tiltás: ${vEff}–${vEff}${vEff<vt?' – több pályával több lehetne':''}`:''})`; $('cfgCount').style.color=R.pool.length<need?'var(--bad)':'var(--mut)';
   const g=$('cfgLevels'); g.innerHTML=''; LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.textContent=i+1; b.title=`${i+1}. ${lv.name} (${Math.floor(i/WORLD)+1}. világ)`; b.className=R.pool.includes(i)?'on':''; b.onclick=()=>{ const ix=R.pool.indexOf(i); if(ix>=0) R.pool.splice(ix,1); else R.pool.push(i); R.pool.sort((a,b)=>a-b); cfgRender(); }; g.appendChild(b); });
   $('cfgHint').style.color=''; $('cfgHint').textContent=R.pool.length<need?`Még legalább ${need-R.pool.length} pálya kell ehhez a körhöz.`:'Kattints a számokra: ezek a pályák jönnek ebben a körben, sorban.';
   const n=CFG.n, matches=n-1+(CFG.bronze&&n>=4?1:0); $('cupSetupSub').innerHTML=`${n} csapat, egyenes kieséses rendszer – összesen ${matches} meccs${n>=16?' <b style="color:#ffd54a">(egy szervezővel egymás után ez 3 óra fölött is lehet – érdemes rövidebb meccseket beállítani, vagy két gépen futtatni)</b>':n>=8?' (kb. 2 óra)':' (kb. egy óra)'}. Alapból minden ki van töltve, nem kötelező belenyúlni.`;
   $('cupTeams').placeholder=Array.from({length:n},(_,i)=>'Csapat '+(i+1)).join('\n');
   $('cupTeamsLbl').textContent=`Csapatok (soronként egy, ${n} db – a sorrend adja a párokat: 1–2, 3–4, …)`;
 }
-function cfgBind(){ $('cfgTarget').onchange=()=>{ CFG.rounds[CFG_TAB].target=+$('cfgTarget').value; cfgRender(); }; $('cfgBronze').onchange=()=>{ CFG.bronze=$('cfgBronze').checked; cfgRender(); }; $('cfgOrder').onchange=()=>{ CFG.order=$('cfgOrder').value; }; $('cfgN').onchange=()=>{ CFG.n=+$('cfgN').value; cfgRender(); }; $('cfgReset').onclick=()=>{ CFG=cupDefaultCfg(CFG.n); cfgRender(); }; }
+function cfgBind(){ $('cfgTarget').onchange=()=>{ CFG.rounds[CFG_TAB].target=+$('cfgTarget').value; cfgRender(); }; $('cfgBronze').onchange=()=>{ CFG.bronze=$('cfgBronze').checked; cfgRender(); }; $('cfgOrder').onchange=()=>{ CFG.order=$('cfgOrder').value; }; $('cfgVeto').onchange=()=>{ CFG.veto=+$('cfgVeto').value; }; $('cfgN').onchange=()=>{ CFG.n=+$('cfgN').value; cfgRender(); }; $('cfgReset').onclick=()=>{ CFG=cupDefaultCfg(CFG.n); cfgRender(); }; }
 function cfgValid(){ for(const k of cfgKeys()){ const R=CFG.rounds[k]; if(R.pool.length<R.target*2-1) return `${CUP_ROUNDS[k].name}: legalább ${R.target*2-1} pálya kell (most ${R.pool.length}).`; } return null; }
 function cupLoad(){ try{ CUP.data=JSON.parse(localStorage.getItem('kotelek_cup')||'null'); }catch(e){ CUP.data=null; } if(CUP.data) cupMigrate(CUP.data); }
 function cupMigrate(d){ // régi 8-as formátum → általános
@@ -1751,7 +1901,7 @@ function cupManual(id){
 function cupStartMatch(id){
   const M=cupM(id); const cfg=cupCfg(); const k=cupKey(id); const R={name:cupRoundTitle(id),target:cfg.rounds[k].target,pool:cfg.rounds[k].pool.slice()};
   if(cfg.order==='random'){ for(let i=R.pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [R.pool[i],R.pool[j]]=[R.pool[j],R.pool[i]]; } }
-  CUP.match={id,target:R.target,pool:R.pool};
+  CUP.match={id,target:R.target,pool:R.pool,veto:cfg.veto===undefined?1:cfg.veto};
   TEAMNAME[0]=cupTeam(M.a); TEAMNAME[1]=cupTeam(M.b);
   hostRoom(true);
   $('lobbyCup').style.display='block'; $('lobbyCup').innerHTML=`<b>${R.name}:</b> <span style="color:${TEAMCOL[0][0]}">${esc(TEAMNAME[0])}</span> (kék) vs <span style="color:${TEAMCOL[1][0]}">${esc(TEAMNAME[1])}</span> (zöld) · ${R.target} nyert pályáig<br><span class="mut">Te nézőként futtatod a meccset. A négy játékos a kóddal lép be, és a saját csapatát választja. Amint mind a négyen bent vannak, indíthatod.</span>`;
@@ -1830,20 +1980,21 @@ let PAUSED=false;
 function hideAll(){ document.querySelectorAll('.ov').forEach(o=>o.classList.remove('show')); }
 function show(id){ hideAll(); $(id).classList.add('show'); if(id==='ovMenu') menuStars(); }
 function buildGrid(id,onPick){ const grid=$(id); grid.innerHTML=''; const best=loadBest(); LEVELS.forEach((lv,i)=>{ const b=document.createElement('button'); b.className='w'+(Math.floor(i/WORLD)+1); const bb=best[i]; b.innerHTML=`${i+1}. ${lv.name}<small>${bb?'★'.repeat(bb.stars)+' '+fmt(bb.t):'–'}</small>`; b.onclick=()=>onPick(i); grid.appendChild(b); }); }
-function startGame(L){ PAUSED=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(L); S.tot=0; S.totd=0; hideAll(); }
+function startGame(L){ PAUSED=false; WEEKLY.on=false; WEEKLY.saved=false; if(NET.mode==='online') sendLobby(); RACE.on=false; S2=null; S=null; newState(L); S.tot=0; S.totd=0; hideAll(); }
 function startLocal(L){ cleanupNet(); NET.mode='local'; startGame(L); }
-function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} újrakezdés`; show('ovPause'); } else hideAll(); }
-function showDone(){ $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd}-szor kezdtétek elölről. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
-function toMenu(){ PAUSED=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; $('btnDoneMenu').textContent='Főmenü'; S=null; S2=null; RACE.on=false; if(CUP.returning){ CUP.returning=false; broadcast({t:'menu'}); cleanupNet(); NET.mode=null; NET.spectator=false; cupOpen(); return; } if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
+function onEsc(){ if(!S||S.ph==='done'||(RACE.on&&RACE.ph==='done')) return; if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1) return; PAUSED=!PAUSED; if(PAUSED){ $('btnSkip').style.display=WEEKLY.on?'none':''; $('pauseInfo').textContent=`${S.L+1}. pálya: ${LEVELS[S.L].name} · összes idő ${fmt(S.tot)} · ${S.totd} újrakezdés`; show('ovPause'); } else hideAll(); }
+function showDone(){ $('doneStats').innerHTML=''; if(WEEKLY.on){ const rec={t:+S.tot.toFixed(1),d:S.totd,s:WEEKLY.stars.slice()}; if(!WEEKLY.saved){ WEEKLY.saved=true; weeklySave(WEEKLY.key,rec); } const best=weeklyLoad()[WEEKLY.key]; $('ovDone').querySelector('h2').textContent='📅 Heti kihívás teljesítve!'; $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').innerHTML=`${weeklySquares(rec.s)} &nbsp; ☠ ${S.totd} újrakezdés${best&&best.t<rec.t?` · a heti legjobbatok: ${fmt(best.t)}`:' · <b style="color:var(--ok)">ez a heti legjobbatok!</b>'}`; show('ovDone'); return; } $('doneTime').textContent='Összidő: '+fmt(S.tot); $('doneDeaths').textContent=`Összesen ${S.totd}-szor kezdtétek elölről. ${S.totd<30?'Ez nagyon szép.':S.totd<80?'Teljesen korrekt.':'De a lényeg, hogy megcsináltátok!'}`; show('ovDone'); }
+function toMenu(){ PAUSED=false; WEEKLY.on=false; WEEKLY.saved=false; WEEKLY.pending=false; $('ovDone').querySelector('h2').textContent='🎉 Végigjátszottátok!'; $('btnDoneMenu').textContent='Főmenü'; S=null; S2=null; RACE.on=false; if(CUP.returning){ CUP.returning=false; broadcast({t:'menu'}); cleanupNet(); NET.mode=null; NET.spectator=false; cupOpen(); return; } if(NET.mode==='online'&&NET.seat===0&&NET.seats[0]&&NET.seats[0].c===-1){ broadcast({t:'menu'}); show('ovLobby'); updateLobby(); return; } cleanupNet(); NET.mode=null; show('ovMenu'); }
 
 $('chkInf').onchange=e=>{ OPT.inf=e.target.checked; };
+$('chkFair').onchange=e=>{ OPT.fair=e.target.checked; try{ localStorage.setItem('kotelek_opt',JSON.stringify({fair:OPT.fair})); }catch(_){} $('fairMs').textContent=Math.round(hostDelay()); };
 document.querySelectorAll('.btnMusic').forEach(b=>b.onclick=()=>{ audioInit(); setMusic(!AUDIO.music); });
 document.querySelectorAll('.btnSfx').forEach(b=>b.onclick=()=>{ audioInit(); setSfx(!AUDIO.sfx); sfx('ui'); });
 document.querySelectorAll('.volMusic').forEach(r=>{ r.oninput=()=>{ audioInit(); setMusicVol(+r.value); }; });
 document.querySelectorAll('.volSfx').forEach(r=>{ r.oninput=()=>{ audioInit(); setSfxVol(+r.value); }; r.onchange=()=>sfx('gem'); });
 updateAudioButtons();
 document.querySelectorAll('button:not(.btnMusic):not(.btnSfx)').forEach(b=>b.addEventListener('click',()=>sfx('ui')));
-function menuStars(){ const b=loadBest(); let st=0,n=0; for(const k in b){ st+=b[k].stars; n++; } $('menuStars').textContent=n?`★ ${st}/${LEVELS.length*3} csillag · ${n} pálya teljesítve`:''; }
+function menuStars(){ { const {w}=isoWeek(new Date()); const best=weeklyLoad()[weeklyKey()]; $('btnWeekly').innerHTML=`📅 <b>Heti kihívás – ${w}. hét</b> · 5 pálya összidőre, mindenkinek ugyanaz &nbsp;<span class="mut">${best?`legjobb időtök: ${fmt(best.t)} ${weeklySquares(best.s)}`:'még nem játszottátok ezen a héten'}</span>`; } const b=loadBest(); let st=0,n=0; for(const k in b){ st+=b[k].stars; n++; } $('menuStars').textContent=n?`★ ${st}/${LEVELS.length*3} csillag · ${n} pálya teljesítve`:''; }
 menuStars();
 $('profName').value=PROF.n||''; $('profName').oninput=e=>{ PROF.n=e.target.value.slice(0,14); profSave(); };
 function renderFaces(){ const box=$('faces'); box.innerHTML=''; FACES.forEach((f,i)=>{ const b=document.createElement('button'); b.textContent=f[0]; b.title=f[1]; b.className=i===PROF.f?'sel':''; b.onclick=()=>{ PROF.f=i; profSave(); renderFaces(); }; box.appendChild(b); }); }
@@ -1853,7 +2004,7 @@ $('btnHelpBack').onclick=()=>show('ovMenu');
 function gfxBtn(){ $('btnGfx').textContent=GFX.light?'✨ Effektek: BE':'✨ Effektek: KI'; $('btnGfx').classList.toggle('off',!GFX.light); }
 $('btnGfx').onclick=()=>{ const on=!GFX.light; GFX.light=on; GFX.bloom=on; try{ localStorage.setItem('kotelek_gfx',JSON.stringify(GFX)); }catch(e){} gfxBtn(); }; gfxBtn();
 $('btnFull').onclick=()=>{ const el=document.documentElement; if(!document.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen).call(el); } else { document.exitFullscreen(); } setTimeout(fit,300); };
-$('btnShare').onclick=async()=>{ let t; if(RACE.on){ t=`🏁 Kötelék 2v2: ${TEAMNAME[0]} ${RACE.score[0]} : ${RACE.score[1]} ${TEAMNAME[1]}`; } else { const b=loadBest(); let st=0; for(const k in b) st+=b[k].stars; t=`🎉 Végigjátszottuk a Kötelék mind a 40 pályáját! ⏱ ${fmt(S.tot)} · ☠ ${S.totd} újrakezdés · ★ ${st}/${LEVELS.length*3}`; } try{ await navigator.clipboard.writeText(t); $('shareMsg').textContent='A vágólapon van – mehet Discordra.'; }catch(e){ $('shareMsg').textContent=t; } };
+$('btnShare').onclick=async()=>{ let t; if(RACE.on){ t=raceDiscordText(); } else if(WEEKLY.on){ t=weeklyText({t:+S.tot.toFixed(1),d:S.totd,s:WEEKLY.stars}); } else { const b=loadBest(); let st=0; for(const k in b) st+=b[k].stars; t=`🎉 Végigjátszottuk a Kötelék mind a 40 pályáját! ⏱ ${fmt(S.tot)} · ☠ ${S.totd} újrakezdés · ★ ${st}/${LEVELS.length*3}`; } try{ await navigator.clipboard.writeText(t); $('shareMsg').textContent='A vágólapon van – mehet Discordra.'; }catch(e){ $('shareMsg').textContent=t; } };
 $('btnHost').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } hostRoom(); };
 $('btnJoinShow').onclick=()=>{ if(typeof Peer==='undefined'){ $('menuErr').textContent='Nem töltődött be a hálózati könyvtár (PeerJS). Van net?'; return; } $('joinMsg').textContent=''; show('ovJoin'); setTimeout(()=>$('inCode').focus(),50); };
 $('btnJoin').onclick=()=>{ const c=$('inCode').value.trim().toUpperCase(); if(c.length!==4){ $('joinMsg').textContent='4 betű kell.'; return; } joinRoom(c); };
@@ -1861,9 +2012,13 @@ $('inCode').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnJoin').onc
 $('btnJoinBack').onclick=()=>{ cleanupNet(); show('ovMenu'); };
 $('btnLobbyBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
 $('btnGuestBack').onclick=()=>{ cleanupNet(); NET.mode=null; show('ovMenu'); };
-$('btnStartHost').onclick=()=>{ if(CUP.match) startRace(0); else if(playerCount()===4) startRace(0); else startGame(0); };
+$('btnStartHost').onclick=()=>{ if(WEEKLY.pending&&playerCount()===2) startWeekly(); else if(CUP.match||playerCount()===4) vetoBegin(); else startGame(0); };
 $('btnCup').onclick=()=>cupOpen(); $('btnCupBack2').onclick=()=>show('ovMenu'); cupSetupInit();
 $('btnLocal').onclick=()=>{ buildGrid('lvgridLocal',L=>startLocal(L)); show('ovLocal'); };
+$('btnWeekly').onclick=()=>{ $('weeklyInfo').innerHTML=weeklyPanelHtml(); show('ovWeekly'); };
+$('btnWeeklyBack').onclick=()=>show('ovMenu');
+$('btnWeeklyLocal').onclick=()=>{ cleanupNet(); NET.mode='local'; startWeekly(); };
+$('btnWeeklyHost').onclick=()=>{ WEEKLY.pending=true; hostRoom(false); };
 $('btnStartLocal').onclick=()=>startLocal(0);
 $('btnLocalBack').onclick=()=>show('ovMenu');
 $('btnResume').onclick=()=>{ PAUSED=false; hideAll(); };
@@ -1882,7 +2037,7 @@ window.addEventListener('resize',fit); fit();
 // ============================================================
 let last=performance.now(), acc=0; const STEP=1/60;
 function loop(now){
-  const dtR=Math.min(0.1,(now-last)/1000); last=now; acc+=dtR;
+  const dtR=Math.min(0.1,(now-last)/1000); last=now; acc+=dtR; padPoll();
   if(S){
     if(NET.mode==='online'&&NET.seats[NET.seat]&&NET.seats[NET.seat].c!==-1){
       // vendég: csak bemenetet küld
@@ -1894,7 +2049,7 @@ function loop(now){
     } else {
       while(acc>=STEP){ acc-=STEP;
         if(PAUSED) break;
-        const all=[0,1,2,3].map(i=>i===NET.seat?(bitsWASD()|bitsArrows()):NET.remoteBits[i]);
+        const hb=hostBits(now); const all=[0,1,2,3].map(i=>i===NET.seat?hb:NET.remoteBits[i]);
         if(RACE.on){ if(RACE.ph==='done') break; raceUpdate(STEP,[all[0],all[1]],[all[2],all[3]]); continue; }
         if(S.ph==='done'){ if(!$('ovDone').classList.contains('show')) showDone(); break; }
         let bits;
@@ -1905,7 +2060,7 @@ function loop(now){
       if(NET.mode==='online'&&now-NET.lastSnap>33){ NET.lastSnap=now; sendSnap(); }
     }
   }
-  if(NET.spectator&&NET.viewTeam===1&&S&&S2){ const t_=S; S=S2; S2=t_; updateFX(dtR); render(now); S2=S; S=t_; } else { updateFX(dtR); render(now); }
+  if(NET.spectator&&S&&S2&&RACE.on){ if(NET.viewMode===0){ updateFX(dtR); renderSplit(now); } else if(NET.viewMode===2){ const t_=S; S=S2; S2=t_; NET.viewTeam=1; updateFX(dtR); render(now); S2=S; S=t_; } else { NET.viewTeam=0; updateFX(dtR); render(now); } } else { updateFX(dtR); render(now); }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
