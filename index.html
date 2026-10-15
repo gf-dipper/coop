@@ -1524,7 +1524,7 @@ function musicLoad(k){
 }
 function musicUpdate(){
   const c=AUDIO.ctx; if(!c) return; const k=musicWant();
-  if(!MUS.state[k]) musicLoad(k);
+  for(const kk in TRACKS){ if(!MUS.state[kk]) musicLoad(kk); } // mind a három előtöltése, hogy váltásnál ne legyen szünet
   if(MUS.state[k]!=='ok'){ if(MUS.state[k]==='err'&&MUS.cur){ musicStop(1.0); } return; }
   if(MUS.cur===k) return;
   musicStop(1.2); const tr=TRACKS[k], t=c.currentTime;
@@ -1543,7 +1543,8 @@ const BEAT=0.5; // 120 bpm, negyed
 function osc(type,freq,t0,t1,gain,dest,detune){ const c=AUDIO.ctx; const o=c.createOscillator(); o.type=type; o.frequency.value=freq; if(detune) o.detune.value=detune; const g=c.createGain(); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(gain,t0+Math.min(0.4,(t1-t0)*0.4)); g.gain.setValueAtTime(gain,Math.max(t0,t1-0.25)); g.gain.linearRampToValueAtTime(0,t1); o.connect(g); g.connect(dest); o.start(t0); o.stop(t1+0.05); }
 function musicTick(){
   const c=AUDIO.ctx; if(!c) return; musicUpdate();
-  if(musicFileActive()){ AUDIO.next=c.currentTime+0.1; AUDIO.step=0; return; }
+  // a beépített zene csak akkor szól, ha a fájl nem tölthető be (betöltés alatt csend van, nem keveredik a kettő)
+  if(musicFileActive()||MUS.state[musicWant()]!=='err'){ AUDIO.next=c.currentTime+0.1; AUDIO.step=0; return; }
   while(AUDIO.next<c.currentTime+0.6){
     const step=AUDIO.step, section=Math.floor(step/64)%3, CH=section===2?CHORDS_B:CHORDS_A, bar=Math.floor(step/8)%CH.length, chord=CH[bar], t=AUDIO.next; const busy=section===1||(RACE.on&&RACE.ph==='play');
     const dest=AUDIO.musicGain;
