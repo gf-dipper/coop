@@ -1113,7 +1113,7 @@ function updateFX(dt){
   FX.prevPh=S.ph;
   if(S.ph==='play'){ for(let i=0;i<2;i++){ const t=FX.trails[i], p=S.p[i]; t.push({x:p.x,y:p.y}); if(t.length>14) t.shift(); } }
   for(const b of BLINK){ if(b.on>0){ b.on-=dt; } else { b.t-=dt; if(b.t<=0){ b.on=0.12; b.t=2+Math.random()*4; } } }
-  if(S.ph==='play'&&GFX.bloom){ for(const l of S.st.lasers){ for(const e of laserSegs(l,S.tm)){ if(Math.random()<0.35) spawnParts(e.x2,e.y2,1,'#ff9aa6',50,1.6,0.35); } }
+  if(S.ph==='play'&&GFX.bloom){ for(const l of S.st.lasers){ for(const e of laserSegs(l,S.tm)){ if(Math.random()<0.12) spawnParts(e.x2,e.y2,1,'#ff9aa6',40,1.3,0.3); } }
     S.fr.forEach((v,i)=>{ if(v>=0&&Math.random()<0.5){ const c=S.st.frags[i]; spawnParts((c[0]+.5)*CELL+(Math.random()-.5)*30,(c[1]+.5)*CELL+(Math.random()-.5)*30,1,'#c9b8d8',25,1.4,0.5); } }); }
 }
 
@@ -1162,36 +1162,36 @@ const LIGHT=document.createElement('canvas'); LIGHT.width=W/2; LIGHT.height=H/2;
 const GLOW=document.createElement('canvas'); GLOW.width=W/6; GLOW.height=H/6; const gctx=GLOW.getContext('2d');
 const BLINK=[{t:2+Math.random()*3,on:0},{t:3+Math.random()*3,on:0}];
 // ---- generált sprite-ok (base64, hogy egy fájl maradjon) ----
-const SPRITE_SRC={ '#4cc3ff':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFPklEQVR42u2Wb2zeVR3FP+fe3/On/7uxdnRdYSsjW8YW3SqaqREo3dwfLWOCbsQskYQoionRRH1n9I0xvNAQfKEYDEFAKQHKhg62yf6K6BYd6uJg/8LadW1n26elfdrn+d379cWj8Y2WOjTGZOf9vTn3fM/53gNXcRX/Y+gKzni4myQ3XjI8IMLM2zm4NcJJQU/4L1FdX9a1D4S1R0JYczANHYfT8KlLIRTSNBRDCJ0nQnD3TQd0e/qfVkDS+vInz+7R5YKxvNXo7XUgWLzcQGDR+NU6gaGuP2IH1nQBB/xcCLhZta7f8aOFP0nTU+WX9eR1TrtXi9Yq+EAXCNT/Z1PfKRh4E24+aGx4Hdu3Gn19bD9+53TAbZ58VwSuv//ezxzaDjcoCgtkQDnnKKZgFs2EEUyGGDorTv7aWHdYNjANn/tehvofvJi/YgJJbmPY+JVObhDCDAPOptEmY+T5pbBxi/BOyMlAyBk+kfWdNDt62Nh/2NG1IeKTu8MVeWDd79PQ1W58o1qSxIPFaMjxs6OGSbQuiXgnXbxgJkCCi2+ClZ1Vt6Awg0oFbP5KeP3D/l/6Ifnnunw0HR8Ve46J0tpoU2Xj0DEhMxa1Ay7iJFqazACSjOg/By3LjIE3IhN94po2bGoYYgR0e8D2+zkr8LWJNDy9W5ze7rh5b2TwvLHygzATI22LRG3uH/MzIAqGh8F7UZiEk4cgzkAIojwdaXqfeGN94ufkAblNoV4wPQKtPwwMvgVty6GuVhzt2EJNDqoUWeIj1/pIszfqZSxuEpms2HvTZhbcWInnnvuN7Z9PcM6DNoe5mTCKVwcAZxV5zHjttjvpaYOQikfqt9DohRNWI6gTVi0oTBd5tD6VlOVE5xbmXy/2BfH4d6Kd+0UE1c8tBR2/eYHjrwjnwTnR/9kNGKXKQsIoFnfxrdptzJe0QLDASTWCx5s/QT6XmHOOqeIu/rS1m4efBkshpMZdZ54AvpibnYC2pTtXCckqDq0CcPJOeP8xy2SNhsZOopXJYIAwixUnmdCaPkL5AtVV7+fW7z5DJh+pWxblnOhcGCFzYeodFJhS9A5JxDzMa45kMpEkMeh+lvJNP2ZmRQ8ox2WTlQ0mkZWjYUkVeCNp+zKsfJKf3+fBiUwCchDkIJZnj6EwHt4feDuKjhXG0KBj1e6X7VintHUA29jUQm+fWNHcw+UoxhXN4ZgA8vlRvv3qIhJ/D4/uOM6aFx2xVBkjwEMHQC6HhdljqKW7LM1VR8pDhiG6NkWcE4ODkGaNxgbIe/FIQzdfnejlwbqP84XxXUwGMHOMFIz2RpQa9twzkK81fMYRPJzZem8NPDY9mwnt3B3bsWiEUFFEGcgAhZIIqaxQMEqpsXOkl0tl49OXexlPoZSKsUJksmAEgbxQXixph6aljjPb7gIem3nnGNqwy2VFcVR88w6hGcezPWJqDIYuiTR1NlKQjRbE2LiYmPSMjQlXjJRKjtI0HH0Ne+IhWLvKeGvIUZuNgtG/7605/AXqSpf0vqRFjcbIGAyfhqoGcF60tBsugWyNUTtPSDDaD/5vs7543tH/22CuCjWvhrpW4w8f2mxme5N/s5B0pQt/ukd/OQihKFpvMS7+EsxBdjFIAld5UpIYxXOVq5Q1rnmPeG+ncXyfGHngFowj/soaUdJ9Sh1fWuY6PsJ13Z7h45EyRum0hJlZJbFIshgNObFsh3HmKYkT+yz+7vtnSV+48d2X0oZ7bktq5k2nl84fEZJZMJyg8hkKZEIYHt/auikUxsT4Uy9d7fxX8X+BvwIXeVfMmW5aFQAAAABJRU5ErkJggg==' };
+const SPRITE_SRC={}; // ide kerülnek a generált figurák, szín szerint (pl. '#4cc3ff': 'data:image/png;base64,…')
 const SPRITES={}; for(const k in SPRITE_SRC){ const im=new Image(); im.onload=()=>{ SPRITES[k]=im; }; im.src=SPRITE_SRC[k]; }
 function radial(c,x,y,r,col,a){ const g=c.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,col); g.addColorStop(1,'rgba(0,0,0,0)'); c.save(); c.globalAlpha=a; c.fillStyle=g; c.fillRect(x-r,y-r,r*2,r*2); c.restore(); }
 function drawLightmap(){
-  const st=S.st; const c=lctx; c.setTransform(0.5,0,0,0.5,0,0); c.globalCompositeOperation='source-over'; c.globalAlpha=1; c.fillStyle='#b4b9cc'; c.fillRect(0,0,W,H); c.globalCompositeOperation='lighter';
-  for(let i=0;i<2;i++){ const p=S.p[i]; radial(c,p.x,p.y,240,PCOL(i),0.7); radial(c,p.x,p.y,80,'#ffffff',0.5); }
-  st.gems.forEach((gm,i)=>{ if(!S.gems[i]) radial(c,(gm[0]+.5)*CELL,(gm[1]+.5)*CELL,75,'#8fe8ff',0.6); });
-  st.keys.forEach((k,i)=>{ if(!S.kg[i]) radial(c,(k[0]+.5)*CELL,(k[1]+.5)*CELL,60,'#ffd54a',0.6); });
-  if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,90,'#5be28a',0.5);
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ c.save(); c.strokeStyle='#ff4d5e'; c.globalAlpha=0.5; c.lineWidth=34; c.lineCap='round'; c.beginPath(); c.moveTo(l.x,l.y); c.lineTo(e.x2,e.y2); c.stroke(); c.restore(); } radial(c,l.x,l.y,60,'#ff4d5e',0.5); }
-  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); radial(c,q.x,q.y,70,'#ff2a3e',0.55); }
-  for(const b of S.bullets) radial(c,b.x,b.y,30,'#ff8a8a',0.6);
-  for(const t of st.turrets) radial(c,t.x,t.y,45,'#8a9ac8',0.35);
-  for(const l in st.plates) st.plates[l].forEach(([cc,rr])=>{ if(plateHeld(l)) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,60,l==='x'?'#c56cff':l==='y'?'#6cffd8':'#ff6cb5',0.5); });
-  if(S.tt>0) st.buttons.forEach(([cc,rr])=>radial(c,(cc+.5)*CELL,(rr+.5)*CELL,60,'#ffd54a',0.5));
+  const st=S.st; const c=lctx; c.setTransform(0.5,0,0,0.5,0,0); c.globalCompositeOperation='source-over'; c.globalAlpha=1; c.fillStyle='#cfd3e0'; c.fillRect(0,0,W,H); c.globalCompositeOperation='lighter';
+  for(let i=0;i<2;i++){ const p=S.p[i]; radial(c,p.x,p.y,200,PCOL(i),0.32); }
+  st.gems.forEach((gm,i)=>{ if(!S.gems[i]) radial(c,(gm[0]+.5)*CELL,(gm[1]+.5)*CELL,60,'#8fe8ff',0.3); });
+  st.keys.forEach((k,i)=>{ if(!S.kg[i]) radial(c,(k[0]+.5)*CELL,(k[1]+.5)*CELL,50,'#ffd54a',0.3); });
+  if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,80,'#5be28a',0.25);
+  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ c.save(); c.strokeStyle='#ff4d5e'; c.globalAlpha=0.25; c.lineWidth=24; c.lineCap='round'; c.beginPath(); c.moveTo(l.x,l.y); c.lineTo(e.x2,e.y2); c.stroke(); c.restore(); } radial(c,l.x,l.y,45,'#ff4d5e',0.25); }
+  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); radial(c,q.x,q.y,55,'#ff2a3e',0.3); }
+  for(const b of S.bullets) radial(c,b.x,b.y,24,'#ff8a8a',0.3);
+  for(const t of st.turrets) radial(c,t.x,t.y,40,'#8a9ac8',0.2);
+  for(const l in st.plates) st.plates[l].forEach(([cc,rr])=>{ if(plateHeld(l)) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,60,l==='x'?'#c56cff':l==='y'?'#6cffd8':'#ff6cb5',0.25); });
+  if(S.tt>0) st.buttons.forEach(([cc,rr])=>radial(c,(cc+.5)*CELL,(rr+.5)*CELL,50,'#ffd54a',0.25));
   // kötél derengés
-  { const a=S.p[0],b=S.p[1]; c.save(); c.strokeStyle=S.tension<=0?'#cfe0ff':S.tension<0.5?'#ffd54a':'#ff5c6c'; c.globalAlpha=0.18; c.lineWidth=22; c.lineCap='round'; c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke(); c.restore(); }
+  { const a=S.p[0],b=S.p[1]; c.save(); c.strokeStyle=S.tension<=0?'#cfe0ff':S.tension<0.5?'#ffd54a':'#ff5c6c'; c.globalAlpha=0.08; c.lineWidth=16; c.lineCap='round'; c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke(); c.restore(); }
   if(RACE.on&&S2){ for(const p of S2.p) radial(c,p.x,p.y,90,'#ffffff',0.15); }
 }
 function drawGlowPass(t){
   const st=S.st; const g=gctx; g.setTransform(1/6,0,0,1/6,0,0); g.globalCompositeOperation='source-over'; g.clearRect(0,0,W,H);
   g.lineCap='round';
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ g.strokeStyle='#ff4d5e'; g.lineWidth=18; g.beginPath(); g.moveTo(l.x,l.y); g.lineTo(e.x2,e.y2); g.stroke(); } }
-  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); g.fillStyle='#ff4d5e'; g.beginPath(); g.arc(q.x,q.y,pt.r+8,0,7); g.fill(); }
-  st.gems.forEach((gm,i)=>{ if(!S.gems[i]){ g.fillStyle='#8fe8ff'; g.beginPath(); g.arc((gm[0]+.5)*CELL,(gm[1]+.5)*CELL,16,0,7); g.fill(); } });
+  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ g.strokeStyle='#ff4d5e'; g.lineWidth=12; g.beginPath(); g.moveTo(l.x,l.y); g.lineTo(e.x2,e.y2); g.stroke(); } }
+  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); g.fillStyle='#ff4d5e'; g.beginPath(); g.arc(q.x,q.y,pt.r+4,0,7); g.fill(); }
+  st.gems.forEach((gm,i)=>{ if(!S.gems[i]){ g.fillStyle='#8fe8ff'; g.beginPath(); g.arc((gm[0]+.5)*CELL,(gm[1]+.5)*CELL,12,0,7); g.fill(); } });
   if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits){ g.fillStyle='rgba(91,226,138,.7)'; g.fillRect(cc*CELL+6,rr*CELL+6,CELL-12,CELL-12); }
   for(const b of S.bullets){ g.fillStyle='#ff9a9a'; g.beginPath(); g.arc(b.x,b.y,12,0,7); g.fill(); }
-  { const a=S.p[0],b=S.p[1]; g.strokeStyle=S.tension<=0?'#cfe0ff':S.tension<0.5?'#ffd54a':'#ff5c6c'; g.lineWidth=12; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke(); }
-  for(let i=0;i<2;i++){ const p=S.p[i]; if(SPRITES[PCOL(i)]){ g.strokeStyle=PCOL(i); g.lineWidth=6; g.beginPath(); g.arc(p.x,p.y,PR+7,0,7); g.stroke(); } else { g.fillStyle=PCOL(i); g.beginPath(); g.arc(p.x,p.y,PR+10,0,7); g.fill(); } }
-  for(const q of FX.parts){ g.globalAlpha=Math.max(0,q.life/q.max)*0.8; g.fillStyle=q.col; g.beginPath(); g.arc(q.x,q.y,q.size*2.5,0,7); g.fill(); } g.globalAlpha=1;
+  { const a=S.p[0],b=S.p[1]; g.strokeStyle=S.tension<=0?'#cfe0ff':S.tension<0.5?'#ffd54a':'#ff5c6c'; g.lineWidth=7; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke(); }
+  for(let i=0;i<2;i++){ const p=S.p[i]; if(!SPRITES[PCOL(i)]){ g.fillStyle=PCOL(i); g.beginPath(); g.arc(p.x,p.y,PR+4,0,7); g.fill(); } }
+  for(const q of FX.parts){ g.globalAlpha=Math.max(0,q.life/q.max)*0.8; g.fillStyle=q.col; g.beginPath(); g.arc(q.x,q.y,q.size*1.6,0,7); g.fill(); } g.globalAlpha=1;
 }
 function drawGhosts(){ const ot=1-myTeam(); const a=S2.p[0],b=S2.p[1]; ctx.save(); ctx.globalAlpha=.32; ctx.strokeStyle=TEAMCOL[ot][0]; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.setLineDash([]);
   for(let i=0;i<2;i++){ const p=S2.p[i]; ctx.fillStyle=TEAMCOL[ot][i]; ctx.beginPath(); ctx.arc(p.x,p.y,PR,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
@@ -1241,7 +1241,7 @@ function render(now){
     }
   }
   // kristályok
-  st.gems.forEach((gm,i)=>{ if(S.gems[i]) return; const x=(gm[0]+.5)*CELL,y=(gm[1]+.5)*CELL+Math.sin(t*3+i)*3; ctx.save(); ctx.translate(x,y); ctx.shadowColor='#8fe8ff'; ctx.shadowBlur=18+Math.sin(t*4+i)*6; ctx.rotate(t*1.2+i);
+  st.gems.forEach((gm,i)=>{ if(S.gems[i]) return; const x=(gm[0]+.5)*CELL,y=(gm[1]+.5)*CELL+Math.sin(t*3+i)*3; ctx.save(); ctx.translate(x,y); ctx.shadowColor='#8fe8ff'; ctx.shadowBlur=8+Math.sin(t*4+i)*3; ctx.rotate(t*1.2+i);
     ctx.fillStyle='#5fd4ff'; ctx.beginPath(); ctx.moveTo(0,-12); ctx.lineTo(9,0); ctx.lineTo(0,12); ctx.lineTo(-9,0); ctx.closePath(); ctx.fill();
     ctx.fillStyle='rgba(255,255,255,.55)'; ctx.beginPath(); ctx.moveTo(0,-12); ctx.lineTo(9,0); ctx.lineTo(0,0); ctx.closePath(); ctx.fill();
     ctx.fillStyle='rgba(0,40,80,.35)'; ctx.beginPath(); ctx.moveTo(0,12); ctx.lineTo(-9,0); ctx.lineTo(0,0); ctx.closePath(); ctx.fill(); ctx.restore();
@@ -1253,18 +1253,18 @@ function render(now){
     ctx.save(); ctx.translate(tu.x,tu.y); ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.rotate(an); ctx.fillStyle='#55658f'; rr(-4,-5,24,10,3); ctx.fill(); ctx.fillStyle='#ff6a6a'; ctx.fillRect(16,-2,5,4); ctx.rotate(-an); ctx.fillStyle='#8a9ac8'; ctx.beginPath(); ctx.arc(0,0,6,0,7); ctx.fill(); ctx.restore(); }
   for(const bl of S.bullets){ glowCircle(bl.x,bl.y,5,'#ff7a7a',14); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(bl.x,bl.y,2,0,7); ctx.fill(); }
   // lézerek
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ ctx.save(); ctx.lineCap='round'; ctx.strokeStyle='rgba(255,60,80,.18)'; ctx.lineWidth=16; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowColor='#ff2a40'; ctx.shadowBlur=14; ctx.strokeStyle='#ff4d5e'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowBlur=0; ctx.strokeStyle='rgba(255,230,230,.9)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.restore(); glowCircle(e.x2,e.y2,4,'#ff8090',12); }
+  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ ctx.save(); ctx.lineCap='round'; ctx.strokeStyle='rgba(255,60,80,.12)'; ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowColor='#ff2a40'; ctx.shadowBlur=6; ctx.strokeStyle='#ff4d5e'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowBlur=0; ctx.strokeStyle='rgba(255,230,230,.9)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.restore(); glowCircle(e.x2,e.y2,4,'#ff8090',12); }
     ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(l.x,l.y,12,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.save(); ctx.translate(l.x,l.y); ctx.rotate(-t*2); ctx.strokeStyle='rgba(255,77,94,.6)'; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.stroke(); ctx.restore(); glowCircle(l.x,l.y,4,'#ff4d5e',10); }
   // őrjáratok
   for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); const q2=patrolPos(pt,S.tm-0.12); ctx.strokeStyle='rgba(255,77,94,.25)'; ctx.lineWidth=pt.r*1.4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(q2.x,q2.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-    ctx.save(); ctx.shadowColor='#ff2a3e'; ctx.shadowBlur=22; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#ff9aa6'); gr.addColorStop(1,'#e0203a'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,pt.r,0,7); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.shadowColor='#ff2a3e'; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#ff9aa6'); gr.addColorStop(1,'#e0203a'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,pt.r,0,7); ctx.fill(); ctx.restore();
     let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#2a0a10'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); }
   // csóvák
   for(let i=0;i<2;i++){ const tr=FX.trails[i], col=PCOL(i); for(let k=0;k<tr.length;k++){ const f=k/tr.length; ctx.fillStyle=col+Math.floor(f*60+8).toString(16).padStart(2,'0'); ctx.beginPath(); ctx.arc(tr[k].x,tr[k].y,PR*f*0.8,0,7); ctx.fill(); } }
   // kötél
   { const a=S.p[0],b=S.p[1]; const d=Math.hypot(b.x-a.x,b.y-a.y); const slack=Math.max(0,st.rope-d); const mx=(a.x+b.x)/2,my=(a.y+b.y)/2+Math.min(40,slack*0.35);
     const tn=S.tension; const col=tn<=0?'#cfe0ff':tn<0.5?'#ffd54a':'#ff5c6c';
-    ctx.save(); ctx.lineCap='round'; ctx.strokeStyle=col; ctx.globalAlpha=.25; ctx.lineWidth=10+tn*6; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(mx,my,b.x,b.y); ctx.stroke();
+    ctx.save(); ctx.lineCap='round'; ctx.strokeStyle=col; ctx.globalAlpha=.14; ctx.lineWidth=8+tn*5; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(mx,my,b.x,b.y); ctx.stroke();
     ctx.globalAlpha=1; ctx.shadowColor=col; ctx.shadowBlur=10; ctx.lineWidth=2.5+tn*2; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(mx,my,b.x,b.y); ctx.stroke();
     // futó energiaszemcsék
     ctx.shadowBlur=0; ctx.fillStyle='#fff'; for(let k=0;k<5;k++){ const f=((t*0.8+k/5)%1); const u=1-f; const px=u*u*a.x+2*u*f*mx+f*f*b.x, py=u*u*a.y+2*u*f*my+f*f*b.y; ctx.globalAlpha=.8; ctx.beginPath(); ctx.arc(px,py,1.6+tn,0,7); ctx.fill(); }
@@ -1278,8 +1278,8 @@ function render(now){
     ctx.fillStyle='rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(px,py+PR+3,PR*0.9*str,4,0,0,7); ctx.fill();
     const spr=SPRITES[col]; const dead=S.ph==='fail'; const bl=BLINK[i].on>0;
     ctx.save(); ctx.translate(px,py); ctx.rotate(ang); ctx.scale(str,1/str); ctx.rotate(-ang);
-    if(spr){ if(bl&&!dead) ctx.scale(1.06,0.86); ctx.shadowColor=col; ctx.shadowBlur=6; ctx.imageSmoothingEnabled=false; ctx.drawImage(spr,-16,-16,32,32); ctx.shadowBlur=0; ctx.imageSmoothingEnabled=true; }
-    else { ctx.shadowColor=col; ctx.shadowBlur=20; const gr=ctx.createRadialGradient(-5,-5,2,0,0,PR+2); gr.addColorStop(0,'#ffffff'); gr.addColorStop(0.25,col); gr.addColorStop(1,dark); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(0,0,PR,0,7); ctx.fill(); ctx.shadowBlur=0;
+    if(spr){ if(bl&&!dead) ctx.scale(1.06,0.86); ctx.shadowBlur=0; ctx.imageSmoothingEnabled=false; ctx.drawImage(spr,-16,-16,32,32); ctx.shadowBlur=0; ctx.imageSmoothingEnabled=true; }
+    else { ctx.shadowColor=col; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(-5,-5,2,0,0,PR+2); gr.addColorStop(0,'#ffffff'); gr.addColorStop(0.25,col); gr.addColorStop(1,dark); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(0,0,PR,0,7); ctx.fill(); ctx.shadowBlur=0;
       ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(0,0,PR-1,0,7); ctx.stroke(); }
     ctx.restore();
     const ex=v>10?vx/v*3:0, ey=v>10?vy/v*3:0;
@@ -1295,7 +1295,7 @@ function render(now){
   for(const q of FX.parts){ ctx.globalAlpha=Math.max(0,q.life/q.max); ctx.fillStyle=q.col; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(q.life/q.max+0.3),0,7); ctx.fill(); } ctx.globalAlpha=1;
   // fénytérkép (multiply) + bloom (lighter)
   if(GFX.light){ drawLightmap(); ctx.save(); ctx.globalCompositeOperation='multiply'; ctx.drawImage(LIGHT,0,0,W,H); ctx.restore(); }
-  if(GFX.bloom){ drawGlowPass(t); ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.45; ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high'; ctx.drawImage(GLOW,0,0,W,H); ctx.globalAlpha=0.25; ctx.drawImage(GLOW,-4,-4,W+8,H+8); ctx.restore(); }
+  if(GFX.bloom){ drawGlowPass(t); ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.18; ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high'; ctx.drawImage(GLOW,0,0,W,H); ctx.globalAlpha=0.08; ctx.drawImage(GLOW,-4,-4,W+8,H+8); ctx.restore(); }
   ctx.restore();
   if(S.ph==='fail'&&S.phT>0.55&&GFX.bloom){ ctx.save(); ctx.globalCompositeOperation='screen'; ctx.globalAlpha=0.35; const k=(S.phT-0.55)*12; ctx.drawImage(cv,k,0); ctx.drawImage(cv,-k,0); ctx.restore(); }
   // HUD
@@ -1503,8 +1503,37 @@ function audioInit(){
   AUDIO.lp=c.createBiquadFilter(); AUDIO.lp.type='lowpass'; AUDIO.lp.frequency.value=1800; AUDIO.lp.Q.value=0.4;
   AUDIO.musicGain=c.createGain(); AUDIO.musicGain.gain.value=musicLevel(); AUDIO.musicGain.connect(AUDIO.lp); AUDIO.lp.connect(AUDIO.master); AUDIO.lp.connect(rev);
   AUDIO.sfxGain=c.createGain(); AUDIO.sfxGain.gain.value=sfxLevel(); AUDIO.sfxGain.connect(AUDIO.master); AUDIO.sfxGain.connect(rev);
+  AUDIO.extGain=c.createGain(); AUDIO.extGain.gain.value=musicLevel(); AUDIO.extGain.connect(AUDIO.master);
   AUDIO.next=c.currentTime+0.1; AUDIO.timer=setInterval(musicTick,120); AUDIO.started=true;
+  musicUpdate();
 }
+function applyMusicLevel(ramp){ if(!AUDIO.ctx) return; const t=AUDIO.ctx.currentTime; for(const g of [AUDIO.musicGain,AUDIO.extGain]){ if(!g) continue; g.gain.cancelScheduledValues(t); g.gain.linearRampToValueAtTime(musicLevel(),t+ramp); } }
+// ---- Zeneszámok fájlból (Suno) – varrat nélküli hurok, átúszás a helyzetek között; ha nincs fájl, marad a beépített zene ----
+const TRACKS={ menu:{file:'zene_menu.mp3',ls:7.012,le:89.141,g:0.9}, jatek:{file:'zene_jatek.mp3',ls:10.449,le:101.82,g:0.9}, verseny:{file:'zene_verseny.mp3',ls:19.389,le:84.265,g:1.05} };
+const MUS={buf:{},state:{},cur:null,src:null,g:null,fail:false};
+function musicWant(){ if(RACE.on) return 'verseny'; if(S) return 'jatek'; return 'menu'; }
+function musicLoad(k){
+  if(MUS.state[k]) return; MUS.state[k]='loading'; const c=AUDIO.ctx, tr=TRACKS[k];
+  fetch(tr.file).then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); }).then(ab=>c.decodeAudioData(ab)).then(buf=>{
+    // hurok-előkészítés: a hurok vége (le) előtti 40 ms átúszik a hurok eleje (ls) előtti 40 ms-ba, így a visszaugrás kattanásmentes
+    const sr=buf.sampleRate, n=Math.min(buf.length,Math.floor(tr.le*sr)), xf=Math.floor(sr*0.04), s0=Math.floor(tr.ls*sr);
+    const out=c.createBuffer(buf.numberOfChannels,n,sr);
+    for(let ch=0;ch<buf.numberOfChannels;ch++){ const a=buf.getChannelData(ch), d=out.getChannelData(ch); d.set(a.subarray(0,n)); if(s0>xf){ for(let i=0;i<xf;i++){ const w=i/xf; d[n-xf+i]=a[n-xf+i]*(1-w)+a[s0-xf+i]*w; } } }
+    MUS.buf[k]=out; MUS.state[k]='ok'; musicUpdate();
+  }).catch(e=>{ MUS.state[k]='err'; console.warn('zene nem tölthető:',tr.file,e.message); musicUpdate(); });
+}
+function musicUpdate(){
+  const c=AUDIO.ctx; if(!c) return; const k=musicWant();
+  if(!MUS.state[k]) musicLoad(k);
+  if(MUS.state[k]!=='ok'){ if(MUS.state[k]==='err'&&MUS.cur){ musicStop(1.0); } return; }
+  if(MUS.cur===k) return;
+  musicStop(1.2); const tr=TRACKS[k], t=c.currentTime;
+  const src=c.createBufferSource(); src.buffer=MUS.buf[k]; src.loop=true; src.loopStart=tr.ls; src.loopEnd=Math.min(tr.le,MUS.buf[k].duration);
+  const g=c.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(tr.g,t+1.2); src.connect(g); g.connect(AUDIO.extGain); src.start(t);
+  MUS.cur=k; MUS.src=src; MUS.g=g;
+}
+function musicStop(fade){ if(!MUS.src) return; const c=AUDIO.ctx, t=c.currentTime, src=MUS.src, g=MUS.g; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(Math.max(0.0001,g.gain.value),t); g.gain.exponentialRampToValueAtTime(0.0001,t+fade); src.stop(t+fade+0.05); MUS.cur=null; MUS.src=null; MUS.g=null; }
+function musicFileActive(){ return !!MUS.cur; }
 // akkordmenet (Hz): Am – F – C – G, majd Am – F – Dm – E
 const CHORDS_A=[[220,261.63,329.63],[174.61,220,261.63],[130.81*2,164.81*2,196*2],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63],[146.83,174.61,220],[164.81,207.65,246.94]];
 const CHORDS_B=[[146.83,174.61,220],[196,246.94,293.66],[220,261.63,329.63],[164.81,207.65,246.94],[174.61,220,261.63],[130.81*2,164.81*2,196*2],[196,246.94,293.66],[164.81,207.65,246.94]];
@@ -1513,7 +1542,8 @@ const ARP=[[0,1,2,1],[0,2,1,2],[1,0,2,0],[2,1,0,1]];
 const BEAT=0.5; // 120 bpm, negyed
 function osc(type,freq,t0,t1,gain,dest,detune){ const c=AUDIO.ctx; const o=c.createOscillator(); o.type=type; o.frequency.value=freq; if(detune) o.detune.value=detune; const g=c.createGain(); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(gain,t0+Math.min(0.4,(t1-t0)*0.4)); g.gain.setValueAtTime(gain,Math.max(t0,t1-0.25)); g.gain.linearRampToValueAtTime(0,t1); o.connect(g); g.connect(dest); o.start(t0); o.stop(t1+0.05); }
 function musicTick(){
-  const c=AUDIO.ctx; if(!c) return;
+  const c=AUDIO.ctx; if(!c) return; musicUpdate();
+  if(musicFileActive()){ AUDIO.next=c.currentTime+0.1; AUDIO.step=0; return; }
   while(AUDIO.next<c.currentTime+0.6){
     const step=AUDIO.step, section=Math.floor(step/64)%3, CH=section===2?CHORDS_B:CHORDS_A, bar=Math.floor(step/8)%CH.length, chord=CH[bar], t=AUDIO.next; const busy=section===1||(RACE.on&&RACE.ph==='play');
     const dest=AUDIO.musicGain;
@@ -1533,8 +1563,8 @@ function musicTick(){
     AUDIO.next+=BEAT; AUDIO.step++;
   }
 }
-function setMusic(on){ AUDIO.music=on; if(on&&AUDIO.mv===0) AUDIO.mv=60; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.cancelScheduledValues(AUDIO.ctx.currentTime); AUDIO.musicGain.gain.linearRampToValueAtTime(musicLevel(),AUDIO.ctx.currentTime+0.25); } updateAudioButtons(); }
-function setMusicVol(v){ AUDIO.mv=Math.max(0,Math.min(100,v|0)); if(AUDIO.mv>0&&!AUDIO.music) AUDIO.music=true; if(AUDIO.mv===0) AUDIO.music=false; audioSave(); if(AUDIO.ctx){ AUDIO.musicGain.gain.cancelScheduledValues(AUDIO.ctx.currentTime); AUDIO.musicGain.gain.linearRampToValueAtTime(musicLevel(),AUDIO.ctx.currentTime+0.08); } updateAudioButtons(); }
+function setMusic(on){ AUDIO.music=on; if(on&&AUDIO.mv===0) AUDIO.mv=60; audioSave(); applyMusicLevel(0.25); updateAudioButtons(); }
+function setMusicVol(v){ AUDIO.mv=Math.max(0,Math.min(100,v|0)); if(AUDIO.mv>0&&!AUDIO.music) AUDIO.music=true; if(AUDIO.mv===0) AUDIO.music=false; audioSave(); applyMusicLevel(0.08); updateAudioButtons(); }
 function setSfxVol(v){ AUDIO.sv=Math.max(0,Math.min(100,v|0)); if(AUDIO.sv>0&&!AUDIO.sfx) AUDIO.sfx=true; if(AUDIO.sv===0) AUDIO.sfx=false; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=sfxLevel(); } updateAudioButtons(); }
 function setSfx(on){ AUDIO.sfx=on; if(on&&AUDIO.sv===0) AUDIO.sv=70; audioSave(); if(AUDIO.ctx){ AUDIO.sfxGain.gain.value=sfxLevel(); } updateAudioButtons(); }
 function updateAudioButtons(){ document.querySelectorAll('.btnMusic').forEach(b=>{ b.textContent=AUDIO.music?'♫':'♫̸'; b.title=AUDIO.music?'Zene némítása':'Zene bekapcsolása'; b.style.opacity=AUDIO.music?'1':'.45'; }); document.querySelectorAll('.btnSfx').forEach(b=>{ b.textContent=AUDIO.sfx?'🔊':'🔇'; b.title=AUDIO.sfx?'Hangok némítása':'Hangok bekapcsolása'; b.style.opacity=AUDIO.sfx?'1':'.45'; }); document.querySelectorAll('.volMusic').forEach(r=>{ r.value=AUDIO.music?AUDIO.mv:0; }); document.querySelectorAll('.volSfx').forEach(r=>{ r.value=AUDIO.sfx?AUDIO.sv:0; }); document.querySelectorAll('.volMusicV').forEach(e=>e.textContent=(AUDIO.music?AUDIO.mv:0)+'%'); document.querySelectorAll('.volSfxV').forEach(e=>e.textContent=(AUDIO.sfx?AUDIO.sv:0)+'%'); }

@@ -4,18 +4,18 @@ Két játékos, egy energiakötél. Ha túl messze kerültök egymástól, elsza
 40 pálya, 5 világ (kötelék → gépezet → veszély → fejtörő → kihívás), kb. 2 óra két embernek.
 Világonként 8 élet van: ha elfogy, a világ elölről indul (a főmenüben kikapcsolható: „Végtelen élet”).
 
-Egyetlen fájl az egész (`index.html`), nem kell hozzá saját szerver: a két gép közvetlenül,
+A játék egyetlen fájl (`index.html`) + a három zene (`zene_menu.mp3`, `zene_jatek.mp3`, `zene_verseny.mp3`), nem kell hozzá saját szerver: a két gép közvetlenül,
 böngészőből kapcsolódik egymáshoz (WebRTC, PeerJS). GitHub Pages csak a fájlt szolgálja ki.
 
 ## Feltöltés GitHubra (kb. 3 perc)
 
 1. GitHubon **New repository** → név pl. `kotelek` → Public → Create.
-2. **Add file → Upload files** → húzd be az `index.html`-t → Commit changes.
+2. **Add file → Upload files** → húzd be az `index.html`-t és a három `zene_*.mp3` fájlt → Commit changes.
 3. A repo **Settings → Pages** menüjében: *Source: Deploy from a branch*, *Branch: main* / *(root)* → Save.
 4. 1–2 perc múlva él a játék itt: `https://<felhasználóneved>.github.io/kotelek/`
    (a Pages oldalon kiírja a pontos címet).
 
-Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
+Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda. Ha a zenefájlok hiányoznak, a játék akkor is megy – ilyenkor a beépített, generált zene szól.
 
 ## Így játsszatok
 
@@ -32,7 +32,7 @@ Ha később módosítod az `index.html`-t, csak töltsd fel újra ugyanoda.
 - A célmezőre **mindkettőtöknek** rá kell állnia, miután minden kristályt összeszedtetek.
 - **A kötelet elvágja** a tüske, az őrjárat és a lézer – mindig ugyanazon az oldalon legyetek, és együtt menjetek át.
 - A kötél nem húzza magával a másikat: aki lemarad, annál elszakad.
-- Zene és hangeffektek a főmenüben (és a szünet menüben) ki-/bekapcsolhatók – a beállítás megmarad a böngészőben. A zene az első kattintás után indul (böngésző-szabály).
+- Zene és hangeffektek a főmenüben (és a szünet menüben) külön hangerővel állíthatók vagy némíthatók – a beállítás megmarad a böngészőben. Három zene van: menü, páros játék, verseny/kupa – a játék magától vált köztük átúszással. A zene az első kattintás után indul (böngésző-szabály).
 - A legjobb idők a gazda gépén mentődnek (böngésző tároló), a pályaválasztóban látszanak a csillagok.
 
 ### Négyen (2v2 verseny)
