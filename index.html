@@ -1129,6 +1129,28 @@ function updateFX(dt){
 
 // --- statikus réteg (padló + falak) cache ---
 const FLOOR={L:-1,cv:null};
+// tüskecsapda: sötét fémlap vésett résekkel, acél tüskék két oldalról megvilágítva, a lap alján vörös veszély-fény
+function drawSpikeTile(x,px,py){
+  x.save();
+  // lap
+  rr(px+2,py+2,CELL-4,CELL-4,5,x); const pg=x.createLinearGradient(px,py,px,py+CELL); pg.addColorStop(0,'#241720'); pg.addColorStop(1,'#120b12'); x.fillStyle=pg; x.fill(); x.strokeStyle='#4a2535'; x.lineWidth=1; x.stroke();
+  // veszély-csíkok a lap alsó szélén
+  x.save(); rr(px+3,py+CELL-7,CELL-6,4,2,x); x.clip(); x.fillStyle='#ff3a50'; for(let i=-1;i<8;i++){ x.beginPath(); x.moveTo(px+i*7,py+CELL-7); x.lineTo(px+i*7+4,py+CELL-7); x.lineTo(px+i*7+8,py+CELL-3); x.lineTo(px+i*7+4,py+CELL-3); x.closePath(); x.fill(); } x.restore();
+  // alsó vörös derengés
+  const rg=x.createRadialGradient(px+CELL/2,py+CELL-4,2,px+CELL/2,py+CELL-4,22); rg.addColorStop(0,'rgba(255,58,80,.6)'); rg.addColorStop(1,'rgba(255,58,80,0)'); x.fillStyle=rg; x.fillRect(px+2,py+2,CELL-4,CELL-4);
+  // tüskék: 3 db, a középső magasabb; vésett rés az alján, bal fele világos, jobb fele árnyékos
+  const sp=[[9,26],[20,30],[31,26]];
+  for(const [cx,hgt] of sp){ const bx=px+cx, by=py+34, tipY=by-hgt, hw=6.2;
+    x.fillStyle='#07050a'; x.beginPath(); x.ellipse(bx,by,hw+1.5,2.2,0,0,7); x.fill();
+    x.fillStyle='#dfe4f2'; x.beginPath(); x.moveTo(bx-hw,by); x.lineTo(bx,tipY); x.lineTo(bx,by); x.closePath(); x.fill();
+    x.fillStyle='#6b7190'; x.beginPath(); x.moveTo(bx,by); x.lineTo(bx,tipY); x.lineTo(bx+hw,by); x.closePath(); x.fill();
+    x.fillStyle='#3a3f58'; x.beginPath(); x.moveTo(bx+hw*0.45,by); x.lineTo(bx,tipY+4); x.lineTo(bx+hw,by); x.closePath(); x.fill();
+    x.fillStyle='#ffd0d6'; x.beginPath(); x.arc(bx,tipY+1.5,1.4,0,7); x.fill();
+  }
+  // hegyek fénye
+  x.save(); x.shadowColor='#ff5c6c'; x.shadowBlur=6; x.fillStyle='rgba(255,92,108,.0)'; for(const [cx,hgt] of sp){ x.beginPath(); x.arc(px+cx,py+34-hgt+2,1.5,0,7); x.fill(); } x.restore();
+  x.restore();
+}
 function buildFloor(L){
   const st=STATICS[L], g=st.grid; const c2=document.createElement('canvas'); c2.width=W; c2.height=H; const x=c2.getContext('2d');
   // padló
@@ -1151,7 +1173,7 @@ function buildFloor(L){
     if(!wall(c+1,r)){ x.strokeStyle='rgba(0,0,0,.35)'; x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); }
   }
   // tüskék (statikus)
-  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; x.fillStyle='#2a1018'; x.fillRect(px+2,py+2,CELL-4,CELL-4); x.shadowColor='#ff3a50'; x.shadowBlur=10; const sg=x.createLinearGradient(px,py+CELL,px,py+6); sg.addColorStop(0,'#ff2e48'); sg.addColorStop(1,'#ffd0d6'); x.fillStyle=sg; x.beginPath(); for(let i=0;i<3;i++){ const bx=px+5+i*12; x.moveTo(bx,py+CELL-5); x.lineTo(bx+6,py+7); x.lineTo(bx+12,py+CELL-5);} x.fill(); x.shadowBlur=0; }
+  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; drawSpikeTile(x,px,py); }
   // vignetta
   const vg=x.createRadialGradient(W/2,H/2,300,W/2,H/2,720); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.55)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
   FLOOR.L=L; FLOOR.cv=c2;
@@ -1220,6 +1242,7 @@ function drawLightmap(){
   if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,80,'#5be28a',0.25);
   for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ c.save(); c.strokeStyle='#ff4d5e'; c.globalAlpha=0.25; c.lineWidth=24; c.lineCap='round'; c.beginPath(); c.moveTo(l.x,l.y); c.lineTo(e.x2,e.y2); c.stroke(); c.restore(); } radial(c,l.x,l.y,45,'#ff4d5e',0.25); }
   for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); radial(c,q.x,q.y,55,'#ff2a3e',0.3); }
+  for(const h of st.hazards) radial(c,(h[0]+.5)*CELL,(h[1]+.5)*CELL+8,34,'#ff3a50',0.16);
   for(const b of S.bullets) radial(c,b.x,b.y,24,'#ff8a8a',0.3);
   for(const t of st.turrets) radial(c,t.x,t.y,40,'#8a9ac8',0.2);
   for(const l in st.plates) st.plates[l].forEach(([cc,rr])=>{ if(plateHeld(l)) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,60,l==='x'?'#c56cff':l==='y'?'#6cffd8':'#ff6cb5',0.25); });
