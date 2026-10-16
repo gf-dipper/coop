@@ -1153,8 +1153,15 @@ const SHADOW_LIGHT=175; // ennyire lát a figura fénye – az Árny ezen belül
 const WORLDS=[
   {name:'Alap',bg0:'#141a30',bg1:'#080b14',wall0:'#2a3454',wall1:'#1c2439',glow:'rgba(90,120,255,.35)',edge:'rgba(140,170,255,.55)',ambient:'#cfd3e0',grid:'rgba(120,150,255,.05)'},
   {name:'Űr',bg0:'#0d0a24',bg1:'#03020a',wall0:'#3a2a6a',wall1:'#1e1540',glow:'rgba(170,110,255,.35)',edge:'rgba(210,170,255,.55)',ambient:'#c9c3e8',grid:'rgba(190,150,255,.05)',stars:true},
-  {name:'Horror',bg0:'#1a0d10',bg1:'#050203',wall0:'#3a1e22',wall1:'#1c0c0f',glow:'rgba(255,60,80,.22)',edge:'rgba(255,120,130,.45)',ambient:'#120a0c',grid:'rgba(255,100,110,.04)',dark:true,flicker:true},
+  {name:'Horror',bg0:'#1a0d10',bg1:'#050203',wall0:'#3a1e22',wall1:'#1c0c0f',glow:'rgba(255,60,80,.22)',edge:'rgba(255,120,130,.45)',ambient:'#c8b4b8',grid:'rgba(255,100,110,.04)',dark:true,flicker:true},
 ];
+// Elemek kinézete világonként (alap / űr / horror)
+const SKIN=[
+  {laser:'#ff4d5e',laserCore:'rgba(255,230,230,.9)',laserGlow:'#ff2a40',patrol:'#ff2a3e',bullet:'#ff7a7a',bulletGlow:'#ff7a7a',gem:'#8fe8ff',exit:'#5be28a',exitRGB:'91,226,138'},
+  {laser:'#5ee8ff',laserCore:'rgba(240,255,255,.95)',laserGlow:'#3ad0ff',patrol:'#5ee8ff',bullet:'#8af0ff',bulletGlow:'#3ad0ff',gem:'#c8a8ff',exit:'#7ae8ff',exitRGB:'122,232,255'},
+  {laser:'#c01030',laserCore:'rgba(255,120,120,.8)',laserGlow:'#ff1030',patrol:'#ff2040',bullet:'#8a0a18',bulletGlow:'#ff2040',gem:'#ffb04a',exit:'#ff3a50',exitRGB:'255,58,80'},
+];
+function skinOf(st){ return SKIN[(st&&st.world)||0]; }
 function worldOf(def){ const w=+(def&&def.world)||0; return WORLDS[w]?w:0; }
 
 const ACC=1800, MAXV=230, FRIC=9, DEF_ROPE=150, SNAP=1.45, TIMED=4.5, LIVES=8, FRAG_T=0.7, WORLD=8;
@@ -1410,8 +1417,34 @@ function updateFX(dt){
 // --- statikus réteg (padló + falak) cache ---
 const FLOOR={L:-1,cv:null};
 // tüskecsapda: sötét fémlap vésett résekkel, acél tüskék két oldalról megvilágítva, a lap alján vörös veszély-fény
+// Űr: energiaszilánkok – kristályos, cián-lila, világító hegyekkel
+function drawSpikeSpace(x,px,py){
+  x.save(); rr(px+2,py+2,CELL-4,CELL-4,5,x); const pg=x.createLinearGradient(px,py,px,py+CELL); pg.addColorStop(0,'#1a1238'); pg.addColorStop(1,'#0a0620'); x.fillStyle=pg; x.fill(); x.strokeStyle='#4a3a8a'; x.lineWidth=1; x.stroke();
+  const rg=x.createRadialGradient(px+CELL/2,py+CELL-4,2,px+CELL/2,py+CELL-4,24); rg.addColorStop(0,'rgba(94,232,255,.45)'); rg.addColorStop(1,'rgba(94,232,255,0)'); x.fillStyle=rg; x.fillRect(px+2,py+2,CELL-4,CELL-4);
+  const sp=[[9,24,-0.25],[20,30,0],[31,24,0.25]];
+  for(const [cx,hgt,tilt] of sp){ const bx=px+cx, by=py+34; x.save(); x.translate(bx,by); x.rotate(tilt);
+    x.fillStyle='#0a0620'; x.beginPath(); x.ellipse(0,0,7,2.2,0,0,7); x.fill();
+    const g=x.createLinearGradient(-6,0,6,0); g.addColorStop(0,'#a8f0ff'); g.addColorStop(0.5,'#5ee8ff'); g.addColorStop(1,'#7a5cff'); x.fillStyle=g; x.beginPath(); x.moveTo(-6,0); x.lineTo(-1.5,-hgt); x.lineTo(1.5,-hgt); x.lineTo(6,0); x.closePath(); x.fill();
+    x.fillStyle='rgba(255,255,255,.35)'; x.beginPath(); x.moveTo(-4,0); x.lineTo(-1,-hgt+2); x.lineTo(-1,0); x.closePath(); x.fill();
+    x.shadowColor='#5ee8ff'; x.shadowBlur=8; x.fillStyle='#ffffff'; x.beginPath(); x.arc(0,-hgt+1,1.6,0,7); x.fill(); x.restore(); }
+  x.restore();
+}
+// Horror: csont-tövisek – vérfoltos lap, görbe sárgásfehér tüskék
+function drawSpikeHorror(x,px,py){
+  x.save(); rr(px+2,py+2,CELL-4,CELL-4,5,x); const pg=x.createLinearGradient(px,py,px,py+CELL); pg.addColorStop(0,'#1c0608'); pg.addColorStop(1,'#0a0203'); x.fillStyle=pg; x.fill(); x.strokeStyle='#4a1016'; x.lineWidth=1; x.stroke();
+  x.fillStyle='rgba(140,10,20,.55)'; x.beginPath(); x.ellipse(px+14,py+30,9,4,0.3,0,7); x.fill(); x.beginPath(); x.ellipse(px+28,py+33,6,3,-0.4,0,7); x.fill();
+  const sp=[[9,24,-0.35],[20,30,0.1],[31,25,0.4]];
+  for(const [cx,hgt,bend] of sp){ const bx=px+cx, by=py+34;
+    x.fillStyle='#050203'; x.beginPath(); x.ellipse(bx,by,6.5,2,0,0,7); x.fill();
+    const tipX=bx+bend*hgt*0.6, tipY=by-hgt; x.fillStyle='#e8dcc0'; x.beginPath(); x.moveTo(bx-5.5,by); x.quadraticCurveTo(bx-2+bend*6,by-hgt*0.6,tipX,tipY); x.quadraticCurveTo(bx+3+bend*6,by-hgt*0.6,bx+5.5,by); x.closePath(); x.fill();
+    x.fillStyle='#8a7a5a'; x.beginPath(); x.moveTo(bx+1,by); x.quadraticCurveTo(bx+3+bend*6,by-hgt*0.6,tipX,tipY); x.quadraticCurveTo(bx+4+bend*6,by-hgt*0.5,bx+5.5,by); x.closePath(); x.fill();
+    x.fillStyle='rgba(160,10,20,.7)'; x.beginPath(); x.arc(tipX,tipY+3,1.6,0,7); x.fill(); }
+  x.restore();
+}
 function drawConveyor(ch,x,y,t){ ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); }
-function drawSpikeTile(x,px,py){
+function drawSpikeTile(x,px,py,world){
+  if(world===1) return drawSpikeSpace(x,px,py);
+  if(world===2) return drawSpikeHorror(x,px,py);
   x.save();
   // lap
   rr(px+2,py+2,CELL-4,CELL-4,5,x); const pg=x.createLinearGradient(px,py,px,py+CELL); pg.addColorStop(0,'#241720'); pg.addColorStop(1,'#120b12'); x.fillStyle=pg; x.fill(); x.strokeStyle='#4a2535'; x.lineWidth=1; x.stroke();
@@ -1457,7 +1490,7 @@ function buildFloor(L){
     if(!wall(c+1,r)){ x.strokeStyle='rgba(0,0,0,.35)'; x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); }
   }
   // tüskék (statikus)
-  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; drawSpikeTile(x,px,py); }
+  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; drawSpikeTile(x,px,py,st.world); }
   // egyirányú kapuk, jég (statikus)
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c], px=c*CELL,py=r*CELL;
     if(ch==='^'||ch==='v'||ch==='<'||ch==='>'){ x.fillStyle='rgba(91,226,138,.10)'; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.save(); x.translate(px+CELL/2,py+CELL/2); x.rotate(ch==='^'?-Math.PI/2:ch==='v'?Math.PI/2:ch==='<'?Math.PI:0); x.strokeStyle='#5be28a'; x.lineWidth=3; x.lineCap='round'; for(const k of [-7,3]){ x.beginPath(); x.moveTo(k-5,-9); x.lineTo(k+4,0); x.lineTo(k-5,9); x.stroke(); } x.strokeStyle='rgba(91,226,138,.5)'; x.lineWidth=2; x.beginPath(); x.moveTo(-15,-16); x.lineTo(-15,16); x.stroke(); x.restore(); }
@@ -1532,8 +1565,8 @@ function drawLightmap(){
   st.gems.forEach((gm,i)=>{ if(!S.gems[i]) radial(c,(gm[0]+.5)*CELL,(gm[1]+.5)*CELL,60,'#8fe8ff',0.3); });
   st.keys.forEach((k,i)=>{ if(!S.kg[i]) radial(c,(k[0]+.5)*CELL,(k[1]+.5)*CELL,50,'#ffd54a',0.3); });
   if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,80,'#5be28a',0.25); else if(dark) for(const [cc,rr] of st.exits) radial(c,(cc+.5)*CELL,(rr+.5)*CELL,50,st.world===2?'#ff3a50':'#5be28a',0.18);
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ c.save(); c.strokeStyle='#ff4d5e'; c.globalAlpha=0.25; c.lineWidth=24; c.lineCap='round'; c.beginPath(); c.moveTo(l.x,l.y); c.lineTo(e.x2,e.y2); c.stroke(); c.restore(); } radial(c,l.x,l.y,45,'#ff4d5e',0.25); }
-  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); radial(c,q.x,q.y,55,'#ff2a3e',0.3); }
+  { const SK=skinOf(st); for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ c.save(); c.strokeStyle=SK.laser; c.globalAlpha=0.25; c.lineWidth=24; c.lineCap='round'; c.beginPath(); c.moveTo(l.x,l.y); c.lineTo(e.x2,e.y2); c.stroke(); c.restore(); } radial(c,l.x,l.y,45,SK.laser,0.25); }
+  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); radial(c,q.x,q.y,55,SK.patrol,0.3); } }
   for(const h of st.hazards) radial(c,(h[0]+.5)*CELL,(h[1]+.5)*CELL+8,34,'#ff3a50',0.16);
   for(const b of S.bullets) radial(c,b.x,b.y,24,'#ff8a8a',0.3);
   for(const t of st.turrets) radial(c,t.x,t.y,40,'#8a9ac8',0.2);
@@ -1546,8 +1579,8 @@ function drawLightmap(){
 function drawGlowPass(t){
   const st=S.st; const g=gctx; g.setTransform(1/6,0,0,1/6,0,0); g.globalCompositeOperation='source-over'; g.clearRect(0,0,W,H);
   g.lineCap='round';
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ g.strokeStyle='#ff4d5e'; g.lineWidth=12; g.beginPath(); g.moveTo(l.x,l.y); g.lineTo(e.x2,e.y2); g.stroke(); } }
-  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); g.fillStyle='#ff4d5e'; g.beginPath(); g.arc(q.x,q.y,pt.r+4,0,7); g.fill(); }
+  { const SK=skinOf(st); for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ g.strokeStyle=SK.laser; g.lineWidth=12; g.beginPath(); g.moveTo(l.x,l.y); g.lineTo(e.x2,e.y2); g.stroke(); } }
+  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); g.fillStyle=SK.patrol; g.beginPath(); g.arc(q.x,q.y,pt.r+4,0,7); g.fill(); } }
   st.gems.forEach((gm,i)=>{ if(!S.gems[i]){ g.fillStyle='#8fe8ff'; g.beginPath(); g.arc((gm[0]+.5)*CELL,(gm[1]+.5)*CELL,12,0,7); g.fill(); } });
   if(S.gems.every(x=>x)) for(const [cc,rr] of st.exits){ g.fillStyle='rgba(91,226,138,.7)'; g.fillRect(cc*CELL+6,rr*CELL+6,CELL-12,CELL-12); }
   for(const b of S.bullets){ g.fillStyle='#ff9a9a'; g.beginPath(); g.arc(b.x,b.y,12,0,7); g.fill(); }
@@ -1624,7 +1657,10 @@ function render(now){
   ctx.drawImage(FLOOR.cv,0,0);
   const allGems=S.gems.every(x=>x)&&S.rg.every(x=>x);
   // cél
-  for(const [c,r] of st.exits){ const px=c*CELL,py=r*CELL; const pul=0.5+0.5*Math.sin(t*3); ctx.fillStyle=allGems?`rgba(91,226,138,${.18+pul*.12})`:'rgba(91,226,138,.07)'; ctx.fillRect(px,py,CELL,CELL); ctx.strokeStyle=allGems?'#5be28a':'rgba(91,226,138,.35)'; ctx.lineWidth=2; ctx.strokeRect(px+2,py+2,CELL-4,CELL-4); if(allGems){ ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=16; ctx.strokeStyle=`rgba(140,255,180,${.5-pul*.4})`; ctx.lineWidth=1.5; const s=6+pul*8; ctx.strokeRect(px+s,py+s,CELL-2*s,CELL-2*s); ctx.restore(); } }
+  const SK=skinOf(st);
+  for(const [c,r] of st.exits){ const px=c*CELL,py=r*CELL; const pul=0.5+0.5*Math.sin(t*3); ctx.fillStyle=allGems?`rgba(${SK.exitRGB},${.18+pul*.12})`:`rgba(${SK.exitRGB},.07)`; ctx.fillRect(px,py,CELL,CELL); ctx.strokeStyle=allGems?SK.exit:`rgba(${SK.exitRGB},.35)`; ctx.lineWidth=2; ctx.strokeRect(px+2,py+2,CELL-4,CELL-4); if(allGems){ ctx.save(); ctx.shadowColor=SK.exit; ctx.shadowBlur=16; ctx.strokeStyle=`rgba(${SK.exitRGB},${.5-pul*.4})`; ctx.lineWidth=1.5; const s=6+pul*8; ctx.strokeRect(px+s,py+s,CELL-2*s,CELL-2*s); ctx.restore(); } }
+  if(st.world===1){ for(const [c,r] of st.exits){ const cx=(c+.5)*CELL,cy=(r+.5)*CELL; ctx.save(); ctx.strokeStyle=`rgba(122,232,255,${allGems?.9:.35})`; ctx.lineWidth=1.5; ctx.setLineDash([3,4]); ctx.lineDashOffset=-t*15; ctx.beginPath(); ctx.arc(cx,cy,14,0,7); ctx.stroke(); ctx.restore(); } }
+  if(st.world===2){ for(const [c,r] of st.exits){ const px=c*CELL,py=r*CELL; ctx.save(); ctx.strokeStyle='rgba(255,58,80,.5)'; ctx.lineWidth=1; for(let k=1;k<4;k++){ ctx.beginPath(); ctx.moveTo(px+4,py+k*10); ctx.lineTo(px+CELL-4,py+k*10); ctx.stroke(); } ctx.restore(); } }
   // futószalagok (felület-réteg)
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const sf=surfAt(st,c,r); if(sf!=='.'&&sf!=='i') drawConveyor(sf,c*CELL,r*CELL,t); }
   // dinamikus cellák
@@ -1647,7 +1683,12 @@ function render(now){
     }
   }
   // kristályok
-  st.gems.forEach((gm,i)=>{ if(S.gems[i]) return; const x=(gm[0]+.5)*CELL,y=(gm[1]+.5)*CELL+Math.sin(t*3+i)*3; ctx.save(); ctx.translate(x,y); ctx.shadowColor='#8fe8ff'; ctx.shadowBlur=8+Math.sin(t*4+i)*3; ctx.rotate(t*1.2+i);
+  st.gems.forEach((gm,i)=>{ if(S.gems[i]) return; const x=(gm[0]+.5)*CELL,y=(gm[1]+.5)*CELL+Math.sin(t*3+i)*3;
+    if(st.world===1){ // energiagömb: lüktető csillag
+      ctx.save(); ctx.translate(x,y); ctx.shadowColor='#c8a8ff'; ctx.shadowBlur=14; const g=ctx.createRadialGradient(-2,-2,1,0,0,9); g.addColorStop(0,'#ffffff'); g.addColorStop(0.5,'#d8c0ff'); g.addColorStop(1,'rgba(150,90,255,.2)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,9,0,7); ctx.fill(); ctx.rotate(t*2+i); ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=1.5; const L=13+Math.sin(t*5+i)*2; ctx.beginPath(); ctx.moveTo(-L,0); ctx.lineTo(L,0); ctx.moveTo(0,-L); ctx.lineTo(0,L); ctx.stroke(); ctx.restore(); return; }
+    if(st.world===2){ // lélekláng: narancs-vörös lobogó láng
+      ctx.save(); ctx.translate(x,y+4); const fl=1+0.15*Math.sin(t*14+i*2); ctx.shadowColor='#ff8030'; ctx.shadowBlur=16; ctx.fillStyle='#ff6a20'; ctx.beginPath(); ctx.moveTo(0,-16*fl); ctx.quadraticCurveTo(9,-6,6,4); ctx.quadraticCurveTo(0,10,-6,4); ctx.quadraticCurveTo(-9,-6,0,-16*fl); ctx.fill(); ctx.fillStyle='#ffd070'; ctx.beginPath(); ctx.moveTo(0,-8*fl); ctx.quadraticCurveTo(4,-2,3,3); ctx.quadraticCurveTo(0,6,-3,3); ctx.quadraticCurveTo(-4,-2,0,-8*fl); ctx.fill(); ctx.restore(); return; }
+    ctx.save(); ctx.translate(x,y); ctx.shadowColor='#8fe8ff'; ctx.shadowBlur=8+Math.sin(t*4+i)*3; ctx.rotate(t*1.2+i);
     ctx.fillStyle='#5fd4ff'; ctx.beginPath(); ctx.moveTo(0,-12); ctx.lineTo(9,0); ctx.lineTo(0,12); ctx.lineTo(-9,0); ctx.closePath(); ctx.fill();
     ctx.fillStyle='rgba(255,255,255,.55)'; ctx.beginPath(); ctx.moveTo(0,-12); ctx.lineTo(9,0); ctx.lineTo(0,0); ctx.closePath(); ctx.fill();
     ctx.fillStyle='rgba(0,40,80,.35)'; ctx.beginPath(); ctx.moveTo(0,12); ctx.lineTo(-9,0); ctx.lineTo(0,0); ctx.closePath(); ctx.fill(); ctx.restore();
@@ -1656,15 +1697,31 @@ function render(now){
   st.keys.forEach((k,i)=>{ if(S.kg[i]) return; const x=(k[0]+.5)*CELL,y=(k[1]+.5)*CELL+Math.sin(t*3)*3; ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=14; ctx.fillStyle='#ffd54a'; ctx.beginPath(); ctx.arc(x-5,y,6,0,7); ctx.fill(); ctx.fillRect(x-1,y-2,14,4); ctx.fillRect(x+8,y+2,3,5); ctx.fillRect(x+3,y+2,3,4); ctx.fillStyle='#3a2a08'; ctx.beginPath(); ctx.arc(x-5,y,2.2,0,7); ctx.fill(); ctx.restore(); });
   // lövegek
   for(const tu of st.turrets){ let best=S.p[0]; if(Math.hypot(S.p[1].x-tu.x,S.p[1].y-tu.y)<Math.hypot(S.p[0].x-tu.x,S.p[0].y-tu.y)) best=S.p[1]; const an=Math.atan2(best.y-tu.y,best.x-tu.x);
-    ctx.save(); ctx.translate(tu.x,tu.y); ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.rotate(an); ctx.fillStyle='#55658f'; rr(-4,-5,24,10,3); ctx.fill(); ctx.fillStyle='#ff6a6a'; ctx.fillRect(16,-2,5,4); ctx.rotate(-an); ctx.fillStyle='#8a9ac8'; ctx.beginPath(); ctx.arc(0,0,6,0,7); ctx.fill(); ctx.restore(); }
-  for(const bl of S.bullets){ glowCircle(bl.x,bl.y,5,'#ff7a7a',14); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(bl.x,bl.y,2,0,7); ctx.fill(); }
+    ctx.save(); ctx.translate(tu.x,tu.y);
+    if(st.world===1){ // krómtorony kék fénnyel, gyűrűs ágyúcső
+      const g=ctx.createRadialGradient(-5,-5,2,0,0,16); g.addColorStop(0,'#8a9ad0'); g.addColorStop(1,'#2a3060'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.strokeStyle='#9ab0ff'; ctx.lineWidth=1.5; ctx.stroke(); ctx.rotate(an); ctx.fillStyle='#5a6aa0'; rr(-4,-5,24,10,3); ctx.fill(); ctx.strokeStyle='#5ee8ff'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(8,-5); ctx.lineTo(8,5); ctx.moveTo(14,-5); ctx.lineTo(14,5); ctx.stroke(); ctx.fillStyle='#8af0ff'; ctx.fillRect(18,-2,4,4); ctx.rotate(-an); ctx.shadowColor='#5ee8ff'; ctx.shadowBlur=8; ctx.fillStyle='#5ee8ff'; ctx.beginPath(); ctx.arc(0,0,4,0,7); ctx.fill(); }
+    else if(st.world===2){ // húsos szemtorony: sötétvörös test, egy forgó szem
+      const g=ctx.createRadialGradient(-4,-4,2,0,0,16); g.addColorStop(0,'#6a1a24'); g.addColorStop(1,'#2a0608'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.strokeStyle='#8a2a34'; ctx.lineWidth=2; ctx.stroke(); for(let k=0;k<5;k++){ const a=k*1.26+t*0.3; ctx.strokeStyle='rgba(140,20,30,.7)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(Math.cos(a)*10,Math.sin(a)*10); ctx.quadraticCurveTo(Math.cos(a+0.4)*18,Math.sin(a+0.4)*18,Math.cos(a+0.2)*23,Math.sin(a+0.2)*23); ctx.stroke(); }
+      ctx.fillStyle='#f0e8e0'; ctx.beginPath(); ctx.ellipse(0,0,9,7,an,0,7); ctx.fill(); ctx.fillStyle='#a01020'; ctx.beginPath(); ctx.arc(Math.cos(an)*3,Math.sin(an)*3,4,0,7); ctx.fill(); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(Math.cos(an)*3.5,Math.sin(an)*3.5,2,0,7); ctx.fill(); }
+    else { ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.rotate(an); ctx.fillStyle='#55658f'; rr(-4,-5,24,10,3); ctx.fill(); ctx.fillStyle='#ff6a6a'; ctx.fillRect(16,-2,5,4); ctx.rotate(-an); ctx.fillStyle='#8a9ac8'; ctx.beginPath(); ctx.arc(0,0,6,0,7); ctx.fill(); }
+    ctx.restore(); }
+  { const SK=skinOf(st); for(const bl of S.bullets){ glowCircle(bl.x,bl.y,5,SK.bullet,14); ctx.fillStyle=st.world===2?'#ff8090':'#fff'; ctx.beginPath(); ctx.arc(bl.x,bl.y,st.world===2?3:2,0,7); ctx.fill(); if(st.world===2){ ctx.fillStyle='rgba(140,10,24,.6)'; ctx.beginPath(); ctx.arc(bl.x-bl.vx*0.03,bl.y-bl.vy*0.03,2.2,0,7); ctx.fill(); } } }
   // lézerek
-  for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ ctx.save(); ctx.lineCap='round'; ctx.strokeStyle='rgba(255,60,80,.12)'; ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowColor='#ff2a40'; ctx.shadowBlur=6; ctx.strokeStyle='#ff4d5e'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowBlur=0; ctx.strokeStyle='rgba(255,230,230,.9)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.restore(); glowCircle(e.x2,e.y2,4,'#ff8090',12); }
-    ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(l.x,l.y,12,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.save(); ctx.translate(l.x,l.y); ctx.rotate(-t*2); ctx.strokeStyle='rgba(255,77,94,.6)'; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.stroke(); ctx.restore(); glowCircle(l.x,l.y,4,'#ff4d5e',10); }
+  { const SK=skinOf(st); const fl=st.world===2?(0.75+0.25*Math.sin(t*37)+0.1*Math.sin(t*91)):1; for(const l of st.lasers){ for(const e of laserSegs(l,S.tm)){ ctx.save(); ctx.globalAlpha=fl; ctx.lineCap='round'; ctx.strokeStyle=SK.laser; ctx.globalAlpha=0.12*fl; ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.globalAlpha=fl; ctx.shadowColor=SK.laserGlow; ctx.shadowBlur=6; ctx.strokeStyle=SK.laser; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.shadowBlur=0; ctx.strokeStyle=SK.laserCore; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(e.x2,e.y2); ctx.stroke(); ctx.restore(); glowCircle(e.x2,e.y2,4,SK.laser,12); }
+    ctx.fillStyle='#2a3450'; ctx.beginPath(); ctx.arc(l.x,l.y,12,0,7); ctx.fill(); ctx.strokeStyle='#4a5a86'; ctx.lineWidth=2; ctx.stroke(); ctx.save(); ctx.translate(l.x,l.y); ctx.rotate(-t*2); ctx.strokeStyle=SK.laser; ctx.globalAlpha=0.6; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0,0,16,0,7); ctx.stroke(); ctx.restore(); glowCircle(l.x,l.y,4,SK.laser,10); } }
   // őrjáratok
-  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); const q2=patrolPos(pt,S.tm-0.12); ctx.strokeStyle='rgba(255,77,94,.25)'; ctx.lineWidth=pt.r*1.4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(q2.x,q2.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-    ctx.save(); ctx.shadowColor='#ff2a3e'; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#ff9aa6'); gr.addColorStop(1,'#e0203a'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,pt.r,0,7); ctx.fill(); ctx.restore();
-    let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#2a0a10'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); }
+  for(const pt of st.patrols){ const q=patrolPos(pt,S.tm); const q2=patrolPos(pt,S.tm-0.12); let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1;
+    if(st.world===1){ // drón: hatszög test, forgó cián fény, hajtómű-csóva
+      ctx.strokeStyle='rgba(94,232,255,.22)'; ctx.lineWidth=pt.r*1.2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(q2.x,q2.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+      ctx.save(); ctx.translate(q.x,q.y); ctx.shadowColor='#5ee8ff'; ctx.shadowBlur=10; ctx.rotate(t*1.5); ctx.fillStyle='#2a3458'; ctx.beginPath(); for(let k=0;k<6;k++){ const a=k*Math.PI/3; ctx.lineTo(Math.cos(a)*pt.r,Math.sin(a)*pt.r); } ctx.closePath(); ctx.fill(); ctx.strokeStyle='#7a8ac0'; ctx.lineWidth=1.5; ctx.stroke(); ctx.rotate(-t*1.5);
+      ctx.strokeStyle='#5ee8ff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,pt.r*0.55,t*4,t*4+1.6); ctx.stroke(); ctx.fillStyle='#bff6ff'; ctx.beginPath(); ctx.arc(dx/dl*3,dy/dl*3,2.6,0,7); ctx.fill(); ctx.restore(); }
+    else if(st.world===2){ // koponya: sápadt gömb, sötét szemüregek, vörös fény, lebegő füst
+      ctx.strokeStyle='rgba(60,0,10,.35)'; ctx.lineWidth=pt.r*1.4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(q2.x,q2.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+      ctx.save(); ctx.shadowColor='#ff2040'; ctx.shadowBlur=12; const gr=ctx.createRadialGradient(q.x-3,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#f0e8d8'); gr.addColorStop(1,'#8a7a66'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y-1,pt.r,0,7); ctx.fill(); ctx.fillStyle='#b0a08a'; ctx.fillRect(q.x-5,q.y+pt.r-5,10,4); ctx.strokeStyle='#4a3a30'; ctx.lineWidth=1; for(let k=-3;k<=3;k+=3){ ctx.beginPath(); ctx.moveTo(q.x+k,q.y+pt.r-5); ctx.lineTo(q.x+k,q.y+pt.r-1); ctx.stroke(); }
+      ctx.fillStyle='#1a0206'; ctx.beginPath(); ctx.ellipse(q.x-4.5,q.y-3,3.4,3.8,0,0,7); ctx.ellipse(q.x+4.5,q.y-3,3.4,3.8,0,0,7); ctx.fill(); ctx.fillStyle='#ff2040'; ctx.beginPath(); ctx.arc(q.x-4.5+dx/dl*1.2,q.y-3+dy/dl*1.2,1.5,0,7); ctx.arc(q.x+4.5+dx/dl*1.2,q.y-3+dy/dl*1.2,1.5,0,7); ctx.fill(); ctx.fillStyle='#1a0206'; ctx.beginPath(); ctx.moveTo(q.x,q.y+1); ctx.lineTo(q.x-2,q.y+4); ctx.lineTo(q.x+2,q.y+4); ctx.closePath(); ctx.fill(); ctx.restore(); }
+    else { ctx.strokeStyle='rgba(255,77,94,.25)'; ctx.lineWidth=pt.r*1.4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(q2.x,q2.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+      ctx.save(); ctx.shadowColor='#ff2a3e'; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,pt.r); gr.addColorStop(0,'#ff9aa6'); gr.addColorStop(1,'#e0203a'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,pt.r,0,7); ctx.fill(); ctx.restore();
+      ctx.fillStyle='#2a0a10'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); } }
   // gravitációs kutak
   st.wells.forEach((wl,i)=>{ const str=wellStrength(wl,S.tm)/wl.f; ctx.save(); const gr=ctx.createRadialGradient(wl.x,wl.y,0,wl.x,wl.y,wl.R); gr.addColorStop(0,`rgba(150,90,255,${0.28*str})`); gr.addColorStop(0.5,`rgba(120,60,220,${0.10*str})`); gr.addColorStop(1,'rgba(120,60,220,0)'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(wl.x,wl.y,wl.R,0,7); ctx.fill();
     ctx.strokeStyle=`rgba(190,150,255,${0.18+0.3*str})`; ctx.lineWidth=1.5; ctx.setLineDash([5,7]); ctx.lineDashOffset=-t*20; ctx.beginPath(); ctx.arc(wl.x,wl.y,wl.R,0,7); ctx.stroke(); ctx.setLineDash([]);
