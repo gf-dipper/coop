@@ -1160,7 +1160,8 @@ const BLUE='#4cc3ff', ORG='#ffa23a';
 function parseLevel(def){
   let lines=def.map.replace(/^\n/,'').split('\n').map(l=>l.replace(/\r/,''));
   while(lines.length<ROWS) lines.push('');
-  const g=[]; const st={grid:g,spawn:[null,null],exits:[],gems:[],rgems:[],plates:{},doors:{},gates:[],keys:[],keyDoors:[],buttons:[],timedDoors:[],pairBtns:[],switches:[],tele:{},hazards:[],turrets:[],patrols:[],lasers:[],chasers:[],kdIdx:{},frags:[],frIdx:{},gemCount:0,rope:def.rope||DEF_ROPE,dark:!!def.dark};
+  const g=[]; const st={grid:g,spawn:[null,null],exits:[],gems:[],rgems:[],plates:{},doors:{},gates:[],keys:[],keyDoors:[],buttons:[],timedDoors:[],pairBtns:[],switches:[],tele:{},hazards:[],turrets:[],patrols:[],lasers:[],chasers:[],kdIdx:{},frags:[],frIdx:{},gemCount:0,rope:def.rope||DEF_ROPE,dark:!!def.dark,floor:[]};
+  { const fl=String(def.floor||'').replace(/^\n/,'').split('\n'); for(let r=0;r<ROWS;r++){ const l=(fl[r]||'').padEnd(COLS,'.'); st.floor[r]=[]; for(let c=0;c<COLS;c++){ const ch=l[c]||'.'; st.floor[r][c]='iudlr'.includes(ch)?ch:'.'; } } }
   for(let r=0;r<ROWS;r++){ g[r]=[]; let l=(lines[r]||'').padEnd(COLS,'.'); for(let c=0;c<COLS;c++){
     let ch=l[c]; if(r===0||r===ROWS-1||c===0||c===COLS-1) ch='#';
     let cell='.';
@@ -1204,9 +1205,9 @@ function parseLevel(def){
 }
 let STATICS=LEVELS.map(parseLevel);
 // ---- cserélhető pályakészlet: szerkesztő, palyak.json, hálózati szinkron ----
-function levelDefs(){ return LEVELS.map(l=>({name:l.name,tip:l.tip||'',par:l.par||60,rope:l.rope||150,dark:!!l.dark,map:String(l.map).replace(/^\n/,''),mov:l.mov||[]})); }
-function setLevels(defs){ if(!Array.isArray(defs)||!defs.length) return false; LEVELS=defs.map(d=>({name:String(d.name||'').slice(0,40)||'pálya',tip:String(d.tip||'').slice(0,160),par:+d.par||60,rope:+d.rope||150,dark:!!d.dark,map:String(d.map||''),mov:Array.isArray(d.mov)?d.mov:[]})); STATICS=LEVELS.map(parseLevel); FLOOR.L=-1; return true; }
-function levelIsEmpty(def){ const m=String(def.map||'').replace(/^\n/,'').split('\n'); let n=0; for(let r=1;r<ROWS-1;r++){ const l=(m[r]||'').padEnd(COLS,'.'); for(let c=1;c<COLS-1;c++){ const ch=l[c]; if(ch!=='.'&&ch!=='1'&&ch!=='2'&&ch!=='E') n++; } } return n===0&&!(def.mov&&def.mov.length); }
+function levelDefs(){ return LEVELS.map(l=>({name:l.name,tip:l.tip||'',par:l.par||60,rope:l.rope||150,dark:!!l.dark,map:String(l.map).replace(/^\n/,''),floor:l.floor?String(l.floor):'',mov:l.mov||[]})); }
+function setLevels(defs){ if(!Array.isArray(defs)||!defs.length) return false; LEVELS=defs.map(d=>({name:String(d.name||'').slice(0,40)||'pálya',tip:String(d.tip||'').slice(0,160),par:+d.par||60,rope:+d.rope||150,dark:!!d.dark,map:String(d.map||''),floor:d.floor?String(d.floor):'',mov:Array.isArray(d.mov)?d.mov:[]})); STATICS=LEVELS.map(parseLevel); FLOOR.L=-1; return true; }
+function levelIsEmpty(def){ const m=String(def.map||'').replace(/^\n/,'').split('\n'); let n=0; for(let r=1;r<ROWS-1;r++){ const l=(m[r]||'').padEnd(COLS,'.'); for(let c=1;c<COLS-1;c++){ const ch=l[c]; if(ch!=='.'&&ch!=='1'&&ch!=='2'&&ch!=='E') n++; } } if(def.floor&&/[iudlr]/.test(def.floor)) n++; return n===0&&!(def.mov&&def.mov.length); }
 
 function patrolPos(p,tm){ if(p.len<=0) return {x:p.pts[0][0],y:p.pts[0][1]}; let d=(tm*p.s)%(2*p.len); if(d>p.len) d=2*p.len-d; let i=0; while(i<p.segs.length-1&&d>p.segs[i]){d-=p.segs[i];i++;} const a=p.pts[i],b=p.pts[i+1],f=p.segs[i]?d/p.segs[i]:0; return {x:a[0]+(b[0]-a[0])*f,y:a[1]+(b[1]-a[1])*f}; }
 function laserSegs(l,tm){ const out=[]; for(let k=0;k<l.arms;k++){ const a=l.a0+l.s*tm+k*Math.PI; const dx=Math.cos(a),dy=Math.sin(a); let d=0; const g=S.st.grid; while(d<l.len){ const x=l.x+dx*d,y=l.y+dy*d; const c=Math.floor(x/CELL),r=Math.floor(y/CELL); if(c<0||r<0||c>=COLS||r>=ROWS||g[r][c]==='#'||g[r][c]==='T') break; d+=3; } out.push({x1:l.x,y1:l.y,x2:l.x+dx*d,y2:l.y+dy*d}); } return out; }
@@ -1229,6 +1230,8 @@ function resetLevel(){
   S.fr=st.frags.map(()=>-1); S.gems=st.gems.map(()=>false); S.rg=st.rgems.map(()=>false); S.wt=0; S.sw=false; S.swIn=[false,false]; S.swCd=0; S.ch=st.chasers.map(c=>({x:c.x,y:c.y})); S.p.forEach(p=>{ p.tp=false; }); S.kg=st.keys.map(()=>false); S.kd=st.keyDoors.map(()=>false); S.tt=0; S.bullets=[]; S.tm=0; S.shots=st.turrets.map(t=>t.ph); S.tension=0; S.ph='play';
 }
 // az üldözőt minden zárt ajtó és fal megállítja (kapcsolt fal, színes ajtó, óra-ajtó, lakat, kristálykapu is)
+// felület (jég, futószalag): külön rétegen, de a régi, térképbe írt jelet is érti
+function surfAt(st,c,r){ const f=(st.floor[r]||[])[c]; if(f&&f!=='.') return f; const ch=(st.grid[r]||[])[c]; return 'iudlr'.includes(ch||'')?ch:'.'; }
 function chaserBlocked(c,r){ if(c<0||r<0||c>=COLS||r>=ROWS) return true; const ch=S.st.grid[r][c]; switch(ch){ case '#': case 'T': return true; case 'G': return S.gems.some(g=>!g)||S.rg.some(g=>!g); case 'X': case 'Y': case 'Z': return !plateHeld(ch.toLowerCase()); case 'D': return S.tt<=0; case 'W': return S.wt<=0; case 'M': return !S.sw; case 'N': return S.sw; case 'K': { const i=S.st.kdIdx[r*COLS+c]; return !S.kd[i]; } } return false; }
 function isSolidFor(pi,c,r){
   if(c<0||r<0||c>=COLS||r>=ROWS) return true;
@@ -1266,7 +1269,7 @@ function update(dt,bits){
   if(S.ph==='play'){
     S.tm+=dt; S.lt+=dt; S.tot+=dt;
     // mozgás
-    for(let i=0;i<2;i++){ const p=S.p[i]; const [ix,iy]=bitsToVec(bits[i]); const cc_=Math.floor(p.x/CELL), rr_=Math.floor(p.y/CELL); const under=(st.grid[rr_]||[])[cc_]; const ice=under==='i'; const acc=ice?ACC*0.45:ACC, fr=ice?1.6:FRIC; p.vx+=ix*acc*dt; p.vy+=iy*acc*dt; p.vx-=p.vx*Math.min(1,fr*dt); p.vy-=p.vy*Math.min(1,fr*dt); const v=Math.hypot(p.vx,p.vy); if(v>MAXV){p.vx*=MAXV/v;p.vy*=MAXV/v;} if(under==='u'||under==='d'||under==='l'||under==='r'){ const CV=120*dt; if(under==='u') p.y-=CV; if(under==='d') p.y+=CV; if(under==='l') p.x-=CV; if(under==='r') p.x+=CV; } }
+    for(let i=0;i<2;i++){ const p=S.p[i]; const [ix,iy]=bitsToVec(bits[i]); const cc_=Math.floor(p.x/CELL), rr_=Math.floor(p.y/CELL); const under=surfAt(st,cc_,rr_); const ice=under==='i'; const acc=ice?ACC*0.45:ACC, fr=ice?1.6:FRIC; p.vx+=ix*acc*dt; p.vy+=iy*acc*dt; p.vx-=p.vx*Math.min(1,fr*dt); p.vy-=p.vy*Math.min(1,fr*dt); const v=Math.hypot(p.vx,p.vy); if(v>MAXV){p.vx*=MAXV/v;p.vy*=MAXV/v;} if(under==='u'||under==='d'||under==='l'||under==='r'){ const CV=120*dt; if(under==='u') p.y-=CV; if(under==='d') p.y+=CV; if(under==='l') p.x-=CV; if(under==='r') p.x+=CV; } }
     // kötél
     const a=S.p[0],b=S.p[1]; let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;
     S.tension=Math.max(0,(d-st.rope)/(st.rope*(SNAP-1)));
@@ -1346,7 +1349,7 @@ function rr(x,y,w,h,r,c){ c=c||ctx; c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,
 // --- effektek ---
 const FX={parts:[],trails:[[],[]],shake:0,prevGems:null,prevKg:null,prevL:-1,prevPh:'',flashT:0,prevTT:0,prevFr:0,prevKd:0,prevRph:'',prevCnt:-1};
 const ELEM_TIPS={plate:['Nyomólap','Amíg valaki rajta áll, nyitva az azonos színű ajtó. Felváltva!'],gate:['Színes sáv','Csak az adott színű figura fér át rajta.'],key:['Kulcs','Vedd fel, és menj neki a lakatos ajtónak.'],button:['Sárga gomb','4,5 másodpercre nyitja az óra-ajtót. Nyomás és futás!'],frag:['Törékeny padló','Rálépés után leszakad – egyszer lehet átmenni rajta.'],patrol:['Őrjárat','Fix ritmusban jár. Érintés = elölről, és a kötelet is elvágja.'],laser:['Lézer','Forog, a falnál megáll. A karok között, egyszerre, egy oldalon.'],turret:['Löveg','A közelebbi figurára lő. Az egyik csalogat, a másik halad.'],hazard:['Tüske','Érintés = elölről. A kötelet is elvágja!'],gem:['Kristály','Mind kell, különben zárva a cél előtti kapu.'],rgem:['Kötélkristály','Nem a figura szedi fel – a KÖTÉLNEK kell áthaladnia rajta.'],pair:['Páros gomb','Mindkettőtöknek egyszerre kell rajta állnia – 4,5 mp-re nyitja a páros ajtót.'],oneway:['Egyirányú kapu','Csak a nyíl irányába lehet átmenni. Vissza nincs.'],sw:['Kapcsoló','Érintésre ki-be kapcsolja az I-es és II-es falakat. Minden érintés vált.'],tele:['Teleport','Belépsz az egyikbe, a párjából jössz ki. A kötél messziről elszakad – a társad legyen a kijárat mellett!'],conv:['Futószalag','Tol a nyíl irányába. Aki rajta áll, sodródik.'],ice:['Jég','Csúszik: lassabb a megállás és a fordulás.'],chaser:['Üldöző','Ha a közelébe érsz, utánad megy. Lassú, de a kötelet is elvágja.']};
-function levelElems(st){ const e=[]; if(Object.keys(st.plates).length) e.push('plate'); if(st.grid.some(r=>r.includes('b')||r.includes('o'))) e.push('gate'); if(st.keys.length) e.push('key'); if(st.buttons.length) e.push('button'); if(st.frags.length) e.push('frag'); if(st.patrols.length) e.push('patrol'); if(st.lasers.length) e.push('laser'); if(st.turrets.length) e.push('turret'); if(st.hazards.length) e.push('hazard'); if(st.gems.length) e.push('gem'); if(st.rgems.length) e.push('rgem'); if(st.pairBtns.length) e.push('pair'); if(st.grid.some(r=>r.some(ch=>'^v<>'.includes(ch)))) e.push('oneway'); if(st.switches.length) e.push('sw'); if(Object.keys(st.tele).length) e.push('tele'); if(st.grid.some(r=>r.some(ch=>'udlr'.includes(ch)))) e.push('conv'); if(st.grid.some(r=>r.includes('i'))) e.push('ice'); if(st.chasers.length) e.push('chaser'); return e; }
+function levelElems(st){ const e=[]; if(Object.keys(st.plates).length) e.push('plate'); if(st.grid.some(r=>r.includes('b')||r.includes('o'))) e.push('gate'); if(st.keys.length) e.push('key'); if(st.buttons.length) e.push('button'); if(st.frags.length) e.push('frag'); if(st.patrols.length) e.push('patrol'); if(st.lasers.length) e.push('laser'); if(st.turrets.length) e.push('turret'); if(st.hazards.length) e.push('hazard'); if(st.gems.length) e.push('gem'); if(st.rgems.length) e.push('rgem'); if(st.pairBtns.length) e.push('pair'); if(st.grid.some(r=>r.some(ch=>'^v<>'.includes(ch)))) e.push('oneway'); if(st.switches.length) e.push('sw'); if(Object.keys(st.tele).length) e.push('tele'); { let cv=false,ic=false; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const sf=surfAt(st,c,r); if(sf==='i') ic=true; else if(sf!=='.') cv=true; } if(cv) e.push('conv'); if(ic) e.push('ice'); } if(st.chasers.length) e.push('chaser'); return e; }
 const MENU={stars:Array.from({length:70},()=>({x:Math.random()*960,y:Math.random()*600,r:Math.random()*1.6+0.4,s:Math.random()*8+3,a:Math.random()*6.28})),bl:[{t:0,on:0},{t:0,on:0},{t:0,on:0}],lt:0,mx:0,my:0};
 function menuBlink(t){ const dt=Math.min(0.1,t-(MENU.lt||t)); MENU.lt=t; for(const b of MENU.bl){ if(b.on>0) b.on-=dt; else { b.t-=dt; if(b.t<=0){ b.on=0.12; b.t=2+Math.random()*3.5; } } } }
 // előnézet a profil mellett: a választott arc úgy, ahogy a pályán fog kinézni (pislog, a kurzort nézi)
@@ -1384,6 +1387,7 @@ function updateFX(dt){
 // --- statikus réteg (padló + falak) cache ---
 const FLOOR={L:-1,cv:null};
 // tüskecsapda: sötét fémlap vésett résekkel, acél tüskék két oldalról megvilágítva, a lap alján vörös veszély-fény
+function drawConveyor(ch,x,y,t){ ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); }
 function drawSpikeTile(x,px,py){
   x.save();
   // lap
@@ -1431,7 +1435,7 @@ function buildFloor(L){
   // egyirányú kapuk, jég (statikus)
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c], px=c*CELL,py=r*CELL;
     if(ch==='^'||ch==='v'||ch==='<'||ch==='>'){ x.fillStyle='rgba(91,226,138,.10)'; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.save(); x.translate(px+CELL/2,py+CELL/2); x.rotate(ch==='^'?-Math.PI/2:ch==='v'?Math.PI/2:ch==='<'?Math.PI:0); x.strokeStyle='#5be28a'; x.lineWidth=3; x.lineCap='round'; for(const k of [-7,3]){ x.beginPath(); x.moveTo(k-5,-9); x.lineTo(k+4,0); x.lineTo(k-5,9); x.stroke(); } x.strokeStyle='rgba(91,226,138,.5)'; x.lineWidth=2; x.beginPath(); x.moveTo(-15,-16); x.lineTo(-15,16); x.stroke(); x.restore(); }
-    if(ch==='i'){ const gr=x.createLinearGradient(px,py,px+CELL,py+CELL); gr.addColorStop(0,'rgba(190,230,255,.28)'); gr.addColorStop(1,'rgba(120,180,255,.12)'); x.fillStyle=gr; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.strokeStyle='rgba(230,245,255,.5)'; x.lineWidth=1; x.beginPath(); x.moveTo(px+6,py+30); x.lineTo(px+18,py+12); x.lineTo(px+24,py+22); x.lineTo(px+34,py+8); x.stroke(); }
+    if(surfAt(st,c,r)==='i'){ const gr=x.createLinearGradient(px,py,px+CELL,py+CELL); gr.addColorStop(0,'rgba(190,230,255,.28)'); gr.addColorStop(1,'rgba(120,180,255,.12)'); x.fillStyle=gr; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.strokeStyle='rgba(230,245,255,.5)'; x.lineWidth=1; x.beginPath(); x.moveTo(px+6,py+30); x.lineTo(px+18,py+12); x.lineTo(px+24,py+22); x.lineTo(px+34,py+8); x.stroke(); }
   }
   // vignetta
   const vg=x.createRadialGradient(W/2,H/2,300,W/2,H/2,720); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.55)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
@@ -1593,6 +1597,8 @@ function render(now){
   const allGems=S.gems.every(x=>x)&&S.rg.every(x=>x);
   // cél
   for(const [c,r] of st.exits){ const px=c*CELL,py=r*CELL; const pul=0.5+0.5*Math.sin(t*3); ctx.fillStyle=allGems?`rgba(91,226,138,${.18+pul*.12})`:'rgba(91,226,138,.07)'; ctx.fillRect(px,py,CELL,CELL); ctx.strokeStyle=allGems?'#5be28a':'rgba(91,226,138,.35)'; ctx.lineWidth=2; ctx.strokeRect(px+2,py+2,CELL-4,CELL-4); if(allGems){ ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=16; ctx.strokeStyle=`rgba(140,255,180,${.5-pul*.4})`; ctx.lineWidth=1.5; const s=6+pul*8; ctx.strokeRect(px+s,py+s,CELL-2*s,CELL-2*s); ctx.restore(); } }
+  // futószalagok (felület-réteg)
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const sf=surfAt(st,c,r); if(sf!=='.'&&sf!=='i') drawConveyor(sf,c*CELL,r*CELL,t); }
   // dinamikus cellák
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c], x=c*CELL,y=r*CELL;
     switch(ch){
@@ -1601,7 +1607,6 @@ function render(now){
       case 'w': { const held=S.p.map(p=>Math.hypot(p.x-(c+.5)*CELL,p.y-(r+.5)*CELL)<PR+14); const on=S.wt>0; ctx.save(); ctx.shadowColor='#ff9a5a'; ctx.shadowBlur=on?18:6; ctx.strokeStyle='#ff9a5a'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(x+CELL/2-7,y+CELL/2,8,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(x+CELL/2+7,y+CELL/2,8,0,7); ctx.stroke(); ctx.fillStyle=on?'#ff9a5a':(held[0]||held[1])?'rgba(255,154,90,.35)':'rgba(255,154,90,.12)'; ctx.beginPath(); ctx.arc(x+CELL/2-7,y+CELL/2,6,0,7); ctx.arc(x+CELL/2+7,y+CELL/2,6,0,7); ctx.fill(); ctx.restore(); if(on){ ctx.beginPath(); ctx.moveTo(x+CELL/2,y+CELL/2); ctx.arc(x+CELL/2,y+CELL/2,16,-Math.PI/2,-Math.PI/2+Math.PI*2*(S.wt/TIMED)); ctx.closePath(); ctx.fillStyle='rgba(255,246,192,.35)'; ctx.fill(); } break; }
       case 'S': { const on=S.sw; ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=on?16:6; ctx.fillStyle='#2a2a1a'; ctx.fillRect(x+8,y+8,CELL-16,CELL-16); ctx.strokeStyle='#ffd54a'; ctx.lineWidth=2; ctx.strokeRect(x+8,y+8,CELL-16,CELL-16); ctx.strokeStyle=on?'#5be28a':'#ff5c6c'; ctx.lineWidth=4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x+CELL/2,y+CELL/2); ctx.lineTo(x+CELL/2+(on?9:-9),y+CELL/2-9); ctx.stroke(); ctx.restore(); break; }
       case 'M': case 'N': { const solid=(ch==='M')?!S.sw:S.sw; if(solid){ const gr=ctx.createLinearGradient(x,y,x,y+CELL); gr.addColorStop(0,'#5a4a1a'); gr.addColorStop(1,'#2e2608'); ctx.fillStyle=gr; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.strokeStyle='rgba(255,213,74,.6)'; ctx.lineWidth=2; ctx.strokeRect(x+3,y+3,CELL-6,CELL-6); } else { ctx.strokeStyle='rgba(255,213,74,.3)'; ctx.lineWidth=1; ctx.setLineDash([3,5]); ctx.strokeRect(x+4,y+4,CELL-8,CELL-8); ctx.setLineDash([]); } ctx.fillStyle='rgba(255,213,74,.6)'; ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.fillText(ch==='M'?'I':'II',x+CELL/2,y+CELL/2+4); break; }
-      case 'u': case 'd': case 'l': case 'r': { ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); break; }
       case '@': case '&': { const col=ch==='@'?'#9be3ff':'#ffb0ff'; ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.shadowColor=col; ctx.shadowBlur=14; ctx.strokeStyle=col; ctx.lineWidth=2.5; for(let k=0;k<3;k++){ ctx.beginPath(); ctx.arc(0,0,6+k*5,t*2+k*2,t*2+k*2+4); ctx.stroke(); } ctx.restore(); break; }
       case 'T': { const gr=ctx.createRadialGradient(x+CELL/2,y+CELL/2,4,x+CELL/2,y+CELL/2,22); gr.addColorStop(0,'#3a4466'); gr.addColorStop(1,'#1c2439'); ctx.fillStyle=gr; ctx.fillRect(x,y,CELL,CELL); break; }
       case 'G': { ctx.fillStyle=allGems?'rgba(255,215,80,.06)':'rgba(90,74,28,.9)'; ctx.fillRect(x+2,y+2,CELL-4,CELL-4); if(!allGems){ ctx.save(); ctx.shadowColor='#ffd54a'; ctx.shadowBlur=8; ctx.strokeStyle='#ffd54a'; ctx.lineWidth=2; ctx.strokeRect(x+6,y+6,CELL-12,CELL-12); ctx.beginPath(); ctx.moveTo(x+CELL/2,y+10); ctx.lineTo(x+CELL-10,y+CELL/2); ctx.lineTo(x+CELL/2,y+CELL-10); ctx.lineTo(x+10,y+CELL/2); ctx.closePath(); ctx.stroke(); ctx.restore(); } else { ctx.strokeStyle='rgba(255,213,74,.25)'; ctx.lineWidth=1; ctx.strokeRect(x+4,y+4,CELL-8,CELL-8);} break; }
@@ -2304,7 +2309,7 @@ const TILEGROUPS=[
     ['l','Szalag ←','futószalag: balra tol','#4a5aa0'],
     ['u','Szalag ↑','futószalag: felfelé tol','#4a5aa0'],
     ['d','Szalag ↓','futószalag: lefelé tol','#4a5aa0'],
-    ['i','Jég','csúszós: lassú megállás és fordulás','#bfe6ff'],
+    ['i','Jég','csúszós: lassú megállás és fordulás – külön réteg: kristály, lap, tüske stb. rakható rá','#bfe6ff'],
     [['@','Teleport A','párban működik: A → A; a kötél messziről elszakad','#9be3ff'],'↔ párja',['@','Teleport A','a másik A (2 db kell)','#9be3ff']],
     [['&','Teleport B','második, független teleport-pár','#ffb0ff'],'↔ párja',['&','Teleport B','a másik B (2 db kell)','#ffb0ff']],
     ['f','Törékeny padló','rálépés után 0,7 mp-cel leszakad','#9a7a9a']]],
@@ -2326,23 +2331,28 @@ const MOVNAME={p:'Őrjárat',l:'Lézer',t:'Löveg',c:'Üldöző'};
 function edDefs(){ return levelDefs(); }
 function edSaveDrafts(){ try{ localStorage.setItem('kotelek_editor',JSON.stringify(levelDefs())); localStorage.setItem('kotelek_use_drafts',EDITOR.useDrafts?'1':'0'); }catch(e){} }
 function edLoadDrafts(){ try{ const d=JSON.parse(localStorage.getItem('kotelek_editor')||'null'); if(d&&d.length) return d; }catch(e){} return null; }
-function edGridFromDef(def){ const lines=String(def.map).replace(/^\n/,'').split('\n'); const g=[]; for(let r=0;r<ROWS;r++){ const l=(lines[r]||'').padEnd(COLS,'.'); g[r]=[]; for(let c=0;c<COLS;c++){ g[r][c]=(r===0||r===ROWS-1||c===0||c===COLS-1)?'#':(l[c]||'.'); } } return g; }
-function edDefFromGrid(){ const def=LEVELS[EDITOR.L]; def.map=EDITOR.grid.map(r=>r.join('')).join('\n'); def.mov=EDITOR.mov.map(m=>JSON.parse(JSON.stringify(m))); return def; }
+function edGridFromDef(def){ const lines=String(def.map).replace(/^\n/,'').split('\n'); const fl=String(def.floor||'').replace(/^\n/,'').split('\n'); const g=[]; const f=[]; for(let r=0;r<ROWS;r++){ const l=(lines[r]||'').padEnd(COLS,'.'); const lf=(fl[r]||'').padEnd(COLS,'.'); g[r]=[]; f[r]=[]; for(let c=0;c<COLS;c++){ let ch=(r===0||r===ROWS-1||c===0||c===COLS-1)?'#':(l[c]||'.'); let sf='iudlr'.includes(lf[c]||'')?lf[c]:'.'; if('iudlr'.includes(ch)){ sf=ch; ch='.'; } g[r][c]=ch; f[r][c]=sf; } } g.floor=f; return g; }
+function edFloorStr(){ const f=EDITOR.floor; if(!f||!f.some(r=>r.some(ch=>ch!=='.'))) return ''; return f.map(r=>r.join('')).join('\n'); }
+function edDefFromGrid(){ const def=LEVELS[EDITOR.L]; def.map=EDITOR.grid.map(r=>r.join('')).join('\n'); def.floor=edFloorStr(); def.mov=EDITOR.mov.map(m=>JSON.parse(JSON.stringify(m))); return def; }
 function edOpen(L){
   EDITOR.on=true; EDITOR.testing=false; EDITOR.L=L===undefined?EDITOR.L:L; EDITOR.sel=-1; EDITOR.selPt=-1; EDITOR.draft=null; EDITOR.drag=null; PAUSED=false; RACE.on=false; S2=null; cleanupNet(); NET.mode='local';
-  const def=LEVELS[EDITOR.L]; EDITOR.grid=edGridFromDef(def); EDITOR.mov=(def.mov||[]).map(m=>JSON.parse(JSON.stringify(m))); EDITOR.undo=[]; EDITOR.rect=null; try{ EDITOR.showPairs=localStorage.getItem('kotelek_ed_pairs')==='1'; }catch(e){} edPushUndo();
+  const def=LEVELS[EDITOR.L]; EDITOR.grid=edGridFromDef(def); EDITOR.floor=EDITOR.grid.floor; EDITOR.mov=(def.mov||[]).map(m=>JSON.parse(JSON.stringify(m))); EDITOR.undo=[]; EDITOR.rect=null; try{ EDITOR.showPairs=localStorage.getItem('kotelek_ed_pairs')==='1'; }catch(e){} edPushUndo();
   hideAll(); document.body.classList.add('editing'); $('editor').style.display='flex'; edRefreshPreview(); edRenderPanels(); fit();
 }
 function edClose(){ EDITOR.on=false; EDITOR.testing=false; document.body.classList.remove('editing'); $('editor').style.display='none'; S=null; show('ovMenu'); fit(); }
 function edRefreshPreview(){ edDefFromGrid(); try{ STATICS[EDITOR.L]=parseLevel(LEVELS[EDITOR.L]); }catch(e){ return; } FLOOR.L=-1; const keepTm=S&&S.L===EDITOR.L?S.tm:0; S=null; newState(EDITOR.L); S.tm=keepTm; S.tot=0; S.totd=0; }
-function edSnapshot(){ const d=LEVELS[EDITOR.L]; return JSON.stringify({g:EDITOR.grid,m:EDITOR.mov,n:d.name,t:d.tip,p:d.par,r:d.rope,dk:!!d.dark}); }
+function edSnapshot(){ const d=LEVELS[EDITOR.L]; return JSON.stringify({g:EDITOR.grid,f:EDITOR.floor,m:EDITOR.mov,n:d.name,t:d.tip,p:d.par,r:d.rope,dk:!!d.dark}); }
 function edPushUndo(){ if(!EDITOR.undo) EDITOR.undo=[]; const snap=edSnapshot(); if(EDITOR.undo[EDITOR.undo.length-1]===snap) return; EDITOR.undo.push(snap); if(EDITOR.undo.length>60) EDITOR.undo.shift(); }
-function edUndo(){ if(!EDITOR.undo||EDITOR.undo.length<2) return; EDITOR.undo.pop(); const d=JSON.parse(EDITOR.undo[EDITOR.undo.length-1]); EDITOR.grid=d.g; EDITOR.mov=d.m; const def=LEVELS[EDITOR.L]; def.name=d.n; def.tip=d.t; def.par=d.p; def.rope=d.r; def.dark=!!d.dk; EDITOR.sel=-1; EDITOR.selPt=-1; edDefFromGrid(); edSaveDrafts(); edRefreshPreview(); edRenderPanels(); }
+function edUndo(){ if(!EDITOR.undo||EDITOR.undo.length<2) return; EDITOR.undo.pop(); const d=JSON.parse(EDITOR.undo[EDITOR.undo.length-1]); EDITOR.grid=d.g; EDITOR.floor=d.f||EDITOR.grid.map(r=>r.map(()=>'.')); EDITOR.mov=d.m; const def=LEVELS[EDITOR.L]; def.name=d.n; def.tip=d.t; def.par=d.p; def.rope=d.r; def.dark=!!d.dk; EDITOR.sel=-1; EDITOR.selPt=-1; edDefFromGrid(); edSaveDrafts(); edRefreshPreview(); edRenderPanels(); }
 function edCommit(){ edDefFromGrid(); EDITOR.dirty=true; edSaveDrafts(); edRefreshPreview(); edRenderList(); edPushUndo(); edRefreshCounts(); }
 function edRefreshCounts(){ if(EDITOR.on&&!EDITOR.testing) edRenderLeft(); }
 function edPos(ev){ const r=cv.getBoundingClientRect(); return [(ev.clientX-r.left)*W/r.width,(ev.clientY-r.top)*H/r.height]; }
 function edCell(ev){ const [x,y]=edPos(ev); const c=Math.floor(x/CELL), rr=Math.floor(y/CELL); if(c<0||rr<0||c>=COLS||rr>=ROWS) return null; return [c,rr]; }
-function edPaint(c,r,ch){ if(c<=0||r<=0||c>=COLS-1||r>=ROWS-1) return; if(ch==='1'||ch==='2'){ for(let rr=0;rr<ROWS;rr++)for(let cc=0;cc<COLS;cc++) if(EDITOR.grid[rr][cc]===ch) EDITOR.grid[rr][cc]='.'; } if(EDITOR.mov.some(m=>(m.t==='t'||m.t==='l'||m.t==='c')&&m.c[0]===c&&m.c[1]===r)&&ch!=='.') return; EDITOR.grid[r][c]=ch; }
+function edPaint(c,r,ch){ if(c<=0||r<=0||c>=COLS-1||r>=ROWS-1) return; if(ch==='1'||ch==='2'){ for(let rr=0;rr<ROWS;rr++)for(let cc=0;cc<COLS;cc++) if(EDITOR.grid[rr][cc]===ch) EDITOR.grid[rr][cc]='.'; } if(EDITOR.mov.some(m=>(m.t==='t'||m.t==='l'||m.t==='c')&&m.c[0]===c&&m.c[1]===r)&&ch!=='.') return;
+  if('iudlr'.includes(ch)){ if(EDITOR.grid[r][c]==='#') EDITOR.grid[r][c]='.'; EDITOR.floor[r][c]=ch; return; } // felület: külön réteg, a tárgy marad
+  if(ch==='.'){ if(EDITOR.grid[r][c]!=='.') EDITOR.grid[r][c]='.'; else EDITOR.floor[r][c]='.'; return; } // törlés: előbb a tárgy, aztán a felület
+  if(ch==='#') EDITOR.floor[r][c]='.';
+  EDITOR.grid[r][c]=ch; }
 // --- mozgó elemek: pontos találat-vizsgálat (pixelben) ---
 function edMovCenter(m){ return m.t==='p'?null:[(m.c[0]+.5)*CELL,(m.c[1]+.5)*CELL]; }
 function edHit(x,y){ // {mi, kind:'pt'|'mid'|'seg'|'center', pi}
@@ -2493,9 +2503,9 @@ function edRenderPanels(){
     const rv=$('edRev'); if(rv) rv.onclick=()=>{ m.path.reverse(); EDITOR.selPt=-1; edCommit(); edRenderPanels(); };
     const rd=$('edRedraw'); if(rd) rd.onclick=()=>{ const old=m; EDITOR.mov.splice(EDITOR.sel,1); EDITOR.sel=-1; EDITOR.selPt=-1; EDITOR.draft={t:'p',path:[],s:old.s,r:old.r}; EDITOR.tool='p'; edCommit(); edRenderPanels(); }; }
   $('edTest').onclick=edTest; $('edCheckBtn').onclick=()=>{ const p=edCheck(); $('edCheckOut').innerHTML=p.length?'<ul class="edprob">'+p.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':'<div class="edok">✔ Alapellenőrzés rendben: kezdőpontok, cél, párosított elemek, elérhetőség.</div>'; };
-  $('edClear').onclick=()=>{ if(!confirm(`Biztos törlöd a(z) ${EDITOR.L+1}. pályát?`)) return; EDITOR.grid=edGridFromDef({map:LEVELS_EMPTY}); EDITOR.mov=[]; EDITOR.sel=-1; EDITOR.selPt=-1; def.name=`${EDITOR.L+1}. pálya`; def.tip=''; def.par=60; def.rope=150; def.dark=false; edCommit(); edRenderPanels(); };
+  $('edClear').onclick=()=>{ if(!confirm(`Biztos törlöd a(z) ${EDITOR.L+1}. pályát?`)) return; EDITOR.grid=edGridFromDef({map:LEVELS_EMPTY}); EDITOR.floor=EDITOR.grid.floor; EDITOR.mov=[]; EDITOR.sel=-1; EDITOR.selPt=-1; def.name=`${EDITOR.L+1}. pálya`; def.tip=''; def.par=60; def.rope=150; def.dark=false; edCommit(); edRenderPanels(); };
   $('edCopy').onclick=()=>{ EDITOR.clip=JSON.parse(JSON.stringify(edDefFromGrid())); edRenderPanels(); };
-  $('edPaste').onclick=()=>{ if(!EDITOR.clip) return; const c=JSON.parse(JSON.stringify(EDITOR.clip)); def.tip=c.tip; def.par=c.par; def.rope=c.rope; def.dark=!!c.dark; EDITOR.grid=edGridFromDef(c); EDITOR.mov=c.mov; EDITOR.sel=-1; EDITOR.selPt=-1; edCommit(); edRenderPanels(); };
+  $('edPaste').onclick=()=>{ if(!EDITOR.clip) return; const c=JSON.parse(JSON.stringify(EDITOR.clip)); def.tip=c.tip; def.par=c.par; def.rope=c.rope; def.dark=!!c.dark; EDITOR.grid=edGridFromDef(c); EDITOR.floor=EDITOR.grid.floor; EDITOR.mov=c.mov; EDITOR.sel=-1; EDITOR.selPt=-1; edCommit(); edRenderPanels(); };
   edRenderList();
   $('edUse').checked=EDITOR.useDrafts;
 }
