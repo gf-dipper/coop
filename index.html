@@ -1455,6 +1455,29 @@ function drawSpikeHorror(x,px,py){
     x.fillStyle='rgba(160,10,20,.7)'; x.beginPath(); x.arc(tipX,tipY+3,1.6,0,7); x.fill(); }
   x.restore();
 }
+// Jég: összefüggő, fagyott lap – a szomszédos jégcellák egy felületnek látszanak, csak a szélén van perem
+function drawIceTile(x,st,c,r){
+  const px=c*CELL,py=r*CELL; const ice=(cc,rr)=>surfAt(st,cc,rr)==='i';
+  let seed=(c*73856093^r*19349663)>>>0; const rnd=()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; };
+  x.save();
+  // alap: világos, kékesfehér fagyott felület, enyhe mélységgel
+  const g=x.createLinearGradient(px,py,px+CELL,py+CELL); g.addColorStop(0,'rgba(214,240,255,.55)'); g.addColorStop(0.5,'rgba(160,210,245,.45)'); g.addColorStop(1,'rgba(120,180,230,.5)'); x.fillStyle=g; x.fillRect(px,py,CELL,CELL);
+  // belső derengés (a jég alatt sötétebb víz)
+  const rg=x.createRadialGradient(px+CELL*0.5,py+CELL*0.6,2,px+CELL*0.5,py+CELL*0.6,CELL*0.8); rg.addColorStop(0,'rgba(60,120,200,0)'); rg.addColorStop(1,'rgba(40,80,160,.25)'); x.fillStyle=rg; x.fillRect(px,py,CELL,CELL);
+  // finom repedéshálózat: cellánként 1–2 vékony, elágazó vonal
+  x.strokeStyle='rgba(255,255,255,.55)'; x.lineWidth=1; const n=1+Math.floor(rnd()*2);
+  for(let k=0;k<n;k++){ let cx=px+6+rnd()*(CELL-12), cy=py+6+rnd()*(CELL-12); let a=rnd()*Math.PI*2; x.beginPath(); x.moveTo(cx,cy); for(let i=0;i<4;i++){ const len=5+rnd()*8; a+=(rnd()-0.5)*1.4; cx=Math.max(px+2,Math.min(px+CELL-2,cx+Math.cos(a)*len)); cy=Math.max(py+2,Math.min(py+CELL-2,cy+Math.sin(a)*len)); x.lineTo(cx,cy); } x.stroke(); if(rnd()<0.5){ x.beginPath(); x.moveTo(cx,cy); x.lineTo(cx+Math.cos(a+1.2)*5,cy+Math.sin(a+1.2)*5); x.stroke(); } }
+  x.strokeStyle='rgba(120,170,230,.35)'; x.beginPath(); x.moveTo(px+4+rnd()*8,py+CELL-4); x.lineTo(px+12+rnd()*12,py+8+rnd()*10); x.stroke();
+  // csillanás
+  x.fillStyle='rgba(255,255,255,.75)'; const sx=px+8+rnd()*20, sy=py+8+rnd()*20; x.beginPath(); x.moveTo(sx-4,sy); x.lineTo(sx,sy-1.2); x.lineTo(sx+4,sy); x.lineTo(sx,sy+1.2); x.closePath(); x.fill(); x.beginPath(); x.moveTo(sx,sy-4); x.lineTo(sx+1.2,sy); x.lineTo(sx,sy+4); x.lineTo(sx-1.2,sy); x.closePath(); x.fill();
+  // perem csak a jég szélén: világos felső/bal él, sötét alsó/jobb él (vastag lap hatás)
+  x.lineWidth=2;
+  if(!ice(c,r-1)){ x.strokeStyle='rgba(255,255,255,.8)'; x.beginPath(); x.moveTo(px,py+1); x.lineTo(px+CELL,py+1); x.stroke(); }
+  if(!ice(c-1,r)){ x.strokeStyle='rgba(255,255,255,.6)'; x.beginPath(); x.moveTo(px+1,py); x.lineTo(px+1,py+CELL); x.stroke(); }
+  if(!ice(c,r+1)){ x.strokeStyle='rgba(30,60,120,.55)'; x.beginPath(); x.moveTo(px,py+CELL-1); x.lineTo(px+CELL,py+CELL-1); x.stroke(); x.strokeStyle='rgba(180,220,255,.35)'; x.beginPath(); x.moveTo(px,py+CELL-3); x.lineTo(px+CELL,py+CELL-3); x.stroke(); }
+  if(!ice(c+1,r)){ x.strokeStyle='rgba(30,60,120,.45)'; x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); }
+  x.restore();
+}
 function drawConveyor(ch,x,y,t){ ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); }
 function drawSpikeTile(x,px,py,world){
   if(world===1) return drawSpikeSpace(x,px,py);
@@ -1508,7 +1531,7 @@ function buildFloor(L){
   // egyirányú kapuk, jég (statikus)
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c], px=c*CELL,py=r*CELL;
     if(ch==='^'||ch==='v'||ch==='<'||ch==='>'){ x.fillStyle='rgba(91,226,138,.10)'; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.save(); x.translate(px+CELL/2,py+CELL/2); x.rotate(ch==='^'?-Math.PI/2:ch==='v'?Math.PI/2:ch==='<'?Math.PI:0); x.strokeStyle='#5be28a'; x.lineWidth=3; x.lineCap='round'; for(const k of [-7,3]){ x.beginPath(); x.moveTo(k-5,-9); x.lineTo(k+4,0); x.lineTo(k-5,9); x.stroke(); } x.strokeStyle='rgba(91,226,138,.5)'; x.lineWidth=2; x.beginPath(); x.moveTo(-15,-16); x.lineTo(-15,16); x.stroke(); x.restore(); }
-    if(surfAt(st,c,r)==='i'){ const gr=x.createLinearGradient(px,py,px+CELL,py+CELL); gr.addColorStop(0,'rgba(190,230,255,.28)'); gr.addColorStop(1,'rgba(120,180,255,.12)'); x.fillStyle=gr; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.strokeStyle='rgba(230,245,255,.5)'; x.lineWidth=1; x.beginPath(); x.moveTo(px+6,py+30); x.lineTo(px+18,py+12); x.lineTo(px+24,py+22); x.lineTo(px+34,py+8); x.stroke(); }
+    if(surfAt(st,c,r)==='i') drawIceTile(x,st,c,r);
   }
   // vignetta
   const vg=x.createRadialGradient(W/2,H/2,300,W/2,H/2,720); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.55)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
@@ -2559,7 +2582,7 @@ function edCheck(){ // gyors ellenőrzés
   const g=EDITOR.grid; let n1=0,n2=0,ne=0; const cnt={}; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c]; cnt[ch]=(cnt[ch]||0)+1; if(ch==='1') n1++; if(ch==='2') n2++; if(ch==='E') ne++; }
   if(n1!==1) probs.push('Hiányzik a kék kezdőpont (1).'); if(n2!==1) probs.push('Hiányzik a narancs kezdőpont (2).'); if(ne<2) probs.push('A célhoz legalább 2 cella kell (E).');
   if(n1&&n2){ const d=Math.hypot(st.spawn[0][0]-st.spawn[1][0],st.spawn[0][1]-st.spawn[1][1])*CELL; if(d>st.rope*1.3) probs.push(`A két kezdőpont túl messze van egymástól (${Math.round(d)} px, a kötél ${st.rope}).`); }
-  for(const L of ['x','y','z']){ const has=st.plates[L], door=st.doors[L]; if(has&&!door) probs.push(`Van ${L} lap, de nincs ${L.toUpperCase()} ajtó.`); if(door&&!has) probs.push(`Van ${L.toUpperCase()} ajtó, de nincs ${L} lap.`); }
+  for(const L of ['x','y','z']){ const has=st.plates[L], door=st.doors[L.toUpperCase()]; if(has&&!door) probs.push(`Van ${L} lap, de nincs ${L.toUpperCase()} ajtó.`); if(door&&!has) probs.push(`Van ${L.toUpperCase()} ajtó, de nincs ${L} lap.`); }
   if(st.keys.length&&!st.keyDoors.length) probs.push('Van kulcs, de nincs lakatos ajtó (K).'); if(st.keyDoors.length&&!st.keys.length) probs.push('Van lakatos ajtó, de nincs kulcs (k).'); if(st.keyDoors.length>st.keys.length) probs.push('Több lakatos ajtó van, mint kulcs.');
   if(st.buttons.length&&!st.timedDoors.length) probs.push('Van gomb, de nincs óra-ajtó (D).'); if(st.timedDoors.length&&!st.buttons.length) probs.push('Van óra-ajtó, de nincs gomb (t).');
   if(st.pairBtns.length&&!cnt['W']) probs.push('Van páros gomb, de nincs páros ajtó (W).'); if(cnt['W']&&!st.pairBtns.length) probs.push('Van páros ajtó, de nincs páros gomb (w).');
@@ -2701,7 +2724,7 @@ function edTest(){ edFinishPath(); const p=edCheck().filter(x=>x.startsWith('Hi�
   edCommit(); EDITOR.testing=true; document.body.classList.add('edtesting'); OPT.inf=true; NET.mode='local'; S=null; newState(EDITOR.L); S.tot=0; S.totd=0; hideAll(); fit(); }
 function edBackFromTest(){ PAUSED=false; EDITOR.testing=false; document.body.classList.remove('edtesting'); OPT.inf=$('chkInf').checked; hideAll(); edRefreshPreview(); edRenderPanels(); fit(); }
 function edExport(){ edFinishPath(); edCommit(); const blob=new Blob([JSON.stringify(levelDefs(),null,1)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='palyak.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
-function edImport(file){ const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!Array.isArray(d)) throw new Error('nem pályalista'); const defs=levelDefs(); const n=Math.min(48,d.length); for(let i=0;i<n;i++) defs[i]=d[i]; setLevels(defs); edSaveDrafts(); coedSendAll(); edOpen(EDITOR.L); EDITOR.msg=`${n} pálya betöltve a fájlból.`; edRenderPanels(); }catch(e){ EDITOR.msg='Nem sikerült betölteni: '+e.message; edRenderPanels(); } }; rd.readAsText(file); }
+function edImport(file){ const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!Array.isArray(d)) throw new Error('nem pályalista'); const defs=levelDefs(); const n=Math.min(48,d.length); let cnt=0; for(let i=0;i<n;i++){ if(d[i]&&typeof d[i]==='object'){ defs[i]=d[i]; cnt++; } } setLevels(defs); edSaveDrafts(); coedSendAll(); edOpen(EDITOR.L); EDITOR.msg=`${cnt} pálya betöltve a fájlból (a fájlban üresen hagyott helyek érintetlenek maradtak).`; edRenderPanels(); }catch(e){ EDITOR.msg='Nem sikerült betölteni: '+e.message; edRenderPanels(); } }; rd.readAsText(file); }
 const LEVELS_EMPTY=LEVELS[0].map;
 // indítás: palyak.json (véglegesített), aztán a böngészőben mentett piszkozat, ha be van kapcsolva
 (async function(){ try{ const r=await fetch('palyak.json',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(setLevels(d)) LEVELS_FILE=true; } }catch(e){}
