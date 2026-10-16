@@ -1499,6 +1499,9 @@ function drawFragile(x,px,py,c,r,v,t){
   x.restore();
 }
 function drawConveyor(ch,x,y,t){ ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); }
+// A tüske abból a falból nő ki, amelyik mellette van: fal felette → lefelé mutat, fal balra → jobbra, stb.
+function spikeRot(g,c,r){ const w=(cc,rr)=>cc<0||rr<0||cc>=COLS||rr>=ROWS||g[rr][cc]==='#'; const dn=w(c,r+1),up=w(c,r-1),lf=w(c-1,r),rt=w(c+1,r);
+  if(dn) return 0; if(up) return Math.PI; if(lf) return Math.PI/2; if(rt) return -Math.PI/2; return 0; }
 function drawSpikeTile(x,px,py,world){
   if(world===1) return drawSpikeSpace(x,px,py);
   if(world===2) return drawSpikeHorror(x,px,py);
@@ -1547,7 +1550,7 @@ function buildFloor(L){
     if(!wall(c+1,r)){ x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); x.strokeStyle='rgba(0,0,0,.45)'; x.beginPath(); x.moveTo(px+CELL-3,py); x.lineTo(px+CELL-3,py+CELL); x.stroke(); x.strokeStyle=WD.edge; }
   }
   // tüskék (statikus)
-  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; drawSpikeTile(x,px,py,st.world); }
+  for(const h of st.hazards){ const px=h[0]*CELL,py=h[1]*CELL; const rot=spikeRot(g,h[0],h[1]); if(rot){ x.save(); x.translate(px+CELL/2,py+CELL/2); x.rotate(rot); x.translate(-px-CELL/2,-py-CELL/2); drawSpikeTile(x,px,py,st.world); x.restore(); } else drawSpikeTile(x,px,py,st.world); }
   // egyirányú kapuk, jég (statikus)
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const ch=g[r][c], px=c*CELL,py=r*CELL;
     if(ch==='^'||ch==='v'||ch==='<'||ch==='>'){ x.fillStyle='rgba(91,226,138,.10)'; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.save(); x.translate(px+CELL/2,py+CELL/2); x.rotate(ch==='^'?-Math.PI/2:ch==='v'?Math.PI/2:ch==='<'?Math.PI:0); x.strokeStyle='#5be28a'; x.lineWidth=3; x.lineCap='round'; for(const k of [-7,3]){ x.beginPath(); x.moveTo(k-5,-9); x.lineTo(k+4,0); x.lineTo(k-5,9); x.stroke(); } x.strokeStyle='rgba(91,226,138,.5)'; x.lineWidth=2; x.beginPath(); x.moveTo(-15,-16); x.lineTo(-15,16); x.stroke(); x.restore(); }
