@@ -64,8 +64,10 @@ Tipp a lebonyolításhoz: egy szervező egyszerre egy meccset tud futtatni, teh�
 
 A főmenü **🛠 Pályaszerkesztő** gombja. 48 pálya helye van; mindegyiket a szerkesztőben rajzolod meg:
 
-- **Bal oldalt** a pályák listája (szaggatott = még üres) és az elemek: falak, kezdőpontok, cél, kristály, kapuk, lapok és ajtók, színes sávok, kulcs és lakat, gomb és óra-ajtó, tüske, törékeny padló. Bal gombbal lerakod, jobb gombbal törlöd, húzva festesz, **Shift+húzással** téglalapot töltesz ki, **Ctrl+Z** visszavon.
-- **Mozgó elemek:** őrjárat (kattints végig az útvonal pontjain – csak vízszintes/függőleges szakaszok –, Enter vagy dupla kattintás: kész), lézer és löveg (egy kattintás a helyére). A **Kijelölés** eszközzel rákattintva a jobb oldali panelen minden tulajdonságuk állítható: sebesség, méret, útvonal; a lézer hossza, forgási sebessége és iránya, kezdőszöge, karjai; a löveg lövésgyakorisága, golyósebessége, késleltetése. Delete vagy 🗑: törlés.
+- **Bal oldalt** a pályák listája (szaggatott = még üres) és az elemek, csoportokban: **Alap** (padló, fal, kezdőpontok, cél), **Gyűjtés** (kristály, kötélkristály, kristálykapu, kulcs, lakat), **Lapok és ajtók** (színes lapok és ajtók, gomb és óra-ajtó, páros gomb és páros ajtó, kapcsoló és I-es/II-es falak), **Utak** (színes sávok, egyirányú kapuk, futószalagok, jég, teleportok, törékeny padló), **Veszély** (tüske), **Mozgó elemek**. Bal gombbal lerakod, jobb gombbal törlöd, húzva festesz, **Shift+húzással** téglalapot töltesz ki, **Ctrl+Z** visszavon.
+- **Mozgó elemek:** őrjárat (kattints végig az útvonal pontjain – ferde szakasz is lehet –, Enter, az utolsó pontra kattintás vagy dupla kattintás: kész, jobb gomb: utolsó pont vissza), lézer, löveg, üldöző (egy kattintás a helyére). Bármelyik eszközzel **megfoghatod** a pályán: a pontokat és középpontokat húzva mozgatod, a kijelölt őrjárat szakaszának közepén lévő **„+"** új pontot szúr be, pontra **jobb gomb** = pont törlése, elemre jobb gomb vagy **Delete** = törlés, **Ctrl+D** = másolat, **nyilak** = egy cellával odébb. A jobb oldali panelen minden tulajdonságuk állítható: sebesség, méret, irány megfordítása; a lézer hossza, forgási sebessége és iránya, kezdőszöge, karjai; a löveg lövésgyakorisága, golyósebessége, késleltetése; az üldöző sebessége és hatótávja.
+- **Párosítások:** az összetartozó elemek egy keretben, egymás alatt vannak a palettán (kulcs → lakatos ajtó, sárga gomb → óra-ajtó, lap → ajtó, páros gomb → páros ajtó, kapcsoló → I-es/II-es fal, kristály → kristálykapu, teleport ↔ párja), a gombokon látszik, hányat raktál le, és ⚠ jelzi, ha valamelyik félnek hiányzik a párja. Ha a kurzor egy ilyen elemen vagy a gombján áll, a pályán szaggatott nyíl köti össze a párokat; a „Párosítások mindig látszanak” pipával folyamatosan látszanak.
+- **Sötét pálya:** jelölőnégyzet a jobb panelen – csak a figurák körül látni, a cél világít.
 - **Jobb oldalt** a pálya neve, tippje, célideje, kötélhossza; **▶ Kipróbálás** (egy gépen, végtelen élettel, a szünet menüből vissza), **✔ Ellenőrzés** (kezdőpontok, cél, párosított elemek, elérhetőség), másolás/beillesztés pályák között.
 - **Mentés:** minden változás magától mentődik a böngészőbe, és amíg a „A játék ezeket a pályákat használja" be van kapcsolva, minden mód (páros, 2v2, kupa, heti) ezekkel megy – a vendégek is a gazdától kapják a pályákat, nekik nem kell semmit csinálniuk.
 - **Véglegesítés:** 💾 *Mentés fájlba* → a letöltött `palyak.json`-t tedd az `index.html` mellé, és töltsd fel GitHubra is. A játék indításkor ezt a fájlt tölti be, így mindenkinél ugyanazok a pályák lesznek – a szerkesztő piszkozata nélkül is. A `palyak_minta.json` egy kész 48-as készlet, ha kiindulási alap kell (*Mintapályák betöltése*).
@@ -82,6 +84,15 @@ A főmenü **🛠 Pályaszerkesztő** gombja. 48 pálya helye van; mindegyiket a
 | Törékeny (repedt) padló | Rálépés után 0,7 mp-cel leszakad – egyszer lehet átmenni rajta |
 | Tüske, vörös gömb, lézer, löveg | Érintés = a pálya elölről (és a kötelet is elvágják, a löveg kivételével) |
 | Lézer | A falnál megáll – a fal mögött biztonságos |
+| Kötélkristály (üreges, sárga) | Nem a figura szedi fel: a **kötélnek** kell áthaladnia rajta. A kristálykapuhoz ez is kell |
+| Páros gomb (két narancs kör) | **Mindkettőtöknek egyszerre** kell rajta állnia – 4,5 mp-re nyitja a páros ajtót |
+| Kapcsoló (sárga kar) | Minden érintésre vált: az I-es falak nyílnak és a II-esek zárnak, vagy fordítva |
+| Egyirányú kapu (zöld nyíl) | Csak a nyíl irányába lehet átmenni |
+| Futószalag (kék nyilak) | Tol a nyíl irányába |
+| Jég | Csúszik: lassabb a megállás és a fordulás |
+| Teleport (A: kék, B: lila örvény) | Belépsz az egyikbe, a párjából jössz ki – a kötél messziről elszakad, a társad álljon a kijárat mellett |
+| Üldöző (lila gömb) | Ha a hatótávjába érsz, utánad megy (lassabb nálad); a kötelet is elvágja. Ha senki sincs a közelben, hazamegy |
+| Sötét pálya | Csak a figurák körül látni |
 
 ## Ha nem jön létre a kapcsolat
 
