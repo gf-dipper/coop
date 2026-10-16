@@ -1226,7 +1226,7 @@ function newState(L){
 function resetLevel(){
   const st=S.st;
   for(let i=0;i<2;i++){const sp=st.spawn[i]; S.p[i].x=(sp[0]+.5)*CELL; S.p[i].y=(sp[1]+.5)*CELL; S.p[i].vx=S.p[i].vy=0; S.p[i].key=false;}
-  S.fr=st.frags.map(()=>-1); S.gems=st.gems.map(()=>false); S.rg=st.rgems.map(()=>false); S.wt=0; S.sw=false; S.swIn=[false,false]; S.ch=st.chasers.map(c=>({x:c.x,y:c.y})); S.p.forEach(p=>{ p.tp=false; }); S.kg=st.keys.map(()=>false); S.kd=st.keyDoors.map(()=>false); S.tt=0; S.bullets=[]; S.tm=0; S.shots=st.turrets.map(t=>t.ph); S.tension=0; S.ph='play';
+  S.fr=st.frags.map(()=>-1); S.gems=st.gems.map(()=>false); S.rg=st.rgems.map(()=>false); S.wt=0; S.sw=false; S.swIn=[false,false]; S.swCd=0; S.ch=st.chasers.map(c=>({x:c.x,y:c.y})); S.p.forEach(p=>{ p.tp=false; }); S.kg=st.keys.map(()=>false); S.kd=st.keyDoors.map(()=>false); S.tt=0; S.bullets=[]; S.tm=0; S.shots=st.turrets.map(t=>t.ph); S.tension=0; S.ph='play';
 }
 // az üldözőt minden zárt ajtó és fal megállítja (kapcsolt fal, színes ajtó, óra-ajtó, lakat, kristálykapu is)
 function chaserBlocked(c,r){ if(c<0||r<0||c>=COLS||r>=ROWS) return true; const ch=S.st.grid[r][c]; switch(ch){ case '#': case 'T': return true; case 'G': return S.gems.some(g=>!g)||S.rg.some(g=>!g); case 'X': case 'Y': case 'Z': return !plateHeld(ch.toLowerCase()); case 'D': return S.tt<=0; case 'W': return S.wt<=0; case 'M': return !S.sw; case 'N': return S.sw; case 'K': { const i=S.st.kdIdx[r*COLS+c]; return !S.kd[i]; } } return false; }
@@ -1279,13 +1279,14 @@ function update(dt,bits){
       st.keys.forEach((k,ki)=>{ if(!S.kg[ki]&&!p.key&&Math.hypot(p.x-(k[0]+.5)*CELL,p.y-(k[1]+.5)*CELL)<PR+12){S.kg[ki]=true;p.key=true;} });
       st.buttons.forEach(bt=>{ if(Math.hypot(p.x-(bt[0]+.5)*CELL,p.y-(bt[1]+.5)*CELL)<PR+14) S.tt=TIMED; });
       // kapcsoló: érintésre vált, újra csak elengedés után
-      let onSw=false; st.switches.forEach(sw=>{ if(Math.hypot(p.x-(sw[0]+.5)*CELL,p.y-(sw[1]+.5)*CELL)<PR+12) onSw=true; }); if(onSw&&!S.swIn[i]){ S.sw=!S.sw; S.swIn[i]=true; sfx('button'); } else if(!onSw) S.swIn[i]=false;
+      let onSw=false; st.switches.forEach(sw=>{ if(Math.hypot(p.x-(sw[0]+.5)*CELL,p.y-(sw[1]+.5)*CELL)<PR+12) onSw=true; }); if(onSw&&!S.swIn[i]){ S.swIn[i]=true; if((S.swCd||0)<=0){ S.sw=!S.sw; S.swCd=0.4; sfx('button'); } } else if(!onSw) S.swIn[i]=false;
       // teleport
       { const cc_=Math.floor(p.x/CELL), rr_=Math.floor(p.y/CELL); const ch=(st.grid[rr_]||[])[cc_]; if(ch==='@'||ch==='&'){ if(!p.tp){ const cells=st.tele[ch]; if(cells&&cells.length>1){ const k=cells.findIndex(q=>q[0]===cc_&&q[1]===rr_); const to=cells[(k+1)%cells.length]; p.x=(to[0]+.5)*CELL; p.y=(to[1]+.5)*CELL; p.tp=true; sfx('key'); } } } else p.tp=false; }
     }
     // páros gomb: mindkettőtöknek egyszerre kell rajta állnia
     if(st.pairBtns.length){ const on=S.p.map(p=>st.pairBtns.some(b=>Math.hypot(p.x-(b[0]+.5)*CELL,p.y-(b[1]+.5)*CELL)<PR+14)); if(on[0]&&on[1]) S.wt=TIMED; }
     if(S.wt>0) S.wt-=dt;
+    if(S.swCd>0) S.swCd-=dt;
     // kötélkristály: a kötélnek kell áthaladnia rajta
     { const a=S.p[0],b=S.p[1]; st.rgems.forEach((gm,gi)=>{ if(!S.rg[gi]&&segDist((gm[0]+.5)*CELL,(gm[1]+.5)*CELL,a.x,a.y,b.x,b.y)<14) S.rg[gi]=true; }); }
     // üldözők: a hatótávon belüli közelebbi figura felé mennek, különben haza
@@ -1633,7 +1634,11 @@ function render(now){
     let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#2a0a10'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); }
   // kötélkristályok (üreges) és üldözők
   st.rgems.forEach((gm,i)=>{ if(S.rg[i]) return; const x=(gm[0]+.5)*CELL,y=(gm[1]+.5)*CELL+Math.sin(t*3+i)*3; ctx.save(); ctx.translate(x,y); ctx.shadowColor='#fff0a0'; ctx.shadowBlur=10; ctx.rotate(t*1.2+i); ctx.strokeStyle='#ffe58a'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(0,-13); ctx.lineTo(10,0); ctx.lineTo(0,13); ctx.lineTo(-10,0); ctx.closePath(); ctx.stroke(); ctx.rotate(-t*1.2-i); ctx.strokeStyle='rgba(255,229,138,.5)'; ctx.lineWidth=1.5; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(-22,0); ctx.lineTo(22,0); ctx.stroke(); ctx.restore(); });
-  S.ch.forEach((q,i)=>{ ctx.save(); ctx.shadowColor='#b05cff'; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,13); gr.addColorStop(0,'#e0b0ff'); gr.addColorStop(1,'#7a2ad0'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,13,0,7); ctx.fill(); ctx.restore(); let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#1a0030'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); ctx.strokeStyle='#1a0030'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(q.x-8,q.y-9); ctx.lineTo(q.x-2,q.y-6); ctx.moveTo(q.x+8,q.y-9); ctx.lineTo(q.x+2,q.y-6); ctx.stroke(); if(dl<st.chasers[i].range){ ctx.strokeStyle='rgba(176,92,255,.25)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(np.x,np.y); ctx.stroke(); ctx.setLineDash([]); } });
+  S.ch.forEach((q,i)=>{ const chd=st.chasers[i]; const near=Math.min(Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y),Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)); const alert=near<chd.range; // hatótáv-gyűrű: mindig látszik, riasztáskor erősebb és lüktet
+    ctx.save(); ctx.strokeStyle=alert?'rgba(255,120,255,.75)':'rgba(176,92,255,.28)'; ctx.lineWidth=alert?2.5:1.5; ctx.setLineDash([7,6]); ctx.lineDashOffset=-t*30; ctx.beginPath(); ctx.arc(q.x,q.y,chd.range+(alert?Math.sin(t*10)*2:0),0,7); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle=alert?'rgba(176,92,255,.10)':'rgba(176,92,255,.04)'; ctx.beginPath(); ctx.arc(q.x,q.y,chd.range,0,7); ctx.fill();
+    if(Math.hypot(q.x-chd.x,q.y-chd.y)>4){ ctx.strokeStyle='rgba(176,92,255,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(chd.x,chd.y,8,0,7); ctx.stroke(); ctx.beginPath(); ctx.moveTo(chd.x-4,chd.y); ctx.lineTo(chd.x+4,chd.y); ctx.moveTo(chd.x,chd.y-4); ctx.lineTo(chd.x,chd.y+4); ctx.stroke(); }
+    ctx.restore();
+    ctx.save(); ctx.shadowColor='#b05cff'; ctx.shadowBlur=10; const gr=ctx.createRadialGradient(q.x-4,q.y-4,2,q.x,q.y,13); gr.addColorStop(0,'#e0b0ff'); gr.addColorStop(1,'#7a2ad0'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(q.x,q.y,13,0,7); ctx.fill(); ctx.restore(); let np=S.p[0]; if(Math.hypot(S.p[1].x-q.x,S.p[1].y-q.y)<Math.hypot(S.p[0].x-q.x,S.p[0].y-q.y)) np=S.p[1]; const dx=np.x-q.x,dy=np.y-q.y,dl=Math.hypot(dx,dy)||1; ctx.fillStyle='#1a0030'; ctx.beginPath(); ctx.arc(q.x-4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.arc(q.x+4+dx/dl*2.5,q.y-2+dy/dl*2.5,2.6,0,7); ctx.fill(); ctx.strokeStyle='#1a0030'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(q.x-8,q.y-9); ctx.lineTo(q.x-2,q.y-6); ctx.moveTo(q.x+8,q.y-9); ctx.lineTo(q.x+2,q.y-6); ctx.stroke(); if(dl<st.chasers[i].range){ ctx.strokeStyle='rgba(176,92,255,.25)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(np.x,np.y); ctx.stroke(); ctx.setLineDash([]); } });
   // csóvák
   for(let i=0;i<2;i++){ const tr=FX.trails[i], col=PCOL(i); for(let k=0;k<tr.length;k++){ const f=k/tr.length; ctx.fillStyle=col+Math.floor(f*60+8).toString(16).padStart(2,'0'); ctx.beginPath(); ctx.arc(tr[k].x,tr[k].y,PR*f*0.8,0,7); ctx.fill(); } }
   // kötél
