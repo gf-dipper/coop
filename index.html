@@ -1499,9 +1499,19 @@ function drawFragile(x,px,py,c,r,v,t){
   x.restore();
 }
 function drawConveyor(ch,x,y,t){ ctx.fillStyle='rgba(120,150,255,.10)'; ctx.fillRect(x+1,y+1,CELL-2,CELL-2); ctx.save(); ctx.translate(x+CELL/2,y+CELL/2); ctx.rotate(ch==='u'?-Math.PI/2:ch==='d'?Math.PI/2:ch==='l'?Math.PI:0); const off=(t*60)%14; ctx.strokeStyle='rgba(140,170,255,.75)'; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ const px=-16+k*14+off; if(px<-18||px>18) continue; ctx.beginPath(); ctx.moveTo(px-4,-8); ctx.lineTo(px+2,0); ctx.lineTo(px-4,8); ctx.stroke(); } ctx.restore(); }
-// A tüske abból a falból nő ki, amelyik mellette van: fal felette → lefelé mutat, fal balra → jobbra, stb.
-function spikeRot(g,c,r){ const w=(cc,rr)=>cc<0||rr<0||cc>=COLS||rr>=ROWS||g[rr][cc]==='#'; const dn=w(c,r+1),up=w(c,r-1),lf=w(c-1,r),rt=w(c+1,r);
-  if(dn) return 0; if(up) return Math.PI; if(lf) return Math.PI/2; if(rt) return -Math.PI/2; return 0; }
+// A tüske abból a falból nő ki, amelyik az összefüggő tüskecsoport mellett van. Vízszintes csoport (sor): fal alatta → fel, fal felette → le.
+// Függőleges csoport (oszlop): fal balra → jobbra mutat, fal jobbra → balra. Egy cella: a közvetlen fal dönt. Egyébként felfelé.
+function spikeRot(g,c,r){
+  if(!g._spk){ g._spk={}; const seen=new Set(); const isH=(cc,rr)=>cc>=0&&rr>=0&&cc<COLS&&rr<ROWS&&g[rr][cc]==='h'; const w=(cc,rr)=>cc<0||rr<0||cc>=COLS||rr>=ROWS||g[rr][cc]==='#';
+    for(let rr=0;rr<ROWS;rr++)for(let cc=0;cc<COLS;cc++){ if(!isH(cc,rr)||seen.has(cc+','+rr)) continue; const cl=[]; const q=[[cc,rr]]; seen.add(cc+','+rr);
+      while(q.length){ const [x,y]=q.pop(); cl.push([x,y]); for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){ const nx=x+dx,ny=y+dy; if(isH(nx,ny)&&!seen.has(nx+','+ny)){ seen.add(nx+','+ny); q.push([nx,ny]); } } }
+      const xs=cl.map(p=>p[0]),ys=cl.map(p=>p[1]); const wd=Math.max(...xs)-Math.min(...xs)+1, ht=Math.max(...ys)-Math.min(...ys)+1;
+      const any=f=>cl.some(([x,y])=>f(x,y)); let rot=0;
+      if(cl.length===1){ const [x,y]=cl[0]; rot=w(x,y+1)?0:w(x,y-1)?Math.PI:w(x-1,y)?Math.PI/2:w(x+1,y)?-Math.PI/2:0; }
+      else if(wd>=ht){ rot=any((x,y)=>w(x,y+1))?0:any((x,y)=>w(x,y-1))?Math.PI:0; }
+      else { rot=any((x,y)=>w(x-1,y))?Math.PI/2:any((x,y)=>w(x+1,y))?-Math.PI/2:0; }
+      for(const [x,y] of cl) g._spk[x+','+y]=rot; } }
+  return g._spk[c+','+r]||0; }
 function drawSpikeTile(x,px,py,world){
   if(world===1) return drawSpikeSpace(x,px,py);
   if(world===2) return drawSpikeHorror(x,px,py);
