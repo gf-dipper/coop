@@ -1461,23 +1461,24 @@ function drawIceTile(x,st,c,r){
   let seed=(c*73856093^r*19349663)>>>0; const rnd=()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; };
   x.save();
   // alap: világos, kékesfehér fagyott felület, enyhe mélységgel
-  const g=x.createLinearGradient(px,py,px+CELL,py+CELL); g.addColorStop(0,'rgba(214,240,255,.55)'); g.addColorStop(0.5,'rgba(160,210,245,.45)'); g.addColorStop(1,'rgba(120,180,230,.5)'); x.fillStyle=g; x.fillRect(px,py,CELL,CELL);
+  const g=x.createLinearGradient(px,py,px+CELL,py+CELL); g.addColorStop(0,'rgba(170,215,255,.22)'); g.addColorStop(0.5,'rgba(130,185,240,.18)'); g.addColorStop(1,'rgba(100,160,225,.22)'); x.fillStyle=g; x.fillRect(px,py,CELL,CELL);
   // belső derengés (a jég alatt sötétebb víz)
-  const rg=x.createRadialGradient(px+CELL*0.5,py+CELL*0.6,2,px+CELL*0.5,py+CELL*0.6,CELL*0.8); rg.addColorStop(0,'rgba(60,120,200,0)'); rg.addColorStop(1,'rgba(40,80,160,.25)'); x.fillStyle=rg; x.fillRect(px,py,CELL,CELL);
+  const rg=x.createRadialGradient(px+CELL*0.5,py+CELL*0.6,2,px+CELL*0.5,py+CELL*0.6,CELL*0.8); rg.addColorStop(0,'rgba(60,120,200,0)'); rg.addColorStop(1,'rgba(40,80,160,.12)'); x.fillStyle=rg; x.fillRect(px,py,CELL,CELL);
   // finom repedéshálózat: cellánként 1–2 vékony, elágazó vonal
-  x.strokeStyle='rgba(255,255,255,.55)'; x.lineWidth=1; const n=1+Math.floor(rnd()*2);
+  x.strokeStyle='rgba(220,240,255,.28)'; x.lineWidth=1; const n=rnd()<0.6?1:0;
   for(let k=0;k<n;k++){ let cx=px+6+rnd()*(CELL-12), cy=py+6+rnd()*(CELL-12); let a=rnd()*Math.PI*2; x.beginPath(); x.moveTo(cx,cy); for(let i=0;i<4;i++){ const len=5+rnd()*8; a+=(rnd()-0.5)*1.4; cx=Math.max(px+2,Math.min(px+CELL-2,cx+Math.cos(a)*len)); cy=Math.max(py+2,Math.min(py+CELL-2,cy+Math.sin(a)*len)); x.lineTo(cx,cy); } x.stroke(); if(rnd()<0.5){ x.beginPath(); x.moveTo(cx,cy); x.lineTo(cx+Math.cos(a+1.2)*5,cy+Math.sin(a+1.2)*5); x.stroke(); } }
-  x.strokeStyle='rgba(120,170,230,.35)'; x.beginPath(); x.moveTo(px+4+rnd()*8,py+CELL-4); x.lineTo(px+12+rnd()*12,py+8+rnd()*10); x.stroke();
+  x.strokeStyle='rgba(120,170,230,.18)'; x.beginPath(); x.moveTo(px+4+rnd()*8,py+CELL-4); x.lineTo(px+12+rnd()*12,py+8+rnd()*10); x.stroke();
   // csillanás
-  x.fillStyle='rgba(255,255,255,.75)'; const sx=px+8+rnd()*20, sy=py+8+rnd()*20; x.beginPath(); x.moveTo(sx-4,sy); x.lineTo(sx,sy-1.2); x.lineTo(sx+4,sy); x.lineTo(sx,sy+1.2); x.closePath(); x.fill(); x.beginPath(); x.moveTo(sx,sy-4); x.lineTo(sx+1.2,sy); x.lineTo(sx,sy+4); x.lineTo(sx-1.2,sy); x.closePath(); x.fill();
+  x.fillStyle='rgba(255,255,255,.45)'; const sx=px+8+rnd()*20, sy=py+8+rnd()*20; if(rnd()<0.5){ x.restore(); return drawIceRim(x,px,py,ice,c,r); } x.beginPath(); x.moveTo(sx-4,sy); x.lineTo(sx,sy-1.2); x.lineTo(sx+4,sy); x.lineTo(sx,sy+1.2); x.closePath(); x.fill(); x.beginPath(); x.moveTo(sx,sy-4); x.lineTo(sx+1.2,sy); x.lineTo(sx,sy+4); x.lineTo(sx-1.2,sy); x.closePath(); x.fill();
   // perem csak a jég szélén: világos felső/bal él, sötét alsó/jobb él (vastag lap hatás)
-  x.lineWidth=2;
-  if(!ice(c,r-1)){ x.strokeStyle='rgba(255,255,255,.8)'; x.beginPath(); x.moveTo(px,py+1); x.lineTo(px+CELL,py+1); x.stroke(); }
-  if(!ice(c-1,r)){ x.strokeStyle='rgba(255,255,255,.6)'; x.beginPath(); x.moveTo(px+1,py); x.lineTo(px+1,py+CELL); x.stroke(); }
-  if(!ice(c,r+1)){ x.strokeStyle='rgba(30,60,120,.55)'; x.beginPath(); x.moveTo(px,py+CELL-1); x.lineTo(px+CELL,py+CELL-1); x.stroke(); x.strokeStyle='rgba(180,220,255,.35)'; x.beginPath(); x.moveTo(px,py+CELL-3); x.lineTo(px+CELL,py+CELL-3); x.stroke(); }
-  if(!ice(c+1,r)){ x.strokeStyle='rgba(30,60,120,.45)'; x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); }
-  x.restore();
+  x.restore(); drawIceRim(x,px,py,ice,c,r);
 }
+function drawIceRim(x,px,py,ice,c,r){ x.save(); x.lineWidth=1.5;
+  if(!ice(c,r-1)){ x.strokeStyle='rgba(200,230,255,.45)'; x.beginPath(); x.moveTo(px,py+1); x.lineTo(px+CELL,py+1); x.stroke(); }
+  if(!ice(c-1,r)){ x.strokeStyle='rgba(200,230,255,.35)'; x.beginPath(); x.moveTo(px+1,py); x.lineTo(px+1,py+CELL); x.stroke(); }
+  if(!ice(c,r+1)){ x.strokeStyle='rgba(120,170,230,.35)'; x.beginPath(); x.moveTo(px,py+CELL-1); x.lineTo(px+CELL,py+CELL-1); x.stroke(); }
+  if(!ice(c+1,r)){ x.strokeStyle='rgba(120,170,230,.3)'; x.beginPath(); x.moveTo(px+CELL-1,py); x.lineTo(px+CELL-1,py+CELL); x.stroke(); }
+  x.restore(); }
 // Törékeny padló: repedezett kőlap, a repedések sötét rések; rálépve narancsosan izzik és remeg, aztán lyuk marad
 function drawFragile(x,px,py,c,r,v,t){
   let seed=(c*2654435761^r*40503)>>>0; const rnd=()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; };
@@ -1486,15 +1487,15 @@ function drawFragile(x,px,py,c,r,v,t){
     x.strokeStyle='rgba(120,140,200,.35)'; x.lineWidth=1; x.beginPath(); for(let k=0;k<7;k++){ const a=k/7*Math.PI*2; const rr=15+rnd()*5; x.lineTo(px+CELL/2+Math.cos(a)*rr,py+CELL/2+Math.sin(a)*rr); } x.closePath(); x.stroke(); return; }
   const live=v>=0, k=live?1-v/FRAG_T:0; x.save(); if(live&&k>0.4){ x.translate((rnd()-.5)*k*3,(rnd()-.5)*k*3); seed=(c*2654435761^r*40503)>>>0; }
   // kőlap
-  const g=x.createLinearGradient(px,py,px,py+CELL); g.addColorStop(0,'#5a5668'); g.addColorStop(1,'#3e3a4c'); x.fillStyle=g; x.fillRect(px+1,py+1,CELL-2,CELL-2);
-  x.strokeStyle='rgba(255,255,255,.18)'; x.lineWidth=1; x.strokeRect(px+1.5,py+1.5,CELL-3,CELL-3);
+  const g=x.createLinearGradient(px,py,px,py+CELL); g.addColorStop(0,'#343a52'); g.addColorStop(1,'#232838'); x.fillStyle=g; x.fillRect(px+1,py+1,CELL-2,CELL-2);
+  x.strokeStyle='rgba(160,180,230,.14)'; x.lineWidth=1; x.strokeRect(px+1.5,py+1.5,CELL-3,CELL-3);
   // repedések: egy középpontból 3–4 cikcakk ág a szélek felé, sötét rés + világos él
   const cx=px+14+rnd()*12, cy=py+14+rnd()*12; const nb=3+Math.floor(rnd()*2);
   for(let b=0;b<nb;b++){ let a=b/nb*Math.PI*2+rnd()*0.8, xx=cx, yy=cy; const pts=[[xx,yy]]; for(let i=0;i<4;i++){ a+=(rnd()-.5)*0.9; xx+=Math.cos(a)*(5+rnd()*5); yy+=Math.sin(a)*(5+rnd()*5); xx=Math.max(px+2,Math.min(px+CELL-2,xx)); yy=Math.max(py+2,Math.min(py+CELL-2,yy)); pts.push([xx,yy]); }
-    x.lineCap='round'; x.strokeStyle=live?`rgba(255,${Math.floor(140-k*100)},60,${0.5+k*0.5})`:'rgba(10,8,16,.9)'; x.lineWidth=live?2.2+k*1.5:2.2; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])); x.stroke();
-    if(!live){ x.strokeStyle='rgba(255,255,255,.22)'; x.lineWidth=0.8; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p[0]+1,p[1]+1):x.moveTo(p[0]+1,p[1]+1)); x.stroke(); } }
+    x.lineCap='round'; x.strokeStyle=live?`rgba(255,${Math.floor(140-k*100)},60,${0.5+k*0.5})`:'rgba(6,8,16,.85)'; x.lineWidth=live?2.2+k*1.5:2; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])); x.stroke();
+    if(!live){ x.strokeStyle='rgba(180,200,240,.16)'; x.lineWidth=0.8; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p[0]+1,p[1]+1):x.moveTo(p[0]+1,p[1]+1)); x.stroke(); } }
   // pár apró kavics/törmelék
-  x.fillStyle='rgba(0,0,0,.35)'; for(let i=0;i<3;i++){ x.beginPath(); x.arc(px+4+rnd()*32,py+4+rnd()*32,1+rnd()*1.2,0,7); x.fill(); }
+  x.fillStyle='rgba(0,0,0,.3)'; for(let i=0;i<2;i++){ x.beginPath(); x.arc(px+4+rnd()*32,py+4+rnd()*32,1+rnd()*1.2,0,7); x.fill(); }
   if(live){ x.fillStyle=`rgba(255,120,60,${0.08+k*0.25})`; x.fillRect(px+1,py+1,CELL-2,CELL-2); x.save(); x.shadowColor='#ff8040'; x.shadowBlur=10*k; x.strokeStyle=`rgba(255,160,80,${0.3+k*0.6})`; x.lineWidth=1.5; x.strokeRect(px+2,py+2,CELL-4,CELL-4); x.restore(); }
   x.restore();
 }
