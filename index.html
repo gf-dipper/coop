@@ -2326,7 +2326,7 @@ function edPairLines(focus){ // a fókuszban lévő karakterhez tartozó összek
   const out=[]; for(const [a,b,col] of PAIRLINKS){ if(focus&&focus!==a&&focus!==b) continue; const A=cells[a]||[],B=cells[b]||[]; if(a===b){ for(let i=0;i<A.length;i++) out.push([A[i],A[(i+1)%A.length],col]); continue; } for(const p of A) for(const q of B) out.push([p,q,col]); }
   return out;
 }
-const MOVTOOLS=[['p','Őrjárat','kattints a pontokra (ferde is lehet), Enter vagy dupla kattintás: kész','#ff4d5e'],['l','Lézer','kattints a középpontra','#ff8a9a'],['t2','Löveg','kattints a cellára','#8a9ac8'],['c2','Üldöző','kattints a kiindulópontra – hatótávon belül üldöz, utána hazamegy','#b05cff']];
+const MOVTOOLS=[['p','Őrjárat','kattints a pontokra (ferde is lehet), Enter vagy dupla kattintás: kész','#ff4d5e'],['l2','Lézer','kattints a középpontra','#ff8a9a'],['t2','Löveg','kattints a cellára','#8a9ac8'],['c2','Üldöző','kattints a kiindulópontra – hatótávon belül üldöz, utána hazamegy','#b05cff']];
 const MOVNAME={p:'Őrjárat',l:'Lézer',t:'Löveg',c:'Üldöző'};
 function edDefs(){ return levelDefs(); }
 function edSaveDrafts(){ try{ localStorage.setItem('kotelek_editor',JSON.stringify(levelDefs())); localStorage.setItem('kotelek_use_drafts',EDITOR.useDrafts?'1':'0'); }catch(e){} }
@@ -2386,7 +2386,7 @@ function edDown(ev){ if(!EDITOR.on||EDITOR.testing) return; const cell=edCell(ev
       if(t!=='sel') EDITOR.tool='sel'; edRenderPanels(); return; } }
   if(t==='sel'){ EDITOR.sel=-1; EDITOR.selPt=-1; edRenderPanels(); return; }
   if(t==='p'){ if(!EDITOR.draft){ EDITOR.draft={t:'p',path:[[c,r]],s:4,r:0.33}; } else { const last=EDITOR.draft.path[EDITOR.draft.path.length-1]; if(last[0]===c&&last[1]===r){ edFinishPath(); return; } EDITOR.draft.path.push([c,r]); } EDITOR.msg=''; edRenderPanels(); return; }
-  if(t==='l'){ if(EDITOR.grid[r][c]==='#'){ EDITOR.msg='A lézer középpontja nem lehet falban.'; edRenderPanels(); return; } EDITOR.mov.push({t:'l',c:[c,r],len:5,s:60,a0:0,arms:1}); EDITOR.sel=EDITOR.mov.length-1; EDITOR.selPt=-1; EDITOR.tool='sel'; edCommit(); edRenderPanels(); return; }
+  if(t==='l2'){ if(EDITOR.grid[r][c]==='#'){ EDITOR.msg='A lézer középpontja nem lehet falban.'; edRenderPanels(); return; } EDITOR.mov.push({t:'l',c:[c,r],len:5,s:60,a0:0,arms:1}); EDITOR.sel=EDITOR.mov.length-1; EDITOR.selPt=-1; EDITOR.tool='sel'; edCommit(); edRenderPanels(); return; }
   if(t==='t2'){ EDITOR.grid[r][c]='.'; EDITOR.mov.push({t:'t',c:[c,r],rate:1.5,s:230,ph:0}); EDITOR.sel=EDITOR.mov.length-1; EDITOR.selPt=-1; EDITOR.tool='sel'; edCommit(); edRenderPanels(); return; }
   if(t==='c2'){ if(EDITOR.grid[r][c]==='#') EDITOR.grid[r][c]='.'; EDITOR.mov.push({t:'c',c:[c,r],s:2.5,range:5}); EDITOR.sel=EDITOR.mov.length-1; EDITOR.selPt=-1; EDITOR.tool='sel'; edCommit(); edRenderPanels(); return; }
   if(ev.shiftKey){ EDITOR.rect=[c,r]; EDITOR.paintCh=t; return; }
