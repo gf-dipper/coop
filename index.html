@@ -158,6 +158,8 @@
 .edgn{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gc,#8a9ac8);margin:0 0 3px}
 .edgn .mut{text-transform:none;letter-spacing:0;font-weight:400}
 .edhb{float:right;display:flex;gap:4px}
+.coedcode{font-size:14px;margin:4px 0}.coedcode b{font-size:20px;letter-spacing:3px;color:var(--ok)}
+.edlv.locked{opacity:.55;border-style:dashed}.edlv.locked::after{content:attr(data-who);position:absolute;right:-2px;bottom:-4px;font-size:8px;background:#ff9a5a;color:#000;border-radius:6px;padding:0 3px;line-height:11px}.edlv{position:relative}
 .edpair{display:flex;align-items:center;flex-wrap:wrap;gap:3px;width:100%;padding:3px 4px;margin:1px 0;border-radius:6px;border:1px solid color-mix(in srgb,var(--pc) 35%,transparent);background:color-mix(in srgb,var(--pc) 7%,transparent)}
 .edpair.warn{border-color:#ff5c6c88;background:#ff5c6c12}
 .edarr{font-size:10px;color:var(--pc);opacity:.9;padding:0 2px;white-space:nowrap}
@@ -361,6 +363,18 @@
       <div class="mut small">Minden változás magától mentődik ebbe a böngészőbe. A fájlba mentés a végleges csomag: a letöltött <b>palyak.json</b>-t tedd az index.html mellé (GitHubra is), és a játék onnan tölti be.</div>
       <div class="edbtns"><button id="edExport" class="pri">💾 Mentés fájlba (palyak.json)</button><button id="edImportBtn">📂 Betöltés fájlból</button><input type="file" id="edImport" accept=".json,application/json" style="display:none"><button id="edSample">Mintapályák betöltése</button></div>
       <label class="edchk"><input type="checkbox" id="edUse" checked> A játék ezeket a pályákat használja ebben a böngészőben (a vendégek is ezeket kapják, ha te vagy a gazda)</label>
+      <div class="edh">👥 Közös szerkesztés</div>
+      <div id="coedOff">
+        <div class="mut small">Hívj be másokat: ők a saját gépükön, ugyanebben a szerkesztőben dolgoznak, mindenki más-más pályán. Minden változás azonnal átmegy mindenkihez, a gazdánál gyűlik össze.</div>
+        <div class="edbtns"><button id="coedHost" class="pri">🔗 Szoba nyitása</button></div>
+        <div class="row2"><label>Kód <input id="coedCode" maxlength="4" placeholder="pl. KQZB" style="text-transform:uppercase"></label><button id="coedJoin" style="align-self:end">Csatlakozás</button></div>
+        <div id="coedMsg" class="mut small"></div>
+      </div>
+      <div id="coedOn" style="display:none">
+        <div class="coedcode">Kód: <b id="coedShow"></b> <span class="mut small">(ezt add meg nekik)</span></div>
+        <div id="coedPeople" class="mut small"></div>
+        <div class="edbtns"><button id="coedLeave" class="danger">Kilépés a szobából</button></div>
+      </div>
     </div>
   </div>
 <script>
@@ -2441,16 +2455,17 @@ function edGridFromDef(def){ const lines=String(def.map).replace(/^\n/,'').split
 function edFloorStr(){ const f=EDITOR.floor; if(!f||!f.some(r=>r.some(ch=>ch!=='.'))) return ''; return f.map(r=>r.join('')).join('\n'); }
 function edDefFromGrid(){ const def=LEVELS[EDITOR.L]; def.map=EDITOR.grid.map(r=>r.join('')).join('\n'); def.floor=edFloorStr(); def.mov=EDITOR.mov.map(m=>JSON.parse(JSON.stringify(m))); return def; }
 function edOpen(L){
+  if(COED.on&&L!==undefined&&L!==EDITOR.L){ const who=coedLockName(L); if(who){ EDITOR.msg=`A(z) ${L+1}. pályát most ${who} szerkeszti – válassz másikat.`; edRenderPanels(); return; } }
   EDITOR.on=true; EDITOR.testing=false; EDITOR.L=L===undefined?EDITOR.L:L; EDITOR.sel=-1; EDITOR.selPt=-1; EDITOR.draft=null; EDITOR.drag=null; PAUSED=false; RACE.on=false; S2=null; cleanupNet(); NET.mode='local';
   const def=LEVELS[EDITOR.L]; if(def.world===undefined||(levelIsEmpty(def)&&!def._wset)){ def.world=edDefaultWorld(EDITOR.L); def._wset=true; } EDITOR.grid=edGridFromDef(def); EDITOR.floor=EDITOR.grid.floor; EDITOR.mov=(def.mov||[]).map(m=>JSON.parse(JSON.stringify(m))); EDITOR.undo=[]; EDITOR.rect=null; try{ EDITOR.showPairs=localStorage.getItem('kotelek_ed_pairs')==='1'; }catch(e){} edPushUndo();
-  hideAll(); document.body.classList.add('editing'); $('editor').style.display='flex'; edRefreshPreview(); edRenderPanels(); fit();
+  hideAll(); document.body.classList.add('editing'); $('editor').style.display='flex'; edRefreshPreview(); edRenderPanels(); fit(); coedAnnounceOpen();
 }
-function edClose(){ EDITOR.on=false; EDITOR.testing=false; document.body.classList.remove('editing'); $('editor').style.display='none'; S=null; show('ovMenu'); fit(); }
+function edClose(){ if(COED.on&&!confirm(COED.host?'Kilépsz? Ezzel a közös szerkesztő szoba is bezárul.':'Kilépsz a szerkesztőből? A közös szerkesztésből is kilépsz.')) return; coedStop(); EDITOR.on=false; EDITOR.testing=false; document.body.classList.remove('editing'); $('editor').style.display='none'; S=null; show('ovMenu'); fit(); }
 function edRefreshPreview(){ edDefFromGrid(); try{ STATICS[EDITOR.L]=parseLevel(LEVELS[EDITOR.L]); }catch(e){ return; } FLOOR.L=-1; const keepTm=S&&S.L===EDITOR.L?S.tm:0; S=null; newState(EDITOR.L); S.tm=keepTm; S.tot=0; S.totd=0; }
 function edSnapshot(){ const d=LEVELS[EDITOR.L]; return JSON.stringify({g:EDITOR.grid,f:EDITOR.floor,m:EDITOR.mov,n:d.name,t:d.tip,p:d.par,r:d.rope,dk:!!d.dark,w:d.world||0,dr:d.drift||null}); }
 function edPushUndo(){ if(!EDITOR.undo) EDITOR.undo=[]; const snap=edSnapshot(); if(EDITOR.undo[EDITOR.undo.length-1]===snap) return; EDITOR.undo.push(snap); if(EDITOR.undo.length>60) EDITOR.undo.shift(); }
 function edUndo(){ if(!EDITOR.undo||EDITOR.undo.length<2) return; EDITOR.undo.pop(); const d=JSON.parse(EDITOR.undo[EDITOR.undo.length-1]); EDITOR.grid=d.g; EDITOR.floor=d.f||EDITOR.grid.map(r=>r.map(()=>'.')); EDITOR.mov=d.m; const def=LEVELS[EDITOR.L]; def.name=d.n; def.tip=d.t; def.par=d.p; def.rope=d.r; def.dark=!!d.dk; def.world=d.w||0; def.drift=d.dr||null; EDITOR.sel=-1; EDITOR.selPt=-1; edDefFromGrid(); edSaveDrafts(); edRefreshPreview(); edRenderPanels(); }
-function edCommit(){ edDefFromGrid(); EDITOR.dirty=true; edSaveDrafts(); edRefreshPreview(); edRenderList(); edPushUndo(); edRefreshCounts(); }
+function edCommit(){ edDefFromGrid(); EDITOR.dirty=true; edSaveDrafts(); edRefreshPreview(); edRenderList(); edPushUndo(); edRefreshCounts(); coedSendLevel(); }
 function edRefreshCounts(){ if(EDITOR.on&&!EDITOR.testing) edRenderLeft(); }
 function edPos(ev){ const r=cv.getBoundingClientRect(); return [(ev.clientX-r.left)*W/r.width,(ev.clientY-r.top)*H/r.height]; }
 function edCell(ev){ const [x,y]=edPos(ev); const c=Math.floor(x/CELL), rr=Math.floor(y/CELL); if(c<0||rr<0||c>=COLS||rr>=ROWS) return null; return [c,rr]; }
@@ -2563,7 +2578,7 @@ function edCheck(){ // gyors ellenőrzés
     st.keys.forEach((k,i)=>{ if(!seen.has(k.join(','))) probs.push(`A(z) ${i+1}. kulcs nem érhető el.`); }); }
   return probs;
 }
-function edRenderList(){ const box=$('edList'); let h=''; LEVELS.forEach((lv,i)=>{ const empty=levelIsEmpty(lv); const wcls='w'+((lv.world!==undefined&&!empty)?worldOf(lv):edDefaultWorld(i)); h+=`<button class="edlv ${i===EDITOR.L?'sel':''} ${empty?'empty':''} ${wcls}" data-l="${i}" title="${esc(lv.name)} – ${WORLDS[(lv.world!==undefined&&!empty)?worldOf(lv):edDefaultWorld(i)].name}">${i+1}</button>`; }); box.innerHTML=h; box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ edFinishPath(); edOpen(+b.dataset.l); }); $('edCount').textContent=`${LEVELS.filter(l=>!levelIsEmpty(l)).length}/48 pálya kész`; }
+function edRenderList(){ const box=$('edList'); let h=''; LEVELS.forEach((lv,i)=>{ const empty=levelIsEmpty(lv); const wcls='w'+((lv.world!==undefined&&!empty)?worldOf(lv):edDefaultWorld(i)); const who=COED.on?coedLockName(i):null; h+=`<button class="edlv ${i===EDITOR.L?'sel':''} ${empty?'empty':''} ${wcls} ${who?'locked':''}" data-l="${i}" data-who="${who?esc(who.slice(0,6)):''}" title="${esc(lv.name)} – ${WORLDS[(lv.world!==undefined&&!empty)?worldOf(lv):edDefaultWorld(i)].name}${who?' – most '+esc(who)+' szerkeszti':''}">${i+1}</button>`; }); box.innerHTML=h; box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ edFinishPath(); edOpen(+b.dataset.l); }); $('edCount').textContent=`${LEVELS.filter(l=>!levelIsEmpty(l)).length}/48 pálya kész`; }
 function edRenderLeft(){
   // paletta – csoportosítva
   let h='<div class="edh">Elemek <span class="mut">(bal gomb: lerak · húzva fest · Shift+húzás: téglalap · jobb gomb: töröl · Ctrl+Z: vissza)</span></div>';
@@ -2626,11 +2641,67 @@ function edRenderPanels(){
   edRenderList();
   $('edUse').checked=EDITOR.useDrafts;
 }
+// ===================== KÖZÖS SZERKESZTÉS =====================
+// Külön PeerJS-kapcsolat a játéktól. A gazda a forrás: minden pályaváltozás hozzá megy, ő küldi tovább.
+// Egy pályát egyszerre csak egy ember szerkeszt (zár), hogy ne írják felül egymást.
+const COED={on:false,host:false,peer:null,conns:[],code:'',locks:{},names:{},me:'',sendT:null};
+function coedName(){ return myName()||('Szerkesztő'+Math.floor(Math.random()*90+10)); }
+function coedPeerId(code){ return 'kotelek-ed-'+code.toUpperCase(); }
+function coedUI(){ $('coedOff').style.display=COED.on?'none':''; $('coedOn').style.display=COED.on?'':'none'; if(COED.on){ $('coedShow').textContent=COED.code; const self=COED.names[COED.me]||COED.me; const names=Object.keys(COED.names).filter(k=>k!==COED.me).map(k=>COED.names[k]); $('coedPeople').innerHTML=`<b>${COED.host?'Te vagy a gazda':'Vendég vagy'}</b> – itt ${names.length+1} fő: ${esc(self)} (te)${names.length?', '+names.map(esc).join(', '):''}. ${COED.host?'A közös csomagot te mented fájlba.':'A pályák a gazdánál gyűlnek, ő menti fájlba.'}`; } }
+function coedLockOf(L){ for(const id in COED.locks) if(COED.locks[id]===L) return id; return null; }
+function coedLockName(L){ const id=coedLockOf(L); if(id===null||id===COED.me) return null; return COED.names[id]||id; }
+function coedApplyLevel(L,def){ if(L<0||L>=LEVELS.length) return; const defs=levelDefs(); defs[L]=def; setLevels(defs); edSaveDrafts(); if(EDITOR.on&&!EDITOR.testing){ if(EDITOR.L===L){ edOpen(L); } else { edRenderList(); } } }
+function coedSendLevel(){ if(!COED.on) return; clearTimeout(COED.sendT); COED.sendT=setTimeout(()=>{ const msg={t:'lv',L:EDITOR.L,def:levelDefs()[EDITOR.L],from:COED.me}; if(COED.host) coedBroadcast(msg,null); else coedSend(msg); },120); }
+function coedSendAll(){ if(!COED.on) return; const msg={t:'all',defs:levelDefs(),locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me}),host:COED.me}; if(COED.host) coedBroadcast(msg,null); else { for(let L=0;L<LEVELS.length;L++) coedSend({t:'lv',L,def:levelDefs()[L],from:COED.me}); } }
+function coedSend(msg){ const c=COED.conns[0]; if(c&&c.open){ try{ c.send(msg); }catch(e){} } }
+function coedBroadcast(msg,except){ for(const c of COED.conns){ if(c!==except&&c.open){ try{ c.send(msg); }catch(e){} } } }
+function coedAnnounceOpen(){ if(!COED.on) return; if(COED.host){ COED.locks[COED.me]=EDITOR.L; coedBroadcast({t:'locks',locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me})},null); edRenderList(); } else coedSend({t:'open',L:EDITOR.L}); }
+function coedHostStart(){
+  coedStop(true); COED.on=true; COED.host=true; COED.code=makeCode(); COED.me=coedName(); COED.locks={[COED.me]:EDITOR.L}; COED.names={};
+  $('coedMsg').textContent='Szoba nyitása…';
+  const peer=newPeer(coedPeerId(COED.code)); COED.peer=peer;
+  peer.on('open',()=>{ $('coedMsg').textContent=''; coedUI(); });
+  peer.on('error',e=>{ if(e.type==='unavailable-id'){ coedHostStart(); return; } $('coedMsg').innerHTML='<span class="err">Hiba: '+e.type+'</span>'; coedStop(); });
+  peer.on('connection',conn=>{
+    COED.conns.push(conn); const id=conn.peer;
+    conn.on('open',()=>{ try{ conn.send({t:'all',defs:levelDefs(),locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me}),host:COED.me}); }catch(e){} });
+    conn.on('data',d=>{
+      if(d.t==='hello'){ COED.names[id]=(String(d.n||'').trim().slice(0,14))||('Vendég '+COED.conns.length); coedUI(); coedBroadcast({t:'locks',locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me})},null); edRenderList(); }
+      else if(d.t==='open'){ const L=d.L|0; const owner=coedLockOf(L); if(owner!==null&&owner!==id){ try{ conn.send({t:'busy',L,who:COED.names[owner]||owner}); }catch(e){} } else { COED.locks[id]=L; } coedBroadcast({t:'locks',locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me})},null); edRenderList(); }
+      else if(d.t==='lv'){ const L=d.L|0; if(COED.locks[id]!==L&&coedLockOf(L)!==null&&coedLockOf(L)!==id) return; coedApplyLevel(L,d.def); coedBroadcast({t:'lv',L,def:d.def,from:COED.names[id]||id},conn); }
+    });
+    conn.on('close',()=>{ const i=COED.conns.indexOf(conn); if(i>=0) COED.conns.splice(i,1); delete COED.locks[id]; delete COED.names[id]; coedUI(); coedBroadcast({t:'locks',locks:COED.locks,names:Object.assign({},COED.names,{[COED.me]:COED.me})},null); edRenderList(); });
+  });
+  coedUI();
+}
+function coedJoin(code){
+  code=String(code||'').trim().toUpperCase(); if(code.length!==4){ $('coedMsg').innerHTML='<span class="err">4 betűs kód kell.</span>'; return; }
+  if(!confirm('Csatlakozol a közös szerkesztéshez? A gazda pályái jönnek ide, a mostani piszkozataidat felülírják ebben a böngészőben. (Előtte mentheted fájlba.)')) return;
+  coedStop(true); COED.on=true; COED.host=false; COED.code=code; COED.me=coedName(); COED.locks={}; COED.names={};
+  $('coedMsg').textContent='Kapcsolódás…';
+  const peer=newPeer(undefined); COED.peer=peer;
+  peer.on('open',()=>{
+    const conn=peer.connect(coedPeerId(code),{reliable:true}); COED.conns=[conn];
+    const to=setTimeout(()=>{ if(!conn.open){ $('coedMsg').innerHTML='<span class="err">Nem találom a szobát.</span> Jó a kód? Nyitva van még a gazdánál?'; coedStop(); } },8000);
+    conn.on('open',()=>{ clearTimeout(to); COED.me=peer.id; conn.send({t:'hello',n:coedName()}); });
+    conn.on('data',d=>{
+      if(d.t==='all'){ setLevels(d.defs); edSaveDrafts(); COED.locks=d.locks||{}; COED.names=d.names||{}; $('coedMsg').textContent=''; coedUI(); if(EDITOR.on){ let L=EDITOR.L; if(coedLockName(L)){ L=LEVELS.findIndex((x,i)=>!coedLockName(i)); if(L<0) L=EDITOR.L; } edOpen(L); } }
+      else if(d.t==='locks'){ COED.locks=d.locks||{}; COED.names=d.names||{}; coedUI(); if(EDITOR.on) edRenderList(); }
+      else if(d.t==='lv'){ coedApplyLevel(d.L|0,d.def); }
+      else if(d.t==='busy'){ EDITOR.msg=`A(z) ${(d.L|0)+1}. pályát most ${d.who} szerkeszti – válassz másikat.`; const L=LEVELS.findIndex((x,i)=>!coedLockName(i)); if(L>=0&&L!==EDITOR.L) edOpen(L); else edRenderPanels(); }
+    });
+    conn.on('close',()=>{ coedStop(); $('coedMsg').innerHTML='<span class="err">A gazda bezárta a szobát.</span> A pályák nálad maradtak ebben a böngészőben.'; });
+  });
+  peer.on('error',e=>{ $('coedMsg').innerHTML='<span class="err">Hiba: '+e.type+'</span>'; coedStop(); });
+  coedUI();
+}
+function coedStop(silent){ for(const c of COED.conns){ try{ c.close(); }catch(e){} } try{ if(COED.peer) COED.peer.destroy(); }catch(e){} COED.on=false; COED.host=false; COED.conns=[]; COED.peer=null; COED.locks={}; COED.names={}; if(!silent){ coedUI(); if(EDITOR.on) edRenderList(); } }
+$('coedHost').onclick=coedHostStart; $('coedJoin').onclick=()=>coedJoin($('coedCode').value); $('coedLeave').onclick=()=>{ if(COED.host&&COED.conns.length&&!confirm('Bezárod a szobát? A többiek kapcsolata megszakad (a pályák nálad maradnak).')) return; coedStop(); };
 function edTest(){ edFinishPath(); const p=edCheck().filter(x=>x.startsWith('Hiányzik')||x.startsWith('A célhoz')); if(p.length){ $('edCheckOut').innerHTML='<ul class="edprob">'+p.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>'; return; }
   edCommit(); EDITOR.testing=true; document.body.classList.add('edtesting'); OPT.inf=true; NET.mode='local'; S=null; newState(EDITOR.L); S.tot=0; S.totd=0; hideAll(); fit(); }
 function edBackFromTest(){ PAUSED=false; EDITOR.testing=false; document.body.classList.remove('edtesting'); OPT.inf=$('chkInf').checked; hideAll(); edRefreshPreview(); edRenderPanels(); fit(); }
 function edExport(){ edFinishPath(); edCommit(); const blob=new Blob([JSON.stringify(levelDefs(),null,1)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='palyak.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
-function edImport(file){ const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!Array.isArray(d)) throw new Error('nem pályalista'); const defs=levelDefs(); const n=Math.min(48,d.length); for(let i=0;i<n;i++) defs[i]=d[i]; setLevels(defs); edSaveDrafts(); edOpen(EDITOR.L); EDITOR.msg=`${n} pálya betöltve a fájlból.`; edRenderPanels(); }catch(e){ EDITOR.msg='Nem sikerült betölteni: '+e.message; edRenderPanels(); } }; rd.readAsText(file); }
+function edImport(file){ const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!Array.isArray(d)) throw new Error('nem pályalista'); const defs=levelDefs(); const n=Math.min(48,d.length); for(let i=0;i<n;i++) defs[i]=d[i]; setLevels(defs); edSaveDrafts(); coedSendAll(); edOpen(EDITOR.L); EDITOR.msg=`${n} pálya betöltve a fájlból.`; edRenderPanels(); }catch(e){ EDITOR.msg='Nem sikerült betölteni: '+e.message; edRenderPanels(); } }; rd.readAsText(file); }
 const LEVELS_EMPTY=LEVELS[0].map;
 // indítás: palyak.json (véglegesített), aztán a böngészőben mentett piszkozat, ha be van kapcsolva
 (async function(){ try{ const r=await fetch('palyak.json',{cache:'no-store'}); if(r.ok){ const d=await r.json(); if(setLevels(d)) LEVELS_FILE=true; } }catch(e){}
