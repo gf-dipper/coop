@@ -10,9 +10,18 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
   #wrap{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
-  #stage{position:relative;width:960px;height:600px;transform-origin:center center}
+  #stage{position:relative;width:960px;height:672px;transform-origin:center center}
+  #hudbar{height:30px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;background:rgba(8,11,20,.82);border:1px solid rgba(120,150,255,.18);border-radius:9px;font-size:14px;color:var(--text);opacity:0;transition:opacity .2s;white-space:nowrap;overflow:hidden}
+  #hudbar.on{opacity:1}
+  #hudL b{font-size:15px;margin-left:8px} #hudL{color:var(--mut);font-weight:700;font-size:12px}
+  #hudC{flex:1;text-align:center;color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis}
+  #hudR{font-weight:700;font-size:14px}
+  #tipbar{height:30px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 14px;font-size:13px;color:var(--mut);opacity:0;transition:opacity .25s;white-space:nowrap;overflow:hidden;border-radius:9px}
+  #tipbar.on{opacity:1}
+  #tipbar.new{background:rgba(8,11,20,.9);border:1px solid rgba(255,213,74,.5);color:var(--text)}
+  #tipbar .nw{color:#ffd54a;font-weight:700;margin-right:4px}
   canvas{display:block;width:960px;height:600px;background:#0e1322;border-radius:12px;box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.6)}
-  .ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;border-radius:12px}
+  .ov{position:absolute;left:0;right:0;top:36px;height:600px;display:none;align-items:center;justify-content:center;border-radius:12px}
   .ov.show{display:flex}
   .box{background:rgba(20,26,43,.96);border:1px solid var(--line);border-radius:16px;padding:28px 32px;min-width:420px;max-width:880px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
   h1{margin:0 0 4px;font-size:44px;letter-spacing:2px}
@@ -149,8 +158,8 @@
   .lvgrid button.w1{border-color:#2e6b8f}.lvgrid button.w2{border-color:#7a5a2a}.lvgrid button.w3{border-color:#8f2e3c}.lvgrid button.w4{border-color:#5a2e8f}.lvgrid button.w5{border-color:#2e8f5a}
   .stars{color:#ffd54a;font-size:30px;letter-spacing:4px}
   .big{font-size:40px;font-weight:700;margin:6px 0}
-  .flash{position:absolute;inset:0;border-radius:12px;pointer-events:none;background:rgba(255,80,100,0);transition:background .08s}
-  #hint{position:absolute;left:0;right:0;bottom:-34px;text-align:center;color:var(--mut);font-size:13px}
+  .flash{position:absolute;left:0;right:0;top:36px;height:600px;border-radius:12px;pointer-events:none;background:rgba(255,80,100,0);transition:background .08s}
+  #hint{position:absolute;left:0;right:0;bottom:-30px;text-align:center;color:var(--mut);font-size:13px}
   .err{color:var(--bad)}
   .tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700}
   .tag.b{background:rgba(76,195,255,.18);color:var(--blue)} .tag.o{background:rgba(255,162,58,.18);color:var(--org)}
@@ -173,7 +182,9 @@
 <body>
 <div id="wrap">
 <div id="stage">
+  <div id="hudbar"><span id="hudL"></span><span id="hudC"></span><span id="hudR"></span></div>
   <canvas id="cv" width="960" height="600"></canvas>
+  <div id="tipbar"></div>
   <div class="flash" id="flash"></div>
 
   <!-- FŐMENÜ -->
@@ -1697,8 +1708,9 @@ function renderSplit(now){
   const pA=computePinfo(); for(let tm=0;tm<2;tm++){ const x0=tm*W/2+20; ctx.textAlign=tm===0?'left':'right'; ctx.fillStyle='#aab4d6'; ctx.font='13px system-ui'; ctx.fillText(pA[tm].map(q=>FACES[q.f|0][0]+' '+q.n).join('   '),tm===0?x0:x0+W/2-40,by+58); }
   if(RACE.ph!=='play') raceOverlay();
 }
+const HUDC={}; function hudSet(id,html){ if(HUDC[id]===html) return; HUDC[id]=html; $(id).innerHTML=html; }
 function raceOverlay(){ const me=myTeam(); ctx.textAlign='center';
-  if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); const sit=raceSituation(); if(sit){ ctx.save(); const pulse=1+0.04*Math.sin(performance.now()/120); ctx.translate(W/2,H/2-90); ctx.scale(pulse,pulse); ctx.font='bold 30px system-ui'; const tw=ctx.measureText(sit.txt).width+44; ctx.fillStyle='rgba(8,11,20,.9)'; rr(-tw/2,-26,tw,46,12); ctx.fill(); ctx.strokeStyle=sit.col; ctx.lineWidth=2; rr(-tw/2,-26,tw,46,12); ctx.stroke(); ctx.shadowColor=sit.col; ctx.shadowBlur=18; ctx.fillStyle=sit.col; ctx.fillText(sit.txt,0,9); ctx.restore(); } }
+  if(RACE.ph==='count'){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); const n=Math.ceil(RACE.t-0.2); ctx.save(); ctx.shadowColor='#fff'; ctx.shadowBlur=24; ctx.fillStyle='#fff'; ctx.font='bold 96px system-ui'; ctx.fillText(n>0?String(n):'RAJT!',W/2,H/2+30); ctx.restore(); ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; { const lv=LEVELS[S.L]; let yy=H/2+110; if(lv.tip){ ctx.fillStyle='#e8ecf7'; ctx.font='16px system-ui'; ctx.fillText(lv.tip,W/2,yy); yy+=24; } const els=levelElems(S.st); if(els.length){ ctx.fillStyle='#8b94b3'; ctx.font='13px system-ui'; ctx.fillText('Elemek: '+els.map(k=>ELEM_TIPS[k][0]).join(' · '),W/2,yy); } } ctx.fillStyle='#8b94b3'; ctx.font='18px system-ui'; ctx.fillText(`${LEVELS[S.L].name} – aki előbb beér, pontot kap`,W/2,H/2+80); const sit=raceSituation(); if(sit){ ctx.save(); const pulse=1+0.04*Math.sin(performance.now()/120); ctx.translate(W/2,H/2-90); ctx.scale(pulse,pulse); ctx.font='bold 30px system-ui'; const tw=ctx.measureText(sit.txt).width+44; ctx.fillStyle='rgba(8,11,20,.9)'; rr(-tw/2,-26,tw,46,12); ctx.fill(); ctx.strokeStyle=sit.col; ctx.lineWidth=2; rr(-tw/2,-26,tw,46,12); ctx.stroke(); ctx.shadowColor=sit.col; ctx.shadowBlur=18; ctx.fillStyle=sit.col; ctx.fillText(sit.txt,0,9); ctx.restore(); } }
   if(RACE.ph==='point'){ const win=RACE.winner===me&&!NET.spectator; ctx.fillStyle='rgba(11,15,26,.7)'; ctx.fillRect(0,0,W,H); ctx.save(); ctx.shadowColor=win?'#5be28a':'#ff5c6c'; ctx.shadowBlur=24; ctx.fillStyle=win?'#5be28a':'#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText(NET.spectator?`${TEAMNAME[RACE.winner]} ért be előbb!`:win?'Pont nektek!':`${TEAMNAME[RACE.winner]} ért be előbb`,W/2,H/2-30); ctx.restore(); ctx.fillStyle='#e8ecf7'; ctx.font='bold 34px system-ui'; ctx.fillText(`${RACE.score[0]} : ${RACE.score[1]}`,W/2,H/2+20); ctx.fillStyle='#8b94b3'; ctx.font='16px system-ui'; ctx.fillText(`Idő: ${fmt(RACE.wonBy)}${RACE.idx+1<RACE.list.length&&!(RACE.target&&Math.max(...RACE.score)>=RACE.target)?'   ·   következő: '+LEVELS[RACE.list[RACE.idx+1]||0].name:''}`,W/2,H/2+54); const [a,b]=RACE.score; const tgt=RACE.target||Math.floor(RACE.list.length/2)+1; const over=Math.max(a,b)>=tgt; if(over){ ctx.fillStyle='#ffd54a'; ctx.font='bold 20px system-ui'; ctx.fillText(`🏆 ${TEAMNAME[a>b?0:1]} nyerte a meccset!`,W/2,H/2+92); } else if(a===b&&RACE.idx>0){ ctx.fillStyle='#e8ecf7'; ctx.font='bold 18px system-ui'; ctx.fillText('Egyenlítés!',W/2,H/2+92); } } }
 function renderMenu(t){
   const bg=ctx.createRadialGradient(W/2,H*0.4,60,W/2,H/2,760); bg.addColorStop(0,'#17203a'); bg.addColorStop(1,'#06080f'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
@@ -1719,7 +1731,7 @@ function renderMenu(t){
 }
 function render(now){
   const t=now/1000;
-  if(!S){ renderMenu(t); renderPreview(t); return; }
+  if(!S){ $('hudbar').classList.remove('on'); $('tipbar').classList.remove('on'); renderMenu(t); renderPreview(t); return; }
   const st=S.st, g=st.grid;
   if(FLOOR.L!==S.L) buildFloor(S.L);
   if(VIEW){ ctx.save(); ctx.beginPath(); ctx.rect(VIEW.x,VIEW.y,W*VIEW.s,H*VIEW.s); ctx.clip(); ctx.translate(VIEW.x,VIEW.y); ctx.scale(VIEW.s,VIEW.s); }
@@ -1849,22 +1861,17 @@ function render(now){
   ctx.restore();
   if(VIEW){ if(S.ph==='fail'){ ctx.fillStyle='rgba(11,15,26,.5)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.fillStyle='#ff5c6c'; ctx.font='bold 44px system-ui'; ctx.fillText('Elölről!',W/2,H/2+14); } ctx.restore(); return; }
   if(S.ph==='fail'&&S.phT>0.55&&GFX.bloom){ ctx.save(); ctx.globalCompositeOperation='screen'; ctx.globalAlpha=0.35; const k=(S.phT-0.55)*12; ctx.drawImage(cv,k,0); ctx.drawImage(cv,-k,0); ctx.restore(); }
-  // HUD
-  const lv=LEVELS[S.L];
-  ctx.fillStyle='rgba(8,11,20,.82)'; rr(8,8,W-16,32,9); ctx.fill(); ctx.strokeStyle='rgba(120,150,255,.18)'; ctx.lineWidth=1; rr(8.5,8.5,W-17,31,9); ctx.stroke();
-  ctx.textAlign='left'; ctx.fillStyle='#8b94b3'; ctx.font='bold 12px system-ui'; const nl=`${S.L+1}/${LEVELS.length}`; ctx.fillText(nl,20,29); const nw=ctx.measureText(nl).width; ctx.fillStyle='#e8ecf7'; ctx.font='bold 15px system-ui'; ctx.fillText(lv.name,20+nw+10,29);
-  if(!RACE.on){ ctx.textAlign='center'; ctx.fillStyle='#8b94b3'; ctx.font='13px system-ui'; ctx.fillText(lv.tip,W/2,29); }
-  ctx.textAlign='right'; ctx.fillStyle='#e8ecf7'; ctx.font='bold 14px system-ui';
-  const gemsLeft=S.gems.filter(x=>!x).length+S.rg.filter(x=>!x).length;
-  if(RACE.on){ ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
-    // eredmény
-    const me=myTeam(); const parts=[[TEAMNAME[0].toUpperCase()+' '+RACE.score[0],TEAMCOL[0][0],'bold 15px system-ui'],['  :  ','#8b94b3','bold 15px system-ui'],[RACE.score[1]+' '+TEAMNAME[1].toUpperCase(),TEAMCOL[1][0],'bold 15px system-ui'],[`     ${RACE.target?RACE.target+' nyert pályáig  ·  ':''}${RACE.idx+1}. pálya   ·   ${NET.spectator?'nézed: '+TEAMNAME[me]+' (Tab: váltás)':'te: '+TEAMNAME[me]}`,'#8b94b3','13px system-ui']];
-    let tw=0; for(const q of parts){ ctx.font=q[2]; tw+=ctx.measureText(q[0]).width; } let xx=W/2-tw/2; ctx.textAlign='left'; for(const q of parts){ ctx.font=q[2]; ctx.fillStyle=q[1]; ctx.fillText(q[0],xx,29); xx+=ctx.measureText(q[0]).width; }
-  } else ctx.fillText(`${gemsLeft?'◆ '+gemsLeft+'   ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives}   ☠ ${S.deaths}   ⏱ ${fmt(S.lt)}${NET.mode==='online'?'   '+NET.ping+' ms':''}`,W-20,29);
+  // HUD – a pálya fölötti sávban (DOM), nem a pályán
+  const lv=LEVELS[S.L]; const gemsLeft=S.gems.filter(x=>!x).length+S.rg.filter(x=>!x).length;
+  { const L=`${S.L+1}/${LEVELS.length}<b>${esc(lv.name)}</b>`; let C='',R='';
+    if(RACE.on){ const me=myTeam(); C=`<span style="color:${TEAMCOL[0][0]};font-weight:700;font-size:15px">${esc(TEAMNAME[0].toUpperCase())} ${RACE.score[0]}</span> &nbsp;:&nbsp; <span style="color:${TEAMCOL[1][0]};font-weight:700;font-size:15px">${RACE.score[1]} ${esc(TEAMNAME[1].toUpperCase())}</span> &nbsp;&nbsp; ${RACE.target?RACE.target+' nyert pályáig · ':''}${RACE.idx+1}. pálya · ${NET.spectator?'nézed: '+esc(TEAMNAME[me])+' (Tab: váltás)':'te: '+esc(TEAMNAME[me])}`; R=`${gemsLeft?'◆ '+gemsLeft+' &nbsp; ':''}⏱ ${fmt(S.lt)}${NET.mode==='online'?' &nbsp; '+NET.ping+' ms':''}`; }
+    else { R=`${gemsLeft?'◆ '+gemsLeft+' &nbsp; ':''}${OPT.inf?'♥ ∞':'♥ '+S.lives} &nbsp; ☠ ${S.deaths} &nbsp; ⏱ ${fmt(S.lt)}${NET.mode==='online'?' &nbsp; '+NET.ping+' ms':''}`; }
+    hudSet('hudL',L); hudSet('hudC',C); hudSet('hudR',R); $('hudbar').classList.add('on');
+    // tippsáv a pálya alatt: új elem 7 mp-ig (sárga), különben a pálya tippje
+    const tb=$('tipbar'); let T='', nw=false; if(FX.banner&&S.ph==='play'){ nw=true; T=FX.banner.items.map(k=>`<span><span class="nw">ÚJ: ${esc(ELEM_TIPS[k][0])}</span>${esc(ELEM_TIPS[k][1])}</span>`).join(''); } else if(lv.tip) T=esc(lv.tip);
+    hudSet('tipbar',T); tb.classList.toggle('new',nw); tb.classList.toggle('on',!!T); }
   if(RACE.on&&S2&&RACE.ph==='play'){ const A=myTeam()===0?S:S2, B=myTeam()===0?S2:S; ctx.fillStyle='rgba(8,11,20,.75)'; rr(W/2-140,H-44,280,38,10); ctx.fill(); drawLeadBar(W/2-120,H-36,240,A,B); }
   if(RACE.on) raceOverlay();
-  // új elem tipp
-  if(FX.banner&&S.ph==='play'){ const a=Math.min(1,FX.banner.t/0.5,(7-FX.banner.t)/0.4); ctx.save(); ctx.globalAlpha=a; const items=FX.banner.items; const bw=Math.min(620,180+items.length*230), bx=W/2-bw/2, by=48; ctx.fillStyle='rgba(8,11,20,.9)'; rr(bx,by,bw,items.length>1?58:40,10); ctx.fill(); ctx.strokeStyle='rgba(255,213,74,.5)'; ctx.lineWidth=1; rr(bx+.5,by+.5,bw-1,(items.length>1?58:40)-1,10); ctx.stroke(); ctx.textAlign='left'; items.forEach((k,i)=>{ const [tt,tx]=ELEM_TIPS[k]; ctx.font='bold 13px system-ui'; const lw=ctx.measureText('ÚJ: '+tt).width; ctx.fillStyle='#ffd54a'; ctx.fillText('ÚJ: '+tt,bx+14,by+18+i*20); ctx.fillStyle='#e8ecf7'; ctx.font='12px system-ui'; ctx.fillText(tx,bx+14+lw+8,by+18+i*20); }); ctx.restore(); }
   // overlay
   if(S.ph==='fail'&&!(RACE.on&&RACE.ph!=='play')){ ctx.fillStyle='rgba(11,15,26,.55)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#ff5c6c'; ctx.shadowBlur=20; ctx.fillStyle='#ff5c6c'; ctx.font='bold 36px system-ui'; const w={rope:'Elszakadt a kötelék!',ropecut:'Elvágták a köteléket!',spike:'Tüske… aú.',patrol:'Elkapott az őrjárat!',laser:'Lézer. Füstölsz.',bullet:'Telitalálat.',hole:'Leszakadt a padló!',well:'Elnyelt a gravitációs kút!',shadow:'Az Árny elkapott…'}[S.failWhy]||'Hoppá.'; ctx.fillText(w,W/2,H/2-10); ctx.restore(); ctx.fillStyle=S.lives<=0?'#ff5c6c':'#8b94b3'; ctx.font=S.lives<=0?'bold 20px system-ui':'16px system-ui'; ctx.fillText(RACE.on?'Elölről – az ellenfél közben halad!':S.lives<=0&&!OPT.inf?`Elfogytak az életek – a ${Math.floor(S.L/WORLD)+1}. világ elölről.`:`Újra a pálya elejéről…  (♥ ${OPT.inf?'∞':S.lives})`,W/2,H/2+24); }
   if(S.ph==='clear'&&!RACE.on){ ctx.fillStyle='rgba(11,15,26,.72)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center'; ctx.save(); ctx.shadowColor='#5be28a'; ctx.shadowBlur=24; ctx.fillStyle='#5be28a'; ctx.font='bold 42px system-ui'; ctx.fillText('Pálya teljesítve!',W/2,H/2-40); ctx.restore(); ctx.fillStyle='#ffd54a'; ctx.font='38px system-ui'; ctx.fillText('★'.repeat(S.stars)+'☆'.repeat(3-S.stars),W/2,H/2+10); ctx.fillStyle='#e8ecf7'; ctx.font='18px system-ui'; ctx.fillText(`Idő: ${fmt(S.clearTime)}   (3 csillag ${lv.par} mp alatt jár)`,W/2,H/2+46); const nxt=WEEKLY.on?(WEEKLY.idx+1<WEEKLY.list.length?WEEKLY.list[WEEKLY.idx+1]:-1):(S.L+1<LEVELS.length?S.L+1:-1); if(nxt>=0){ctx.fillStyle='#8b94b3'; ctx.font='15px system-ui'; ctx.fillText(`Következő: ${LEVELS[nxt].name}${WEEKLY.on?`  (${WEEKLY.idx+2}/${WEEKLY.list.length})`:''}`,W/2,H/2+76);} }
@@ -2450,7 +2457,7 @@ $('btnLostMenu').onclick=()=>show('ovMenu');
 $('btnDoneMenu').onclick=toMenu;
 
 // méretezés
-function fit(){ const ed=EDITOR.on&&!EDITOR.testing; const availW=window.innerWidth-(ed?590:0); const s=Math.min(availW/980,(window.innerHeight-(ed?30:60))/640,1.6); $('stage').style.transform=`scale(${s})`; }
+function fit(){ const ed=EDITOR.on&&!EDITOR.testing; const availW=window.innerWidth-(ed?590:0); const s=Math.min(availW/980,(window.innerHeight-(ed?30:60))/710,1.6); $('stage').style.transform=`scale(${s})`; }
 window.addEventListener('resize',fit); fit();
 
 // ============================================================
